@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>매력 키워드 출현 빈도 분석 (데이터셋 2)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif; max-width: 820px; margin: 0 auto; padding: 20px 16px; background: #fff; color: #1a1a1a; }
+  h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 18px; }
+  .sort-btns { display: flex; gap: 8px; margin-bottom: 18px; }
+  .sort-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer; font-size: 13px; font-weight: 500; background: #fff; color: #333; transition: all .15s; }
+  .sort-btn.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+  .row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer; }
+  .label { width: 230px; font-size: 13px; font-weight: 600; text-align: right; padding-right: 8px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-bg { flex: 1; background: #f0f0f0; border-radius: 4px; height: 28px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; transition: width .5s ease; }
+  .bar-fill span { font-size: 13px; font-weight: 700; }
+  .bar-high { background: #7c3aed; }
+  .bar-high span { color: #fff; }
+  .bar-mid { background: #a78bfa; }
+  .bar-mid span { color: #fff; }
+  .bar-low { background: #c4b5fd; }
+  .bar-low span { color: #3b1f6e; }
+  .examples { margin-left: 238px; font-size: 12px; color: #555; padding: 4px 8px; background: #f8f9fa; border-radius: 4px; margin-top: 2px; margin-bottom: 6px; display: none; }
+  .examples.open { display: block; }
+  .summary { margin-top: 24px; padding: 16px; background: #f8f9fa; border-radius: 8px; font-size: 13px; line-height: 1.8; }
+  .summary h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .note { margin-top: 16px; padding: 12px; background: #fffbeb; border-radius: 8px; font-size: 12px; color: #92400e; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<h2>매력 키워드 출현 빈도 분석 (데이터셋 2)</h2>
+<p class="subtitle">전체 201건 ｜ 유효 응답 171건 ｜ 「특별히 없음/없음」 등 30건</p>
+
+<div class="sort-btns">
+  <button class="sort-btn active" onclick="sortBy('count')">출현수 순</button>
+  <button class="sort-btn" onclick="sortBy('name')">이름 순</button>
+</div>
+
+<div id="chart"></div>
+
+<div class="summary">
+  <h3>📊 분석 요약</h3>
+  <strong>TOP 3:</strong> 필링/필(49) → 저자극(43) → 밀착감/시트 소재(15)<br>
+  <strong>※중복 카운팅 주의:</strong> 「低刺激ピール」은 저자극(43)과 필링(49) 양쪽에 카운팅됨<br>
+  <strong>신규 키워드 (데이터셋 1에 없었던 것):</strong><br>
+  　・히알루론산(7) ・세럼인마스크(6) ・촉촉한 텍스처(6) ・초박형 시트(7)<br>
+  <strong>대폭 감소:</strong> 붙이는 에센스 20→3<br>
+  <strong>대폭 증가:</strong> 저자극 28→43 / 필링 13→49 / 세라마이드 7→11 / 밀착감 6→15<br>
+  <strong>무응답률:</strong> 30/201 = 14.9%
+</div>
+
+<div class="note">
+  ⚠️ 참고: 하나의 응답에 복수 키워드가 포함된 경우, 각각 개별 카운팅했습니다 (중복 카운팅 있음).<br>
+  특히 「低刺激ピール」「低刺激ピーリング」은 저자극·필링 양쪽 카테고리에 중복 카운팅되어 있습니다.<br>
+  바를 클릭하면 해당 카테고리에 포함된 표현 바리에이션을 확인할 수 있습니다.
+</div>
+
+<script>
+const data = [
+  { keyword: "필링/필", count: 49, examples: "ピーリング, 低刺激ピール, 低刺激ピーリング, ピーリングセラム, ピーリング&バリアケア, バリアピーリング, PHAバリアピーリング, ピーリングマスク" },
+  { keyword: "저자극", count: 43, examples: "低刺激, 低刺激ピール, 低刺激ピーリング, 低刺激であること, 敏感肌にやさしい, 刺激が少なく, 成分が穏やかで刺激がない" },
+  { keyword: "밀착감/시트 소재", count: 15, examples: "極細繊維シート密着, 肌にしっかり密着, 超薄型シート, 高密着ウォータージェルシート, 肌にぴたっと密着, 薄型シートが顔に密着" },
+  { keyword: "피부장벽/배리어 케어", count: 14, examples: "バリアバランスケア, ピーリング&バリアケア, 肌バリアを整え, バリアケア, バリア機能が高い, セラミドによる肌バリアケア" },
+  { keyword: "침투력/성분 침투", count: 12, examples: "浸透力, 浸透力UP, 肌深部まで届ける, おだやかに浸透させる, 浸透力を高めた, 高浸透" },
+  { keyword: "가격/가성비", count: 12, examples: "770円, 7枚入り/770円, 安く行える, コスパが高い, コストパフォーマンス, 買いやすい, 値段, 価格設定" },
+  { keyword: "세라마이드", count: 11, examples: "セラミド, セラミド配合, セラミドによる肌バリアケア, セラミドとヒアルロン酸" },
+  { keyword: "보습/수분 유지", count: 11, examples: "潤いを届ける, しっとりと整える, 潤いのある肌, うるおいをたもつ, 保湿, 水分の蒸発を防ぐ" },
+  { keyword: "각질 케어/각질 오프", count: 10, examples: "角質を整えながら浸透, 古い角質を整え, 角質ケア, 角質が取れる, 角質を整える, 肌の代謝サイクルを整え" },
+  { keyword: "매끈/부드러움", count: 7, examples: "肌をもっとすべすべにする, 肌をなめらかにする, 肌を守りもっとすべすべにします" },
+  { keyword: "초박형 시트", count: 7, examples: "超薄型シート, 超薄型, 薄型シート, 極薄シートマスク" },
+  { keyword: "히알루론산", count: 7, examples: "ヒアルロン酸, ヒアルロン酸配合, セラミドとヒアルロン酸" },
+  { keyword: "PHA / LHA", count: 6, examples: "PHA, PHA&LHA, PHA+LHA配合, PHAバリアピーリング" },
+  { keyword: "세럼인마스크", count: 6, examples: "セラムinマスク, セラムインマスク, PHAバリアピーリングセラムインマスク" },
+  { keyword: "촉촉한 텍스처", count: 6, examples: "みずみずしいシート, みずみずしいウォーターテクスチャー, みずみずしいテクスチャ, ウォーターテクスチャー" },
+  { keyword: "붙이는 에센스", count: 3, examples: "貼る美容液, はる, 美容液" },
+  { keyword: "세안 직후 사용 가능", count: 3, examples: "洗顔後すぐ使える, 洗顔後すぐに" },
+  { keyword: "간편함/사용 편리", count: 3, examples: "使いやすさ, 手軽なケア, 手軽さ" },
+];
+
+let currentSort = "count";
+const maxCount = Math.max(...data.map(d => d.count));
+
+function getBarClass(count) {
+  if (count >= 20) return "bar-high";
+  if (count >= 10) return "bar-mid";
+  return "bar-low";
+}
+
+function render() {
+  const sorted = [...data].sort((a, b) =>
+    currentSort === "count" ? b.count - a.count : a.keyword.localeCompare(b.keyword, "ko")
+  );
+
+  const chart = document.getElementById("chart");
+  chart.innerHTML = sorted.map((item, i) => `
+    <div class="row" onclick="toggleEx(${i})">
+      <div class="label" title="${item.keyword}">${item.keyword}</div>
+      <div class="bar-bg">
+        <div class="bar-fill ${getBarClass(item.count)}" style="width:${(item.count / maxCount * 100)}%">
+          <span>${item.count}</span>
+        </div>
+      </div>
+    </div>
+    <div class="examples" id="ex-${i}"><strong>포함된 표현 (원문):</strong> ${item.examples}</div>
+  `).join("");
+}
+
+function sortBy(type) {
+  currentSort = type;
+  document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+  render();
+}
+
+function toggleEx(i) {
+  const el = document.getElementById("ex-" + i);
+  el.classList.toggle("open");
+}
+
+render();
+</script>
+</body>
+</html>
