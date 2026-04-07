@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JP 브리핑 평가 - 프로덕트</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.15.3/Recharts.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } = Recharts;
+
+const TAB_COLORS = {
+  reason: { main: "#3B82F6", bg: "#EFF6FF", border: "#BFDBFE", text: "#1E40AF" },
+  helpful: { main: "#F97316", bg: "#FFF7ED", border: "#FED7AA", text: "#9A3412" },
+  unnecessary: { main: "#EC4899", bg: "#FDF2F8", border: "#FBCFE8", text: "#9D174D" },
+  improvement: { main: "#8B5CF6", bg: "#F5F3FF", border: "#DDD6FE", text: "#5B21B6" },
+};
+
+const reasonData = [
+  { name: "문제 없이 이해됨", value: 9, short: "문제 없음", detail: "문제 없이 사업부 전략과 소속 팀 역할이 이해되었다." },
+  { name: "협업 필요 영역 설명 부족", value: 7, short: "협업 영역 부족", detail: "유관부서와의 협업, 혹은 서포트가 필요한 구체적인 영역에 대한 설명이 부족했다. (제품, 행사 등)" },
+  { name: "협업 필요 시점 설명 부족", value: 7, short: "협업 시점 부족", detail: "유관부서와의 협업, 혹은 서포트가 필요한 시점(타이밍)에 대한 설명이 부족했다." },
+  { name: "DRI 불명확", value: 3, short: "DRI 불명확", detail: "세부적인 전략이나 액션에 대해 궁금한 점, 이슈사항이 생겼을 때 누구에게 문의해야할지(DRI)가 명확하지 않았다." },
+  { name: "가중목 설정 이유 불명확", value: 1, short: "설정 이유", detail: "가중목/선행지표/타임라인 등을 왜 그렇게 설정했는지에 대한 이유가 불명확했다." },
+  { name: "용어/프레임 설명 부족", value: 1, short: "용어 부족", detail: "용어와 프레임(고객 지칭 용어, 레버, 퍼널 등)에 대한 정의 및 설명이 부족했다." },
+  { name: "팀 방향성 불부합", value: 1, short: "방향성 불부합", detail: "제품, 채널, 고객에 관한 관점이 내가 소속된 팀의 방향성과 부합하지 않았다." },
+];
+
+const helpfulData = [
+  { name: "제품 포트폴리오별 운영 방향", value: 11, short: "포트폴리오 방향", detail: "제품 포트폴리오별 운영 방향 (라인, 히어로 SKU, 볼륨 등)" },
+  { name: "월/분기별 타임라인 뷰", value: 11, short: "타임라인 뷰", detail: "월/분기별 타임라인(캘린더) 형태의 뷰" },
+  { name: "고객 분류별 세부 전략", value: 11, short: "고객 전략", detail: "고객 분류별(타겟, WHO) 세부 전략" },
+  { name: "프로모션 플래닝", value: 6, short: "프로모션", detail: "프로모션 플래닝 (인플루언서, IMC, 빅모델 등)" },
+  { name: "채널별 플랜 매핑", value: 5, short: "채널 매핑", detail: "채널별 플랜 매핑" },
+];
+
+const unnecessaryData = [
+  { name: "없음 / 전부 유용한 정보로 느껴졌음", value: 20, short: "전부 유용함", detail: "없음 / 전부 유용한 정보로 느껴졌음" },
+  { name: "프로모션 플래닝", value: 1, short: "프로모션 플래닝", detail: "프로모션 플래닝 (인플루언서, IMC, 빅모델 등)" },
+  { name: "전반적으로 필요한 정보였다 (기타)", value: 1, short: "기타 의견", detail: "전반적으로 필요한 정보였다." },
+];
+
+const improvementData = [
+  { theme: "유관부서 협업/DRI 명확화", count: 3, quotes: [
+    "유관부서와 어떤 협업을 진행해야 하는지 예상되는 플랜이 보이지 않아 아쉬웠습니다.",
+    "전략 우선순위 및 실행 로드맵 명확화 필요 — 핵심 드라이버(Top 1~2)가 불명확. DRI 및 실행 책임 구조 부재로 실행 시 혼선 가능성.",
+    "사업부 간 프로젝트 영향도 및 프로덕트 제품 개발 PM의 업무 연계 부분도 고려되었으면 좋겠습니다.",
+  ]},
+  { theme: "제품 전략/임팩트 상세화", count: 3, quotes: [
+    "현재 개발중인 신제품에 대한 플랜도 추가되면 좋을 것 같습니다.",
+    "PDRN 라인 외 제품 라인의 육성 + 운영 플랜은 어떻게 되는지도 궁금합니다.",
+    "해당 플랜으로 진행 시 매출 또는 볼륨의 전 후 증가 예상 수치",
+  ]},
+  { theme: "타임라인/정기 업데이트", count: 2, quotes: [
+    "월별로 더 세부화 되어 있고 매 달 1회 주기로 업데이트 되는 내용이 함께 공유될 수 있다면 가장 도움이 되는 운영 방식이 될 것 같다.",
+    "연간 전채널의 세트 출시 시점, 대략적인 개수, 메인 제품, 제약식 등이 표기되어 있으면 좋겠습니다.",
+  ]},
+  { theme: "전략 맥락/방향성 공유", count: 2, quotes: [
+    "전략의 앞단에서 고민되었던 이유와 맥락에 대한 내용이 조금 더 자세하게 공유되면 좋겠습니다.",
+    "고객(who)의 어떤 고민(what)을 타겟해서 매출을 확대할지에 대한 뷰가 공유되면 좋을 것 같습니다.",
+  ]},
+  { theme: "일본 시장 특수성 반영", count: 1, quotes: [
+    "일본 채널만의 폐쇄적인 구조나 유의할 점에 대한 설명이 있다면 더 좋을 것 같습니다.",
+  ]},
+];
+
+const tabList = [
+  { key: "reason", label: "이해도 낮은 이유" },
+  { key: "helpful", label: "도움이 된 부분" },
+  { key: "unnecessary", label: "불필요한 부분" },
+  { key: "improvement", label: "개선 필요사항" },
+];
+const chartDataMap = { reason: reasonData, helpful: helpfulData, unnecessary: unnecessaryData };
+const insightMap = {
+  reason: { icon: "✅", text: "9명(41%)은 문제 없이 이해했으며, 가장 많이 지적된 이슈는 유관부서 협업 관련 설명 부족입니다." },
+  helpful: { icon: "💡", text: "포트폴리오 방향, 타임라인 뷰, 고객 전략이 각각 11명(50%)으로 동일하게 높은 만족도를 보였습니다." },
+  unnecessary: { icon: "👍", text: "20명(91%)이 불필요한 부분이 없다고 응답하여, 전반적으로 매우 높은 정보 유용성을 보였습니다." },
+  improvement: { icon: "📝", text: "주관식 응답 중 11건의 실질적 개선 의견을 5개 테마로 분류했습니다. 카드를 클릭하면 원문을 확인할 수 있습니다." },
+};
+
+function ImprovementView() {
+  const [open, setOpen] = useState(null);
+  const tc = TAB_COLORS.improvement;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <h3 style={{ fontSize: 16, fontWeight: 600, color: "#1e293b", margin: "0 0 4px" }}>개선 필요사항 주관식 요약 (테마별)</h3>
+      {improvementData.map((item, i) => {
+        const isOpen = open === i;
+        return (
+          <div key={i} onClick={() => setOpen(isOpen ? null : i)} style={{ border: `1px solid ${isOpen ? tc.main : "#e2e8f0"}`, borderRadius: 10, overflow: "hidden", cursor: "pointer", transition: "all 0.2s", background: isOpen ? tc.bg : "#fff" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px" }}>
+              <div style={{ minWidth: 40, height: 40, borderRadius: 8, background: tc.main, opacity: Math.max(1 - i * 0.12, 0.4), display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 16, fontWeight: 700 }}>{item.count}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#1e293b" }}>{item.theme}</div>
+                <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>{item.count}건의 응답</div>
+              </div>
+              <div style={{ fontSize: 18, color: "#94a3b8", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>▾</div>
+            </div>
+            {isOpen && (
+              <div style={{ padding: "0 16px 14px", borderTop: `1px solid ${tc.border}` }}>
+                <ul style={{ margin: "12px 0 0", padding: "0 0 0 18px", listStyle: "none" }}>
+                  {item.quotes.map((q, j) => (
+                    <li key={j} style={{ fontSize: 13, color: "#475569", lineHeight: 1.6, marginBottom: 8, position: "relative", paddingLeft: 4 }}>
+                      <span style={{ position: "absolute", left: -16, color: tc.main }}>•</span>"{q}"
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState("reason");
+  const tc = TAB_COLORS[tab];
+  const insight = insightMap[tab];
+  const isChart = tab !== "improvement";
+  const data = chartDataMap[tab];
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const d = payload[0].payload;
+      return (
+        <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", maxWidth: 300 }}>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#1e293b", lineHeight: 1.5 }}>{d.detail || d.name}</p>
+          <p style={{ margin: "4px 0 0", fontSize: 14, color: tc.main, fontWeight: 700 }}>{d.value}명 응답</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 700, color: "#1e293b", margin: "0 0 4px" }}>📊 JP 브리핑 평가 - 프로덕트</h2>
+      <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 20px" }}>프로덕트 본부 응답자 22명 기준 (복수 응답 포함)</p>
+      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+        {tabList.map(t => (
+          <button key={t.key} onClick={() => setTab(t.key)} style={{ padding: "8px 18px", borderRadius: 20, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", background: tab === t.key ? TAB_COLORS[t.key].main : "#f1f5f9", color: tab === t.key ? "#fff" : "#64748b", transition: "all 0.2s" }}>{t.label}</button>
+        ))}
+      </div>
+      <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e2e8f0", padding: "20px 16px 12px" }}>
+        {isChart ? (
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 600, color: "#1e293b", margin: "0 0 16px 0" }}>{tabList.find(t => t.key === tab).label} (빈도순)</h3>
+            <ResponsiveContainer width="100%" height={data.length * 52 + 20}>
+              <BarChart data={data} layout="vertical" margin={{ top: 0, right: 50, left: 10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                <XAxis type="number" tick={{ fontSize: 12, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="short" width={120} tick={{ fontSize: 12, fill: "#475569" }} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: tc.main + "0F" }} />
+                <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={28}>
+                  {data.map((_, i) => (<Cell key={i} fill={tc.main} fillOpacity={Math.max(1 - i * 0.08, 0.35)} />))}
+                  <LabelList dataKey="value" position="right" style={{ fontSize: 13, fontWeight: 700, fill: "#475569" }} formatter={v => v + "명"} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (<ImprovementView />)}
+      </div>
+      <div style={{ marginTop: 16, padding: "12px 16px", background: tc.bg, borderRadius: 8, border: "1px solid " + tc.border }}>
+        <p style={{ margin: 0, fontSize: 13, color: tc.text }}>{insight.icon} {insight.text}</p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
