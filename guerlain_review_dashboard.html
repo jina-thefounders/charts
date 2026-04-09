@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>겔랑 아베이유 로얄 — @cosme 후기 분석</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Sans+JP:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C8A951;--gold-light:#E8D69C;--gold-glow:rgba(200,169,81,0.15);
+  --ink:#1A1714;--ink-soft:#3D3831;--cream:#FAF7F2;--cream-dark:#F0EBE3;--white:#FFFFFF;
+  --honey:#F5A623;--rose:#D4727A;--sage:#7BA08A;--sky:#6A9ECF;--lavender:#9B8EC4;--coral:#E8836B;
+  --shadow:0 2px 20px rgba(26,23,20,0.06);--shadow-lg:0 8px 40px rgba(26,23,20,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased}
+.hero{background:var(--ink);padding:60px 40px 50px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(200,169,81,0.08) 0%,transparent 50%),radial-gradient(ellipse at 70% 50%,rgba(200,169,81,0.05) 0%,transparent 50%);animation:shimmer 8s ease-in-out infinite alternate}
+@keyframes shimmer{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(20px,-10px) rotate(1deg)}}
+.hero-badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;padding:6px 18px;margin-bottom:24px;position:relative}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);color:var(--gold-light);font-weight:700;line-height:1.2;position:relative;margin-bottom:12px}
+.hero p{color:rgba(255,255,255,0.5);font-size:14px;font-weight:300;letter-spacing:0.5px;position:relative}
+.container{max-width:1200px;margin:0 auto;padding:40px 24px 80px}
+.section-title{display:flex;align-items:center;gap:16px;margin:48px 0 28px}
+.section-title .num{font-family:'Playfair Display',serif;font-size:42px;color:var(--gold);line-height:1;font-weight:700}
+.section-title .text h2{font-size:20px;font-weight:700}
+.section-title .text span{font-size:12px;color:var(--ink-soft);font-weight:300;letter-spacing:1px;margin-top:2px}
+.card{background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:32px;margin-bottom:24px;transition:box-shadow 0.3s}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card-header{font-size:15px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.card-header .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.click-hint{font-size:11px;font-weight:400;color:var(--ink-soft);margin-left:auto;background:var(--cream);padding:3px 10px;border-radius:20px}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:768px){.chart-row{grid-template-columns:1fr}}
+.chart-wrap{position:relative;width:100%;cursor:pointer}
+.insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:16px}
+.insight-pill{background:var(--cream);border-radius:12px;padding:20px 24px;border-left:3px solid var(--gold)}
+.insight-pill .pill-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.insight-pill .pill-body{font-size:13px;line-height:1.7;color:var(--ink-soft)}
+.insight-pill .pill-body strong{color:var(--ink);font-weight:700}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+@media(max-width:640px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--white);border-radius:12px;padding:24px;text-align:center;box-shadow:var(--shadow)}
+.stat-card .stat-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--gold)}
+.stat-card .stat-label{font-size:12px;color:var(--ink-soft);margin-top:4px}
+.bar-list{display:flex;flex-direction:column;gap:14px}
+.bar-item{display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform 0.15s}
+.bar-item:hover{transform:translateX(4px)}
+.bar-label{min-width:150px;font-size:13px;font-weight:500;color:var(--ink-soft);text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:28px;background:var(--cream);border-radius:6px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-size:12px;font-weight:700;color:var(--white);transition:width 1.2s cubic-bezier(0.22,1,0.36,1);min-width:40px}
+
+/* ─── VOC Modal ─── */
+.voc-overlay{position:fixed;inset:0;background:rgba(26,23,20,0.5);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease}
+.voc-overlay.active{opacity:1;pointer-events:auto}
+.voc-modal{background:var(--white);border-radius:20px;max-width:560px;width:90%;max-height:80vh;overflow:hidden;transform:translateY(20px) scale(0.97);transition:transform 0.35s cubic-bezier(0.22,1,0.36,1);box-shadow:0 24px 80px rgba(0,0,0,0.18)}
+.voc-overlay.active .voc-modal{transform:translateY(0) scale(1)}
+.voc-modal-head{padding:28px 32px 20px;border-bottom:1px solid var(--cream-dark);display:flex;align-items:center;justify-content:space-between}
+.voc-modal-head h3{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+.voc-modal-head h3 .badge{background:var(--gold-glow);color:var(--gold);font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.voc-close{width:32px;height:32px;border-radius:50%;border:none;background:var(--cream);cursor:pointer;font-size:18px;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+.voc-close:hover{background:var(--cream-dark)}
+.voc-modal-body{padding:24px 32px 32px;overflow-y:auto;max-height:calc(80vh - 80px)}
+.voc-item{padding:16px 0;border-bottom:1px solid var(--cream)}
+.voc-item:last-child{border-bottom:none}
+.voc-item .jp{font-family:'Noto Sans JP','Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--ink);font-weight:400;position:relative;padding-left:16px}
+.voc-item .jp::before{content:'';position:absolute;left:0;top:6px;width:4px;height:calc(100% - 12px);border-radius:2px;background:var(--gold-light)}
+.voc-item .meta{font-size:11px;color:rgba(0,0,0,0.35);margin-top:6px;padding-left:16px}
+.footer{text-align:center;padding:32px;font-size:11px;color:rgba(0,0,0,0.3);letter-spacing:1px}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">@cosme Review Analysis</div>
+  <h1>Guerlain Abeille Royale<br>Watery Oil Serum</h1>
+  <p>약 85건의 @cosme 후기 기반 · 2026.01 – 2026.04</p>
+</div>
+
+<div class="voc-overlay" id="vocOverlay">
+  <div class="voc-modal">
+    <div class="voc-modal-head">
+      <h3 id="vocTitle"></h3>
+      <button class="voc-close" id="vocClose">✕</button>
+    </div>
+    <div class="voc-modal-body" id="vocBody"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="stats-row fade-up">
+    <div class="stat-card"><div class="stat-num">85</div><div class="stat-label">분석 후기 수</div></div>
+    <div class="stat-card"><div class="stat-num">61%</div><div class="stat-label">보습 효과 언급률</div></div>
+    <div class="stat-card"><div class="stat-num">52</div><div class="stat-label">"안 끈적" 언급 횟수</div></div>
+    <div class="stat-card"><div class="stat-num">38</div><div class="stat-label">"향이 좋다" 언급</div></div>
+  </div>
+
+  <div class="section-title fade-up"><div class="num">01</div><div class="text"><h2>사용감</h2><span>使用感 · TEXTURE &amp; EXPERIENCE</span></div></div>
+  <div class="chart-row fade-up">
+    <div class="card">
+      <div class="card-header"><span class="dot" style="background:var(--gold)"></span>사용감 키워드 TOP 10<span class="click-hint">📌 바 클릭 → 일본어 VOC</span></div>
+      <div class="chart-wrap"><canvas id="chart-usage"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="dot" style="background:var(--gold)"></span>긍정 vs 부정 비율</div>
+      <div class="chart-wrap"><canvas id="chart-usage-pn"></canvas></div>
+      <div class="insight-grid" style="margin-top:20px"><div class="insight-pill"><div class="pill-title">Key Takeaway</div><div class="pill-body">"오일인데 <strong>끈적이지 않다</strong>"는 평가가 압도적 1위로, 오일 기피층까지 설득하는 <strong>핵심 USP</strong>. 향은 고급감으로 긍정적이나 <strong>6건의 호불호</strong> 의견 존재.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section-title fade-up"><div class="num">02</div><div class="text"><h2>효능 · 효과</h2><span>効能・効果 · EFFICACY</span></div></div>
+  <div class="chart-row fade-up">
+    <div class="card">
+      <div class="card-header"><span class="dot" style="background:var(--sage)"></span>효능 키워드별 언급 횟수<span class="click-hint">📌 바 클릭 → 일본어 VOC</span></div>
+      <div class="chart-wrap"><canvas id="chart-efficacy"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="dot" style="background:var(--sage)"></span>효과 체감 분포</div>
+      <div class="chart-wrap"><canvas id="chart-efficacy-radar"></canvas></div>
+    </div>
+  </div>
+  <div class="card fade-up"><div class="insight-grid">
+    <div class="insight-pill"><div class="pill-title">3대 체감 효과</div><div class="pill-body"><strong>보습(55회) → 탄력(35회) → 윤기(22회)</strong> 순. "바른 다음날 피부가 달라졌다"는 즉효성 체험담이 구매 전환의 핵심.</div></div>
+    <div class="insight-pill"><div class="pill-title">장기 사용 효과</div><div class="pill-body">3개월 이상 사용자는 <strong>인너드라이 개선, 모공 축소, 피부 안정화</strong>를 보고. 리피터 전환율이 높은 구조.</div></div>
+    <div class="insight-pill"><div class="pill-title">의외의 효과</div><div class="pill-body">미백 성분이 없는데도 <strong>"피부가 밝아졌다"</strong>는 투명감/톤업 보고 7건. 보습에 의한 부수 효과로 추정.</div></div>
+  </div></div>
+
+  <div class="section-title fade-up"><div class="num">03</div><div class="text"><h2>발견 및 인지 채널</h2><span>認知チャネル · DISCOVERY CHANNEL</span></div></div>
+  <div class="chart-row fade-up">
+    <div class="card">
+      <div class="card-header"><span class="dot" style="background:var(--sky)"></span>인지 채널 분포<span class="click-hint">📌 바 클릭 → 일본어 VOC</span></div>
+      <div class="chart-wrap"><canvas id="chart-channel"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="dot" style="background:var(--sky)"></span>채널별 비율</div>
+      <div class="chart-wrap"><canvas id="chart-channel-pie"></canvas></div>
+      <div class="insight-grid" style="margin-top:20px"><div class="insight-pill"><div class="pill-title">핵심 전환 경로</div><div class="pill-body"><strong>BA 카운터 추천 + 샘플 체험</strong>이 가장 강력한 전환 경로. @cosme 랭킹이 <strong>관심 유발</strong>의 최대 채널이며, SNS는 아직 보조적.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section-title fade-up"><div class="num">04</div><div class="text"><h2>구매 이유</h2><span>購入理由 · PURCHASE DRIVER</span></div></div>
+  <div class="card fade-up">
+    <div class="card-header"><span class="dot" style="background:var(--coral)"></span>구매 이유 TOP 10<span class="click-hint">📌 바 클릭 → 일본어 VOC</span></div>
+    <div class="bar-list" id="purchase-bars"></div>
+  </div>
+  <div class="card fade-up"><div class="insight-grid">
+    <div class="insight-pill"><div class="pill-title">건조 고민 = 최대 트리거</div><div class="pill-body">건조 대책(25회)이 압도적 1위. <strong>겨울철 시즌 마케팅</strong>과 직결되는 구매 동기.</div></div>
+    <div class="insight-pill"><div class="pill-title">가격 허들 → 포인트 환원</div><div class="pill-body">"비싸지만"이 거의 모든 후기에 등장. <strong>포인트 환원 타이밍</strong>이 결정적 구매 트리거.</div></div>
+    <div class="insight-pill"><div class="pill-title">높은 리피터 비율</div><div class="pill-body">3본 이상 리피트 언급 다수. <strong>한 번 써보면 이탈율이 낮은</strong> 제품 구조.</div></div>
+  </div></div>
+</div>
+<div class="footer">GUERLAIN ABEILLE ROYALE · @COSME REVIEW ANALYSIS · 2026</div>
+
+<script>
+const VOC={"끈적이지 않음":[{jp:"ベタつかないオイル美容液なので、大変気に入っています。",meta:"50代・混合肌"},{jp:"オイル特有のベタベタした感じもなく、すぐに浸透して、塗った瞬間から潤いとハリを実感。",meta:"35歳・混合肌"},{jp:"ベタベタ感は無く、すっと肌に馴染みます。",meta:"59歳・乾燥肌"},{jp:"全くベタつくことはなく肌に吸い込まれていく感動と、ゲラン特有の高級感のある香りと使用感でとても幸せになれる",meta:"32歳・脂性肌"},{jp:"オイルなのにベタつかなくて、しっとりなのにサラッとしていてすごい！",meta:"28歳・混合肌"},{jp:"オイルでしっかり潤うのにベタベタにならない。塗った瞬間に良い！と感じる商品",meta:"58歳・普通肌"}],"향 (고급감 / 힐링)":[{jp:"香りに高級感があって気分が上がります。",meta:"35歳・混合肌"},{jp:"デパコスらしい華やかな香りもあり、癒やされます。",meta:"49歳・混合肌"},{jp:"香水のような高級感あふれる香りがする。しっとり浸透して心地良いです。",meta:"33歳・乾燥肌"},{jp:"ゲランらしい華やかさはしっかりあるから好みは分かれそうだけど、個人的にはかなり気分上がるタイプ。",meta:"39歳・混合肌"},{jp:"ゴージャスな香り。さすがおゲラン様と呼ばれるだけのことはある。高級というか上品というか、大人っぽい重厚な香り",meta:"46歳・普通肌"}],"흡수력 / 침투력":[{jp:"浸透が早いので肌の変化を期待できます。",meta:"49歳・混合肌"},{jp:"顔に塗り広げるとスッと馴染んでベタつきません。朝の化粧前にも使えるスキンケア",meta:"37歳・普通肌"},{jp:"とにかくアベイユの浸透力はすごい。なんなら手にとった段階で手のひらに吸い込まれる。",meta:"60歳・乾燥肌"},{jp:"洗顔後すぐに使用。その後の化粧水がぐんぐん肌に入っていく感じがして毎晩使用中。",meta:"31歳・乾燥肌"}],"가벼운 텍스처":[{jp:"サラッとしたオイルで伸びも良く、塗ったあとは、ツヤツヤになります。",meta:"43歳・普通肌"},{jp:"まるでオイルじゃないみたいにサラッと軽いところが良かったのに…",meta:"33歳・混合肌"},{jp:"あまりオイル感はなくみずみずしいテクスチャー",meta:"55歳・敏感肌"},{jp:"使用感は比較的軽めで、サラッとしたオイル系のテクスチャー。スクワラン系のような軽やかな伸び",meta:"42歳・混合肌"}],"보틀 디자인 / 고급감":[{jp:"高級感あるボトルデザインで自分へのご褒美にもおすすめです。",meta:"49歳・混合肌"},{jp:"デザインがとても可愛いので、飾っておくだけでテンションが上がります。",meta:"投稿者"},{jp:"重みのあるボトルやガラスのスポイトなどパケからゴージャスで気分が上がるのはさすがゲラン",meta:"39歳・混合肌"},{jp:"ボトル内のキラキラとした粒子や容器の質感など、見た目の高級感があり",meta:"42歳・混合肌"}],"잘 펴짐 / 발림성":[{jp:"つけるとのびも良く、しっとりしますが、ベタつく感じはないです。",meta:"44歳・混合肌"},{jp:"するっと広がって、すっとなじむ。みずみずしさはあるのに薄すぎない",meta:"39歳・混合肌"},{jp:"何滴かですーっと伸びるのでコスパは良い方だと思います。",meta:"35歳・普通肌"}],"골드 비즈 (프치프치)":[{jp:"数の子みたいなつぶつぶは手のひらにのせるとすぐ溶けて見えなくなります。",meta:"39歳・乾燥肌"},{jp:"プチプチした感触が新感覚！",meta:"33歳・乾燥肌"},{jp:"さらさらしていて肌につけると金色の粒がとけて、さーっと肌に入っていきます。",meta:"48歳・混合肌"},{jp:"プチプチを潰すのが楽しい。スキンケアってめんどくささとの戦いな側面もあるので、こういう癒しポイントは意外と大事",meta:"37歳・脂性肌"}],"향이 강해 호불호":[{jp:"少し香りがするので苦手な方もあるかもしれませんが、私は癒されます。",meta:"59歳・乾燥肌"},{jp:"香りが苦手な人には少し存在感あるかもってところ。",meta:"39歳・混合肌"},{jp:"リピートしたいけれど　匂いが苦手です。使い切るまでに慣れるといいけれど、、",meta:"56歳・混合肌"},{jp:"むかしのThe化粧品といった香りでエレベーターの中に残るような強めな一瞬香りがします。",meta:"39歳・乾燥肌"}],"보틀 불안정 / 쓰러짐":[{jp:"ボトルの底面が狭いので安定感が悪く少し使いにくい。",meta:"32歳・混合肌"},{jp:"細身の容器な上、中身がサラサラ液体なので開けている時に倒さないように最新の注意が必要です",meta:"38歳・普通肌"},{jp:"倒れやすく。2回こぼしちゃったので、溢さなかったら、一年は持つかもです！",meta:"44歳・混合肌"}],"리뉴얼 후 무거움":[{jp:"リニューアル後はベタッと重たく感じました。ありがちな重いオイルになっちゃいましたね…",meta:"33歳・混合肌"},{jp:"リニューアル前が良すぎただけでリニューアル後が悪い訳ではないし、研究の賜物であることも理解しています。",meta:"33歳・混合肌"}],"보습 / 촉촉함":[{jp:"とんでもない保湿力！なのにベタベタしない！",meta:"31歳・乾燥肌"},{jp:"乾燥していた肌のキメが整い、肌ツヤが復活。ハチミツの濃厚な潤いがあり",meta:"49歳・混合肌"},{jp:"しっかり潤うのにベタベタにならない。",meta:"58歳・普通肌"},{jp:"奥までしっかり保湿されていて、肌が柔らかくなっているような感覚。",meta:"31歳・乾燥肌"},{jp:"夕方になっても乾燥でピリピリする事がなくなりました。",meta:"50歳・乾燥肌"}],"탄력 (ハリ)":[{jp:"肌がパーンとハリが出て目の下のたるみも目立たなくなっていた",meta:"63歳・乾燥肌"},{jp:"ハリ蜜肌って言われている通りハリが出て普段のケアと比べると艶も一段違います",meta:"30歳・混合肌"},{jp:"密度がすごくあがって萎んだ肌が生き返る。肌の密度がつまったような感覚になったのは初めて",meta:"36歳・混合肌"},{jp:"肌がふっくらして目元の窪みなどがふっくらして目立たなくなるのが私からみてもわかるくらいの変化です。",meta:"33歳・乾燥肌（母への感想）"}],"윤기 (ツヤ)":[{jp:"肌に艶が出ます。同僚から、褒められました。",meta:"59歳・乾燥肌"},{jp:"このセラムは使った瞬間から「肌が綺麗になった人のツヤ」を与えてくれます。",meta:"投稿者"},{jp:"肌がツヤツヤに保湿されるのでお気に入り",meta:"34歳・普通肌"},{jp:"つけた瞬間わかりやすい水光肌に。ヌラヌラした感じではなく、つるん！となります。",meta:"39歳・乾燥肌"}],"건조 개선 (장기)":[{jp:"乾燥が改善され、キメが細かくなったと思います。周りの人が乾燥で悩んでいるときでも全く悩まなくなりました。",meta:"51歳・乾燥肌"},{jp:"顔の乾燥が凄くて、ファンデーションも乾燥ぽくなることに悩んでたけど、これに出会ってから改善された！",meta:"25歳・敏感肌"},{jp:"インナードライが改善した上、目元の小皺が気にならなくなり、何より肌治安がとてもいい。",meta:"37歳・脂性肌"}],"포동포동 / 탱글":[{jp:"お肌がふっくら元気になる感覚があり、肌のしぼみが気になる方は是非試していただきたい",meta:"32歳・脂性肌"},{jp:"翌日ちょっと太ったかと思うくらいもっちりした肌になっていました",meta:"44歳・混合肌"},{jp:"使った感じはオイルなのに重くなく、しっとりもちもちになります。",meta:"60歳・乾燥肌"},{jp:"モチモチになりました！香りも良くて癒されます。",meta:"32歳・混合肌"}],"피부결 개선":[{jp:"肌のキメが整い、肌ツヤが復活。",meta:"49歳・混合肌"},{jp:"キメが細かくなったと思います。アットコスメの肌診断でも、乾燥してると出ることは無いです。",meta:"51歳・乾燥肌"},{jp:"肌の密度が上がる気がします。",meta:"54歳・乾燥肌"},{jp:"数日使うと、触ったときのやわらかさとか、うるおいの入り方が安定してくる感じ。",meta:"39歳・混合肌"}],"모공 축소":[{jp:"毛穴が小さくなり、お肌にもハリがでてきてメイクのりも良い",meta:"44歳・混合肌"},{jp:"毛穴がぎゅうっと縮みました。そして乾燥知らず。",meta:"46歳・普通肌"},{jp:"毛穴も目立たなくなってきてハリが出たように感じます。",meta:"47歳・乾燥肌"},{jp:"初めて使用した翌朝は毛穴がふっくらした印象になり、肌も落ち着いた気がします。",meta:"38歳・普通肌"}],"화장 밀착력 향상":[{jp:"翌朝の化粧ノリもいい感じでした。",meta:"35歳・混合肌"},{jp:"翌日化粧ノリがとても良く驚きました！",meta:"33歳・乾燥肌"},{jp:"肌もモッチモチになって化粧ノリもよくなります。化粧も嫌な崩れ方しない",meta:"31歳・普通肌"},{jp:"ファンデのりも良くなり、価格以外のデメリットが全く見当たらない",meta:"44歳・混合肌"}],"코스파 / 소량 OK":[{jp:"本当に微量でじゅうぶんでした！コスパはめちゃくちゃ良いです！",meta:"46歳・普通肌"},{jp:"かなり伸びるのでコスパは良いのかも！！",meta:"25歳・敏感肌"},{jp:"こんなに効果があると、いろいろ使う必要無くなるのでコスパが良い気がしてます。",meta:"51歳・乾燥肌"}],"진정 / 피부 안정":[{jp:"花粉にやられこのままだとまずい…恐々使用...朝、鏡を見てびっくり！即効悩みはぶっ飛びました！",meta:"49歳・混合肌"},{jp:"花粉シーズンの肌の治安を守ってくれています。お値段はしますが買う価値ありだと思います",meta:"55歳・敏感肌"},{jp:"赤みがでやすい私の肌が安定している！めちゃくちゃ感動した。",meta:"35歳・普通肌"}],"투명감 / 톤업":[{jp:"肌が白くなる。透明感、くすみ抜け。美白成分は入っていないし…肌そのものがピカピカと白くなってきている",meta:"46歳・普通肌"},{jp:"肌の調子が良くなって、毛穴も目立たなくなったような、透明感が上がったような",meta:"56歳・普通肌"},{jp:"黄色い液なのに、朝には肌がひときわ澄んで白く明るくなっているのも不思議です。",meta:"54歳・普通肌"}],"주름 개선":[{jp:"目尻のシワがーーーーー！！　薄くなった！！使用した次の日にまさかの目尻のシワが薄くなりました。",meta:"44歳・混合肌"},{jp:"目元の小皺が気にならなくなり",meta:"37歳・脂性肌"},{jp:"きになっていたシワもなんだか薄く、この調子で消えてくれそう。",meta:"59歳・普通肌"}],"효과 미미":[{jp:"一年間ほど使用しました。ただこれじゃなきゃだめということがなかったのでリピートはしませんでした。",meta:"34歳・乾燥肌"},{jp:"イマイチで小さい商品でびっくりでした",meta:"54歳・乾燥肌"},{jp:"アンチエイジング的には微妙なので保湿重視のかたに",meta:"投稿者"}],"@cosme 랭킹 / 구전":[{jp:"以前から口コミ評価が上位で気になっていたコチラ。高価ですが、効果は絶大。",meta:"49歳・混合肌"},{jp:"ずっとランキング上位で見かけていたこの美容液、気になっていました。",meta:"31歳・乾燥肌"},{jp:"人気みたいだから買ってみるか…くらいで購入しましたが、これは本当に感動するものでした。",meta:"投稿者"},{jp:"口コミランキングでも上位の方にあったので、店頭で試して購入しました。",meta:"43歳・普通肌"}],"BA 카운터 추천":[{jp:"BAさんが丁寧に説明してくれてその通りに物は試しと使ってみたところ感動するくらいよかったです。",meta:"39歳・混合肌"},{jp:"「ハチミツの効果で肌荒れを鎮静してくれますので、使ってみてください」とBAさんが仰っていました",meta:"49歳・混合肌"},{jp:"松屋銀座のカウンターで、同ラインの化粧水と併せて勧められ購入しました。",meta:"42歳・混合肌"},{jp:"デパートのカウンターでリップを購入しようとしたら、乾燥してるのを気にしてくださり急遽購入した次第であります。",meta:"44歳・混合肌"}],"잡지 부록 / 샘플":[{jp:"雑誌付録で使ってみたところベタベタせずにしっとりして乾燥肌が気にならなくなり、デパートのカウンターで購入しました。",meta:"52歳・乾燥肌"},{jp:"雑誌の付録で使わずに置いてあったのですがふと使って見たらびっくりするほどのハリ！！翌日デパートに買いに行っていました笑",meta:"36歳・混合肌"},{jp:"「11秒に一回売れている名品オイル」1番はじめは雑誌の付録で使用したのがきっかけ",meta:"35歳・普通肌"}],"SNS / YouTube":[{jp:"SNSでお肌がキレイな美容家さん達がお勧めしていたので意を決して購入。",meta:"45歳・混合肌"},{jp:"SNSでよく見かけていて、口コミランキングでも上位の方にあったので",meta:"43歳・普通肌"},{jp:"雑誌やYouTubeでよく見るので気になって購入。",meta:"31歳・普通肌"}],"지인 추천":[{jp:"姉から試供品を貰って使ってみてビックリ！！",meta:"60歳・乾燥肌"},{jp:"友人からの勧めで、この美容液を購入しました。",meta:"36歳・普通肌"},{jp:"まずフリマにて肌に合うかお試ししました！",meta:"41歳・混合肌"}],"@cosme 당첨":[{jp:"＠コスメ当選で頂きました。",meta:"46歳・乾燥肌"},{jp:"アットコスメさんから30ml現品がプレゼント当選で送られてきて",meta:"39歳・混合肌"},{jp:"アットコスメさんからプレゼント当選しました。ずっと気になっていたのでうれしかったです。",meta:"投稿者"}],"매체 / 전문가":[{jp:"雑誌でも美容賢者が使用している有名オイル。",meta:"35歳・普通肌"},{jp:"「11秒に一回売れている名品オイル」というだけあって",meta:"35歳・普通肌"}],"예능 / 방송":[{jp:"おかずクラブの動画でこの商品を知り、11月頭に購入後毎日使っています",meta:"40歳・混合肌"}],"건조 대책 / 보습 필요":[{jp:"冬の乾燥にはオイルを取り入れないと不安な年齢になり、高いけど高評価から買ってみました。",meta:"43歳・普通肌"},{jp:"乾燥が気になり使い始めたところ、翌日には乾燥していた肌のキメが整い",meta:"49歳・混合肌"},{jp:"年々冬の乾燥がひどい為、思い切って小さいサイズを試しに購入してみました。",meta:"38歳・混合肌"},{jp:"最近の肌は乾燥するので、友人からの勧めで、この美容液を購入しました。",meta:"36歳・普通肌"}],"높은 평가 / 구전 신뢰":[{jp:"高いけど高評価から買ってみました。口コミにある通りサラッとしたオイル",meta:"43歳・普通肌"},{jp:"以前から口コミ評価が上位で気になっていたコチラ。",meta:"49歳・混合肌"},{jp:"人気みたいだから買ってみるか…くらいで購入しましたが、これは本当に感動するものでした。",meta:"投稿者"},{jp:"口コミが気になっていたので、ゲランの20%ポイントバックの際に購入しました。",meta:"56歳・普通肌"}],"샘플 사용 후 감동":[{jp:"サンプルを使用してからの購入です。朝、鏡を見てびっくり！",meta:"49歳・混合肌"},{jp:"雑誌の付録で使って良かったので、現品購入して2回目のリピ買いです。",meta:"40歳・敏感肌"},{jp:"先日オイルセロムのサンプルを頂きましたので、使ってみたところ…使い心地がとても良くて、購入しました。",meta:"54歳・普通肌"},{jp:"ノベルティで5mlのミニサイズをいただいて使ったのが最初のきっかけでした。",meta:"39歳・混合肌"}],"에이징 케어":[{jp:"ここ最近で年齢的に一番響いた商品",meta:"58歳・普通肌"},{jp:"年齢を重ねておでこが痩せてきたのが気になりプラスすることにしました。",meta:"44歳・普通肌"},{jp:"艶肌ケアやエイジングケアをがんばりたい人には人気なのも納得の美容液でした。",meta:"31歳・普通肌"}],"오래 전부터 궁금":[{jp:"ずっと気になっててやっっっと購入。結論、かなり使いやすいオイル",meta:"37歳・普通肌"},{jp:"ずっといつか購入してみたい！でも高い…と思いながらなかなか手に取れなかった",meta:"45歳・混合肌"},{jp:"ずっと前から憧れていたのですが、やっと購入にいたりました",meta:"38歳・普通肌"}],"자기 보상 / 선물":[{jp:"自分への誕生日プレゼントとして購入しました。ずっと気になっていた美容液です。",meta:"41歳・混合肌"},{jp:"高級感あるボトルデザインで自分へのご褒美にもおすすめです。",meta:"49歳・混合肌"},{jp:"私にとっては値段が高いのですが、ご褒美品だと思ってこれからも使い続けたいです。",meta:"48歳・混合肌"}],"포인트 환원 / 할인":[{jp:"ゲランの20%ポイントバックの際に購入しました。",meta:"56歳・普通肌"},{jp:"ポイントアップだったので初めて購入してみました。",meta:"41歳・普通肌"},{jp:"お高いので20%ポイントバックのタイミングを狙いました",meta:"38歳・普通肌"},{jp:"@cosmeさんの20%ポイント還元が来ましたので現品購入",meta:"55歳・敏感肌"}],"겔랑 브랜드 신뢰":[{jp:"ゲランはそんじゃそこらのメーカーとは歴史が違うわ！",meta:"59歳・普通肌"},{jp:"ゲランってほんと名品が多いなぁ…と感じるようになったのはやはり年配者向けのブランドなのかな。",meta:"60歳・乾燥肌"},{jp:"ゲランを使い始めて20年近くなりますが、この美容液はお手入れにかかせません。",meta:"50歳・乾燥肌"}],"가족에게 선물":[{jp:"６０代の母にプレゼントとして購入しました。３４本目のリピートです。",meta:"33歳・乾燥肌"}],"면세점 할인":[{jp:"那覇空港を月一以上で利用するので、DFSで一番大きいサイズを購入してます。セカンドバイというキャンペーンでさらに10%オフ",meta:"32歳・脂性肌"}]};
+
+const overlay=document.getElementById('vocOverlay'),vocTitle=document.getElementById('vocTitle'),vocBody=document.getElementById('vocBody');
+function openVOC(k,c){const items=VOC[k];if(!items||!items.length)return;vocTitle.innerHTML=k+' <span class="badge">'+c+'회 언급</span>';vocBody.innerHTML=items.map(v=>'<div class="voc-item"><div class="jp">'+v.jp+'</div><div class="meta">'+v.meta+'</div></div>').join('');overlay.classList.add('active')}
+document.getElementById('vocClose').onclick=()=>overlay.classList.remove('active');
+overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove('active')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.classList.remove('active')});
+
+Chart.defaults.font.family="'Noto Sans KR',sans-serif";Chart.defaults.font.size=12;Chart.defaults.color='#3D3831';
+const gold='#C8A951',goldA='rgba(200,169,81,0.7)',sage='#7BA08A',sageA='rgba(123,160,138,0.7)',sky='#6A9ECF',skyA='rgba(106,158,207,0.7)';
+
+function attachClick(chart,labels,counts,keys){
+  chart.canvas.style.cursor='pointer';
+  chart.canvas.onclick=function(evt){const p=chart.getElementsAtEventForMode(evt,'nearest',{intersect:true},true);if(p.length>0)openVOC(keys[p[0].index],counts[p[0].index])};
+}
+
+const uL=['끈적이지 않음','향 (고급감 / 힐링)','흡수력 / 침투력','가벼운 텍스처','보틀 디자인 / 고급감','잘 펴짐 / 발림성','골드 비즈 (프치프치)','향이 강해 호불호','보틀 불안정 / 쓰러짐','리뉴얼 후 무거움'];
+const uC=[52,38,28,22,14,12,10,6,5,2];
+const uChart=new Chart(document.getElementById('chart-usage'),{type:'bar',data:{labels:uL,datasets:[{data:uC,backgroundColor:[...Array(7).fill(goldA),...Array(3).fill('rgba(212,114,122,0.6)')],borderColor:[...Array(7).fill(gold),...Array(3).fill('#D4727A')],borderWidth:1,borderRadius:6,hoverBackgroundColor:[...Array(7).fill(gold),...Array(3).fill('#D4727A')]}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{afterBody:()=>'👆 클릭하면 일본어 원문 VOC를 확인할 수 있어요'}}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{stepSize:10}},y:{grid:{display:false}}}}});
+document.getElementById('chart-usage').parentElement.style.height='360px';
+attachClick(uChart,uL,uC,uL);
+
+new Chart(document.getElementById('chart-usage-pn'),{type:'doughnut',data:{labels:['긍정 (끈적이지 않음·향·흡수 등)','부정 (향 호불호·불안정 등)'],datasets:[{data:[176,13],backgroundColor:[goldA,'rgba(212,114,122,0.5)'],borderColor:[gold,'#D4727A'],borderWidth:2}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{padding:16,usePointStyle:true,pointStyle:'circle'}}}}});
+
+const eL=['보습 / 촉촉함','탄력 (ハリ)','윤기 (ツヤ)','건조 개선 (장기)','포동포동 / 탱글','피부결 개선','모공 축소','화장 밀착력 향상','코스파 / 소량 OK','진정 / 피부 안정','투명감 / 톤업','주름 개선','효과 미미'];
+const eC=[55,35,22,20,18,15,14,14,10,8,7,6,4];
+const eChart=new Chart(document.getElementById('chart-efficacy'),{type:'bar',data:{labels:eL,datasets:[{data:eC,backgroundColor:[...Array(12).fill(sageA),'rgba(212,114,122,0.5)'],borderColor:[...Array(12).fill(sage),'#D4727A'],borderWidth:1,borderRadius:6,hoverBackgroundColor:[...Array(12).fill(sage),'#D4727A']}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{afterBody:()=>'👆 클릭하면 일본어 원문 VOC를 확인할 수 있어요'}}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{stepSize:10}},y:{grid:{display:false}}}}});
+document.getElementById('chart-efficacy').parentElement.style.height='420px';
+attachClick(eChart,eL,eC,eL);
+
+new Chart(document.getElementById('chart-efficacy-radar'),{type:'radar',data:{labels:['보습','탄력','윤기','모공','메이크업','피부결','진정','투명감'],datasets:[{label:'언급 빈도',data:[55,35,22,14,14,15,8,7],fill:true,backgroundColor:'rgba(123,160,138,0.15)',borderColor:sage,borderWidth:2,pointBackgroundColor:sage,pointRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{r:{beginAtZero:true,angleLines:{color:'rgba(0,0,0,0.06)'},grid:{color:'rgba(0,0,0,0.06)'},pointLabels:{font:{size:11,weight:'500'}},ticks:{display:false}}}}});
+
+const cL=['@cosme 랭킹 / 구전','BA 카운터 추천','잡지 부록 / 샘플','SNS / YouTube','지인 추천','@cosme 당첨','매체 / 전문가','예능 / 방송'];
+const cC=[12,12,8,5,5,4,4,1];
+const cChart=new Chart(document.getElementById('chart-channel'),{type:'bar',data:{labels:cL,datasets:[{data:cC,backgroundColor:skyA,borderColor:sky,borderWidth:1,borderRadius:6,hoverBackgroundColor:sky}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{afterBody:()=>'👆 클릭하면 일본어 원문 VOC를 확인할 수 있어요'}}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'}},y:{grid:{display:false}}}}});
+document.getElementById('chart-channel').parentElement.style.height='300px';
+attachClick(cChart,cL,cC,cL);
+
+new Chart(document.getElementById('chart-channel-pie'),{type:'doughnut',data:{labels:['@cosme 구전','BA 카운터','잡지/샘플','SNS','지인','기타'],datasets:[{data:[12,12,8,5,5,9],backgroundColor:['rgba(106,158,207,0.8)','rgba(123,160,138,0.8)','rgba(200,169,81,0.7)','rgba(155,142,196,0.7)','rgba(232,131,107,0.7)','rgba(180,180,180,0.5)'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,cutout:'55%',plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true,pointStyle:'circle',font:{size:11}}}}}});
+
+const pData=[{label:'건조 대책 / 보습 필요',count:25,color:'#E8836B'},{label:'높은 평가 / 구전 신뢰',count:14,color:'#D4727A'},{label:'샘플 사용 후 감동',count:12,color:'#C8A951'},{label:'에이징 케어',count:10,color:'#9B8EC4'},{label:'오래 전부터 궁금',count:10,color:'#7BA08A'},{label:'자기 보상 / 선물',count:8,color:'#6A9ECF'},{label:'포인트 환원 / 할인',count:6,color:'#F5A623'},{label:'겔랑 브랜드 신뢰',count:5,color:'#E8836B'},{label:'가족에게 선물',count:2,color:'#7BA08A'},{label:'면세점 할인',count:1,color:'#6A9ECF'}];
+const bc=document.getElementById('purchase-bars');
+pData.forEach(d=>{const pct=d.count/25*100;const item=document.createElement('div');item.className='bar-item';item.innerHTML='<div class="bar-label">'+d.label+'</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:'+d.color+'">'+d.count+'회</div></div>';item.onclick=()=>openVOC(d.label,d.count);bc.appendChild(item);setTimeout(()=>{item.querySelector('.bar-fill').style.width=pct+'%'},300)});
+
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
