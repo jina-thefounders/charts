@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>엑소좀 컨셉 분석</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c0a1a;--surface:#16132d;--surface2:#1e1a3a;--accent:#8b5cf6;--accent2:#a78bfa;--accent3:#c4b5fd;--positive:#34d399;--negative:#f87171;--select:#60a5fa;--text:#e2e0f0;--text-dim:#9896ac;--border:#2d2a4a}
+body{font-family:'Noto Sans KR','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.tabs{display:flex;justify-content:center;gap:4px;padding:24px 20px 0;position:sticky;top:0;background:var(--bg);z-index:100;border-bottom:1px solid var(--border)}
+.tab{padding:12px 28px;border:none;background:transparent;color:var(--text-dim);font-family:inherit;font-size:.9rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .3s}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.tab-panel{display:none;padding:40px 20px 60px;max-width:1100px;margin:0 auto}.tab-panel.active{display:block}
+.section-title{font-size:1.4rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.section-desc{color:var(--text-dim);font-size:.85rem;margin-bottom:32px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:500}
+.badge-positive{background:rgba(52,211,153,.15);color:var(--positive)}.badge-negative{background:rgba(248,113,113,.15);color:var(--negative)}.badge-select{background:rgba(96,165,250,.15);color:var(--select)}
+.chart-container{background:var(--surface);border-radius:16px;padding:32px;margin-bottom:40px;border:1px solid var(--border)}
+.bar-row{display:flex;align-items:center;margin-bottom:6px;position:relative;z-index:1}.bar-row:hover{z-index:100}
+.bar-label{width:200px;min-width:200px;font-size:.85rem;font-weight:500;text-align:right;padding-right:16px;color:var(--text)}
+.bar-track{flex:1;height:36px;background:var(--surface2);border-radius:6px;position:relative;overflow:visible;cursor:pointer}
+.bar-fill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.22,1,.36,1);position:relative;display:flex;align-items:center;padding-left:12px;min-width:fit-content}
+.bar-fill.positive{background:linear-gradient(90deg,rgba(52,211,153,.3),rgba(52,211,153,.15));border:1px solid rgba(52,211,153,.3)}
+.bar-fill.negative{background:linear-gradient(90deg,rgba(248,113,113,.3),rgba(248,113,113,.15));border:1px solid rgba(248,113,113,.3)}
+.bar-fill.select{background:linear-gradient(90deg,rgba(96,165,250,.3),rgba(96,165,250,.15));border:1px solid rgba(96,165,250,.3)}
+.bar-count{font-size:.8rem;font-weight:600;padding:0 10px;white-space:nowrap}
+.bar-fill.positive .bar-count{color:var(--positive)}.bar-fill.negative .bar-count{color:var(--negative)}.bar-fill.select .bar-count{color:var(--select)}
+.tooltip{display:none;position:absolute;left:0;top:42px;background:#1c1836;border:1px solid var(--accent);border-radius:10px;padding:14px 16px;z-index:9999;min-width:340px;max-width:460px;max-height:260px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.bar-track:hover .tooltip{display:block}
+.tooltip-title{font-size:.75rem;color:var(--accent2);margin-bottom:8px;font-weight:600}
+.tooltip-item{font-family:'Noto Sans JP',sans-serif;font-size:.78rem;color:var(--text-dim);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.5}.tooltip-item:last-child{border-bottom:none}
+.tooltip::-webkit-scrollbar{width:4px}.tooltip::-webkit-scrollbar-track{background:transparent}.tooltip::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+.wordcloud-container{background:var(--surface);border-radius:16px;padding:40px;margin-bottom:40px;border:1px solid var(--border);min-height:340px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px}
+.wc-word{display:inline-block;padding:4px 8px;border-radius:4px;font-family:'Noto Sans JP',sans-serif;transition:all .3s;cursor:default;line-height:1.3}
+.wc-word:hover{background:rgba(139,92,246,.15);transform:scale(1.08)}
+.wc-s1{font-size:.7rem;color:rgba(150,148,172,.6)}.wc-s2{font-size:.85rem;color:rgba(150,148,172,.8)}.wc-s3{font-size:1.05rem;color:var(--text-dim)}.wc-s4{font-size:1.3rem;color:var(--accent3);font-weight:400}.wc-s5{font-size:1.6rem;color:var(--accent2);font-weight:500}.wc-s6{font-size:2rem;color:var(--accent);font-weight:600}.wc-s7{font-size:2.4rem;color:#e0d4ff;font-weight:700}
+.divider{width:100%;height:1px;background:var(--border);margin:48px 0}
+.sub-heading{font-size:1.1rem;font-weight:600;margin-bottom:20px;color:var(--text)}
+@media(max-width:768px){.header h1{font-size:1.6rem}.bar-label{width:130px;min-width:130px;font-size:.75rem}.chart-container{padding:16px}.tabs{gap:0}.tab{padding:10px 14px;font-size:.8rem}.tooltip{min-width:260px;max-width:320px}}
+</style>
+</head>
+<body>
+<div class="tabs">
+<button class="tab active" onclick="showTab('tab1')">매력 포인트</button>
+<button class="tab" onclick="showTab('tab2')">비매력 포인트</button>
+<button class="tab" onclick="showTab('tab3')">선택 이유</button>
+</div>
+<div id="tab1" class="tab-panel active">
+<div class="section-title">매력적으로 느껴진 부분 <span class="badge badge-positive">Q1</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-positive"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-positive"></div>
+</div>
+<div id="tab2" class="tab-panel">
+<div class="section-title">관심 없었던 부분 <span class="badge badge-negative">Q2</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-negative"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-negative"></div>
+</div>
+<div id="tab3" class="tab-panel">
+<div class="section-title">선택 이유 <span class="badge badge-select">Q3</span></div>
+<div class="section-desc">이 컨셉을 1위로 선택한 응답자 대상 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-select"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-select"></div>
+</div>
+<script>
+var positiveRaw=["エクソソーム","ハリを回復させる。","うるおいとぷるんとした使用感で肌弾力UP","ハリ回復","吸収の早い低分子コラーゲンが肌に密着するから保湿力が高そう","肌がプルンとするところ","吸収の早いコラーゲン　吸収の早い低分子コラーゲン","ぷるんとしたハリ感をキープ","#エクソソーム浸透","コラーゲン","浸透力、密着力","カミナリのようなイラスト","エクソソーム浸透","ぷるんとしたハリ感","立体ハリ","使う度に肌が引き締まるという点","エクソソーム","リフティングカットシート","たるみがちな肌を包み込んで引き上げるリフティングカットシート","密着感があるところ","ハリ回復","特に自然由来成分を重視している点に魅力を感じており、敏感になりがちな時期でも安心して使えそうだと感じています。","ナノエクソ","ハリ回復","3Dボリューム","使うたびに引き締まる コラーゲンリバイタルマスクというフレーズ","ぷるんとしたハリ感をキープ","集中デリバリー","anuaのメーカー名","パッケージ","コラーゲンリバイタルマスク","ハリ","ハリ回復","超低分子コラーゲン","低分子コラーゲン","エクソソーム浸透","吸収が早いのが良かった","ハリ回復","ナノエクソソーム","ぷるんとしたハリ感","ハリ回復","肌へ集中デリバリー　肌への栄養がいきわたりそう","たるみがちな肌を包み込んで引き上げるリフティングカットシートで、10分間集中ハリケア","エクソソーム浸透","ナノエクソソーム：エクソソームがコラーゲン成分を肌に密着させ、ハリ感のあるぷるんとした肌コンディションを持続","3Dボリュームマスクで立体感があるところ。","レトリブ","低分子コラーゲン","ハリ浸透","低分子コラーゲン","エクソソーム","パッケージ","立体弾力　さっぱり浸透","吸収の早い低分子コラーゲンが肌に密着し、うるおいとぷるんとした使用感で肌弾力UP","ハリ","肌へ集中","エクソソーム","エクソソーム","吸収の早いコラーゲンをナノエクソソームで密着デリバリーし、ぷるんとしたハリ感をキープ","肌に優しい","コラーゲンリバイタルマスクでハリのある肌に。リフティングマスクでの引き上げ。","ぷるんとした肌","コラーゲンがたっぷりなところ","エクソソーム浸透","ぷるんとしたハリ感をキープ","たるみがちな肌を引き上げる","ぷるんとした肌","3Dマスク","吸収の早い","肌へ集中デリバリー","コラーゲンがたくさん配合されていて、肌に潤いと弾力をたっぷりと与える効果が高くて肌によりハリが出ることがとても魅力的だと思うこと。","使うたびに引き締まる","ナノエクソソーム","All in one","吸収のはやい","ナノエクソソーム","ハリ回復という言葉","ナノエクソソーム","コラーゲン","エクソソーム配合であること","ハリ改善","コラーゲン","吸収の早いコラーゲンをナノエクソソームで密着デリバリーし、ぷるんとしたハリ感をキープ","ハリ感","コラーゲンペプチド","ハリ回復","コラーゲン","ハリ感のあるぷるんとした肌コンディションを持続","肌弾力UP","ぷるんとしたハリ感","さっぱり浸透してくれるのが魅力的だと感じた","たるみを引き上げる","ハリが出そう","低分子コラーゲンの効果がありそうな部分","ハリ","ナノエクソソーム","吸収の早いコラーゲン","コラーゲンリバイタルマスク","張りが回復するところ","エクソソーマ","エクソソームがコラーゲン成分を肌に密着させ、ハリ感のあるぷるんとした肌コンディションを持続","さっぱり浸透しながらもハリ感を実感できる、密着力のあるセラム処方","エクソソーム","アヌアの新パッケージっぽい","集中ハリケア","肌へ集中デリバリー","ハリ感　コンディション持続","コラーゲンが含まれている","さっぱり浸透","エクソソーム浸透","さっぱり浸透しながらもハリ感を実感できる、密着力のあるセラム処方","魅力的なところ","ハリ感をキープ","使うたびに肌が引き締まるのはいいと思う","吸収の早いコラーゲンでぷるんとしたハリ感をキープできるのは魅力的だと思った","高級感がある","ナノエクソソーム","ボリュームマスク","低分子コラーゲン","ハリ回復","ぷるんとしたハリ感に惹かれた","低分子コラーゲン","集中10分ケア","ナノエクソソーム","はり","コラーゲン","リフティングカットシート","吸収の早いコラーゲン","10分集中でケアが済ませられると言う言い切りが興味深い。","ハリ回復","コラーゲンという文字が多い","パッケージきれい","ハリ回復","肌をリカバリーしてくれそうです","ハリが回復するというのが魅力的でした","ぷるんとした肌になりそう。","さっぱりしながらハリ感","うるおいとぷるんとした使用感で肌弾力UP","ハリ回復","肌コンディションを持続","肌弾力があるところ","肌弾力があるところ","エクソソーム","肌へ集中デリバリー","7枚入り、770円、コラーゲン","吸収の早いコラーゲン","低分子コラーゲン","ハリ回復","使うたびにハリを取り戻す","使うたびに引き締まる","ハリ感をキープ","エクソリーム","肌へ集中","エクソソームが使われていること","さっぱり浸透してくれること","吸収の早い低分子コラーゲン","使う度に引き締まる","使うたびに引き締まるという点","ハリ感を感じられる","コラーゲンが入っている","エクソソーム浸透","ハリ回復","ぷるんとしたハリ","うるおいとぷるんとした使用感で肌弾力UP","ハリ回復","コラーゲン","内容がよくわからなかった","ぷるんとしたハリ感","コラーゲンが入っているのがよさそうだと感じた","浸透力、ハリケア","Anua","セラム処方","たるみがちなはだを引き上げるリフティングカットシート","たるみがちな肌","１０分間はリケア","忙しい日でも肌をいたわる時間を確保できるのはとてもありがたいと感じております","使う度に引き締まる","コラーゲンが与えられるところ","成分が密着","使うたびに引き締まる 継続して使用したくなる","ぷるんとしたハリが出る","たるみがちな肌を包み込んで引き上げるリフティングカットシートで、10分間集中ハリケア","ぷるんとしたハリ感をキープ","吸収の早い","密着デリバリー","ハリ","リフティングかっとシート","ナノエクソソームという美容に良さそうな成分が気になった","ハリ","ハリ回復","アヌアというブランド","10分集中","#ハリ回復の部分に魅力を感じた","低分子コラーゲン","エクソソームが入っているのが良い","使う度に肌がひきしまる","肌に集中","ハリ","低分子","保湿","さっぱり浸透　ハリケア","10分間集中ハリケア","使うたびに引き締まる","10分間という部分","エクソソーム","コラーゲンバイタルマスクがハリ感をもたらしてくれる。リフティングマスクでしっかり引き上げ。","エクソソーム","ハリ回復","コラーゲン","エクソソーム浸透浸透","ハリ回復","ハリ感","吸収の早い低分子コラーゲンが肌に密着","使うたびにひきしまる効果を実感できそう","低分子コラーゲンが肌に密着という点が、肌にハリが出そうで使ってみたいと感じた。","リフトアップを目的としたコラーゲン配合のシートマスクである事が印象に残った","低分子コラーゲン","ハリをキープできるところ","ハリ感コラーゲン","コラーゲンが肌に良さそう","新しいコラーゲンな印象","10分間でリフトアップができるということ","吸収の早いコラーゲン","エクソソーム浸透","コラーゲンリバイタル、セラム処方","たるみがちな肌を包み込んで引き上げる","ハリ感のあるぷるんとした肌コンディションを持続","色","低分子コラーゲンを初めて聞いたが、肌に吸収しやすいのはとても魅力的だと感じた","桃の絵","7枚入りで770円","エクソソーム ハリ回復","使うたびに引き締まる","コラーゲンが入っている","ぷるんとしたハリ感をキープ","リフティング","たるみがちな肌を包み込んで引き上げるリフティングカットシートで、10分間集中ハリケア","集中デリバリー","吸収の早いコラーゲン","コラーゲンがある","エクソソーム","エクソソーム","香り","ハリ感のあるぷるんとした肌コンディションを持続","パッケージデザイン","エクソソームが低分子コラーゲンを包み込み、肌へ集中デリバリー","コラーゲンエクソソーム","新しいそう","使うたびに引き締まるというところがいいなと思いました","エクソソーム ハリ 使う度","パッケージ","ぷるんとしたハリ感、肌弾力UP","ぷるんとしたハリをキープ","低分子コラーゲン","インパクトがある","良さげ","ナノエクソソーム","コラーゲン","コラーゲンをナノエクソソームで密着デリバリー","ハリ回復","吸収の早いコラーゲン","コラーゲンは気になる","低分子コラーゲン","使うたび引き締まる、コラーゲンリバイタル","うるおいとハリを与えるということ。","使うたびに引き締まる","肌にしっかり効果がありそう","低分子コラーゲン","コラーゲン成分を肌に密着させ、ハリ感のあるぷるんとした肌コンディションを持続","安いたおもう","吸収の早いコラーゲン","ハリ回復は気になる","さわやか","リフトアップ出来る","コラーゲン","エクソソームが低分子コラーゲンを包み込み、肌へ集中デリバリー 使うたびに引き締まる コラーゲンリバイタルマスク","ハリ感というワード","ハリ感を実感できるところ","ハリ感というワード","ハリ感というワード","吸収の早いコラーゲンをナノエクソソームで密着デリバリー","吸収の早いコラーゲン","肌を引き上げる","たるみがちな肌を包み込んで引き上げる","吸収の早いコラーゲンでぷるんとしたハリをキープするということ","ぷるんと、ハリ回復","コラーゲンが配合されていてプルンとした肌になれそうなところ","ハリ回復","さっぱりしながら密着感のある使用感","低分子コラーゲンが吸収がはやくてうるおいと肌の弾力をアップするというところが魅力的です","たるみがちな肌を包み込んで引き上げるリフティングカットシートで、10分間集中ハリケア","低分子コラーゲン","ナノエクソソーム","使いやすそう","エクソソーム","密着力のあるセラム処方というところ","ぷるんとしたハリ感をキープ","使うたびに引き締まる","ハリ回復","使うたびに引き締まる、たるみがちな肌を包み込んで引き上げる","ナノエクソソームがつかわれていること","低分子コラーゲン","エクソリーム","ぷるん","10分間集中ハリケア","コラーゲン","引き締まる","10分間集中ハリケア","使うたびに引き締まる","ハリ回復","さっぱり浸透しながらもハリ感を実感できる","色","コラーゲン","使っ度に引き締まる","エクソソーム","ハリ回復","使うたびに引き締まる","コラーゲン"];
+var negativeRaw=["ハリ回復","セラム処方。","10分間集中ハリケアの10分間は少し長い","普段からマスクを使わないので使わない","10分間集中","密着デリバリー","エクソソーム浸透がよくわからない","英語","ハリ","集中デリバリー","エクソソーム、解説されているが馴染みがないから","低分子コラーゲン","ナノエクソソーム","密着デリバリー","デリバリー","穏やかな使用感が特徴とされているため、しっかりとした効果実感を重視する方にはやや印象が弱く感じられるかもしれません。","エクソソーム","ハリ回復","ナノエクソソーム","低分子が分からない","効果","高そう","肌へ集中デリバリー","エクソソーム","エクソソーム浸透","セラム処方","ハリ","エクソソームが低分子コラーゲンを包み込み　あまり想像できなかった","ボリューム","ペプチド","10種ペプチド","本当にハリがでるのかきになる","エクソソーむ","低分子","コラーゲン","さっぱり浸透しながらもハリ感を実感できる、密着力のあるセラム処方","低分子","パックでリフトアップ効果があるのがよく分からない","ナノエクソソームで密着","10分で効果があると思えない","デザインがきつすぎる","10分間集中","#エクソソーム浸透","集中デリバリー","エノエクソソームが何なのかよくわからないので、日本語に置き換えるか説明が欲しい","エクソソーム","値段","エクソソーム","海外製っぽい","10分間集中ハリケア","低分子コラーゲン（初めて聞いた）","ナノエクソソーム","3D","コラーゲン","10分間","シートマスクであること","さっぱり浸透","密着デリバリーがピンと来なかった","ナノエクソソーム","エクソソームが何かわからなかったので","セラム処方","エクソソームがよく分からない","価格","エクソソーム","ハリ","集中デリバリー","わからない","エクソソーム","肌への言葉にデリバリーと言う言葉が使いたくない。","えくそそりーむ","10分は少し長い","エクソソームという成分を初めて知ったのでまだなじみがありませんでした","さっぱり浸透するというところ。","ナノエクソソーム","値段","エクソソーム","肌弾力UP","10分間","ハリケアができるところ","ナノエクソソーム","密着デリバリー","肌へ集中デリバリーという表現が好きじゃない","全部","エクソソーム浸透","リフティングカット","エクソソーム","専門用語が難しくて内容が頭に入らなかった","10分間集中ハリケア","エクソソーム浸透がよくわからない","コラーゲン","密着デリバリー","エクソーム","エクソソーム","エクソソームがわからない。","シートマスクという形状上、どうしても毎日の使用には手間やコストがかかる点も気になっております。","10分間集中ケア","セラムとは何かわからなかった","エクソソームが低分子コラーゲンを包み込みあまり想像できない","低分子が分からない","エクソソーム","よくわからない言葉がたくさん出てきてよく分からなかった","ハリ","エクソソーム","エクソソーム、専門用語がわからないから","全体","コラーゲン","たるみ","エクソソーム","成分","ハリやつやを必要としていないので魅力を感じなかった","コラーゲン","低分子","エクソソーム","さっぱり浸透","エクソソーム","たるみがちな肌を包み込んで引き上げるリフティングカットシート","さっぱり浸透しながらもハリ感を実感できるという点が、私的には少ししっとりしているテクスチャーが好みな為。","低分子といえどコラーゲンは一時的な供給ではリフトアップは望めないと思うのにそれが数分で外してしまうシートマスクである事から効果が期待できなさそうで魅力的ではない","エクソソーム","価格の高さ","パッケージデザインが肌につけるものとして違和感","エクソソームの意味がわからないので関心が持てなかった","ぷるんとした肌","コラーゲン配合","10分間","さっぱり浸透","リフティングカットシートで10分間集中ハリケア","商品そのもの","たるみがちな肌","コラーゲン","さっぱり浸透しながらもハリ感を実感できる、密着力のあるセラム処方","さっぱり","ハリケア","エクソソーム","コラーゲンリバイタルマスク、ナノエクソソーム","10分集中ケア","ボリュームという表現に違和感を持った","具体的にどういうものなのかよくわからなかった","高い","10分間集中","集中デリバリー","エクソソーム","エクソソーム浸透","10分間集中ハリケア","さっぱりした感じがすきじゃない敏感肌には","さわやか","エクソソームという聞き慣れないワード","エクソソームという聞き慣れないワード","エクソソームという聞き慣れないワード","#ハリ回復","値段が高い","コラーゲン","エクソソームがコラーゲン成分を肌に密着させるとあるが、エクソソームが何かわからないため伝わらなかった","リフティングカットと伊野が想像つかない","低分子コラーゲンを満たすというのが想像つかない","セラム処方","エクソソーム","ハリケアができること","コラーゲンリバイタルマスク","エクソソーム","さっぱり浸透","使うたびに引き締まる","ハリ回復","リバイタル","たるみがちな肌を包み込んで引きあげるリフティングカットシート","写真","10分間集中ケア","エクソソーム","マスク","エクソソーム浸透","デリバリー"];
+var selectRaw=["輝いてる","強いて言えばを選んだ","よりぷるんとした肌になれそうなので","良さそう","自分の肌に合っていそうだから","ボリュームリバイタルという名前から肌が再生しそうなイメージがわいたから","コラーゲンがしっかり与えられそう","パッケージがより好きだったから","コラーゲン","きれい","なんとなく","なんとなく","細胞の中に入ってきそう","パッケージ","効果が高そう","見た目が可愛い","リバイタルマスクというのが気になるから","良さそうだから","なんとなく","何となく","リバイタルのほうがききそう","エクソソームのほうが効果がありそうだから","エクソソーム","見やすい","肌がふっくらしそうで良いから","パッケージのみため","浸透力が良さそう","浸透性を感じる","まだ、肌のたるみなどの悩みを改善してくれそうだから","エクソソームやリバイタルなど最近の言葉で効果がありそうだから。パッケージがよりサイエンスさがあり効き目がありそうだから","商品のパッケージのデザインが好きだからです。","たるみがちな肌を引き上げる事に興味を持ったから","ボリュームマスクははじめ聞くから","消去法","ハリがある肌になりそう","よい","デザインが目立つ","聞いたことのない名前があったので興味がある","こちらのほうが肌にハリをもたらせそうだから","魅力的な効果があるから","エクソソームが好きだから","比較したときに効果がより高そう","パッケージのイメージ","イラスト的に効きそう","消去法です。","色味が好きだから","可能性を感じます","高級感があるから","見た目が惹かれる","なんとなく","なんとなく","より深く潤いそう","張り回復するところ","エクソソームが入っている方が効果がありそうだから","肌のたるみや透明感など気になる部分に効きそうだから","デザイン","エクソソーム成分が魅力的","ハリをうみ出してくれそう","さっぱり浸透すること","シワができにくそう。","魅力的だから","キープというのがいいと思った","高級感がある","パッケージが好き","パッケージが好み","よりうるおいが満ちそうだった","なんとなく","パッケージがきれい","成分に新しさがありより効果が期待できそうでした","ハリが出そうだから","自分が気にしている所をカバーできるから","自分が気にしている所をカバーできるから","コラーゲンとエクソソームがいい","より肌にハリと艶が出そうだから","引き締め効果がありそうだから","見た目の印象","全体的に効きそうなイメージがする","どちらでもいい","パッケージの色あい","気分が明るくなりそう","より肌に潤いを与えてくれそうな気がした","パッケージデザインがいいから。","パッケージの雰囲気が明るくて自分の年代向けだと感じるから。","私向けだと思う","なんとなくパッケージから","ハリをだしてみたい","張りが得られそう","効きそう","デザインに惹かれたから。","わかりやすい","細胞の中に入っていく感じがする","パワーをチャージできるようなパッケージに見えて良いと思った","もちもち肌になりそう","なんとなく保湿が高そう","#ハリ回復という言葉により魅力を感じたから","エクソソームが気になるから。","こちらの方が効果が期待できそうだから","こっち方がキャッチコピーがよかった","何となく","目を引く","見やすい","さっぱりしていて使用感がよさそうで、ハリケア効果が高そうだから","ハリケアをしっかりできそうだから","パッケージのみため","パッケージがきれい","誘導が嬉しい","リバイタルやエクソソームという最近の言葉が魅力的。パッケージもサイエンス感があって効果がありそう","効果が高そうだから","すぐに浸透することが強調されていて、効果が高そうだと思ったから","より良い成分が入り込んでくれそうに感じたから","明るい","透明感のあるパッケージデザインと、肌に浸透しているような紫の光が文言と合っている気がする。説明文も全体的にわかりやすかった。","パッケージも興味を引き、効果がありそう","何なのかわからないが、エクソソームが肌に良さそうだったから","こっちの方が自分に合っていると感じた","最近、肌のたるみが気になって、コラーゲンが足りない気がしていたので。","選択したものの方が横文字や難しい言葉がまだ少ない気がするから。","色が綺麗","実感が湧きやすそう","光ってる","エクソソームが気になるから","きれい","綺麗だから","効果を実感できそうな期待感があった。","説得力があったので","エクソソームが魅力的","気になる内容だった","コラーゲンがたくさん入っている感じが伝わるから","正直、どちらの説明も似てるのでこちらを選んだ理由はない","エクソソームが高級感があるから","新しい感じがするから","シンプル","印象が良い。","エクソソーム成分が魅力的","コラーゲンエクソソームという言葉を最近よく聞くので、新しい感じがして興味を持ちました","イメージしやすい","パッケージのインパクトが大きいから","ハリをキープしてくれるから","輝きの度合いが強いのでインパクトがあり目立つから。","強力そう","エクソソームは今話題の成分だから","軽やかな感じがするから","こちらの方が自分が取り入れたいエイジングケアをできそうだから","おしゃれ","なんとなく","浸透力がありそうだから","配合成分が独自と感じたため","コンセプトがわかりやすかったから","かっこいい","宇宙感があるから","効果が高そうなイメージ","なんとなく","効果が魅力的だった","近未来感あるから","デザインがいい","パワーがありそうだから。","ぱっと見の色合いなどが気に入ったから","成分の説明がより詳細で信頼感があったから","写真の絵がよりパワーを感じるからです。","なんとなく","パッケージがおしゃれで綺麗。肌に良さそう","明るいから","肌へ潤いを与えてくれそうだから","引き締まる感じが、今の自分にあっていそうと感じた","エクソソームのほうが効果がありそうだから","なんとなく","エクソソームが良さそうだから","エクソソーム","説明がなんとなく効きそう","わかりやすい"];
+
+// ========== CATEGORIES ==========
+var positiveCategories=[
+{label:"탄력(ハリ) 회복/케어",keywords:["ハリ回復","ハリ","はり","ハリ感","ハリ改善","ハリが出そう","張りが回復","ハリを取り戻す","ハリ浸透","ハリ回復という言葉","ハリケア","集中ハリケア","ハリ感をキープ","ハリ感を感じ","ハリ感を実感","ハリが回復","肌にハリ","ハリをキープ","ハリ感という","ハリ感コラーゲン","ハリ回復は"]},
+{label:"콜라겐 (저분자 포함)",keywords:["コラーゲン","低分子コラーゲン","超低分子コラーゲン","コラーゲンペプチド","コラーゲンリバイタル","コラーゲンバイタル","吸収の早いコラーゲン","吸収の早い低分子","吸収のはやい","吸収が早い","吸収の早い","コラーゲンエクソソーム"]},
+{label:"엑소좀/나노엑소좀",keywords:["エクソソーム","ナノエクソソーム","エクソソーム浸透","ナノエクソ","エクソソーマ","エクソリーム","エクソソーム配合"]},
+{label:"탱글탱글(ぷるん) 탄력감",keywords:["ぷるん","プルン","プルプル","ぷるんとした","ぷるんとボリューム"]},
+{label:"리프팅 / 인상 효과",keywords:["リフティング","たるみ","引き上げ","引き締まる","引き締め","リフトアップ","使うたびに引き締","使う度に引き締","使っ度に引き締","使う度に肌がひき","肌を引き上げ"]},
+{label:"산뜻한 침투(さっぱり浸透)",keywords:["さっぱり浸透","浸透力","さっぱり","さわやか"]},
+{label:"밀착 / 집중 딜리버리",keywords:["密着","集中デリバリー","肌へ集中","密着力","密着感","密着デリバリー","肌に集中","成分が密着"]},
+{label:"10분 집중 케어",keywords:["10分","10分間","１０分","集中10分","10分集中"]},
+{label:"보습 / 피부 탄력 UP",keywords:["うるおい","肌弾力","保湿","潤い","弾力感","肌コンディション","もっちり"]},
+{label:"패키지 / 디자인",keywords:["パッケージ","高級感","デザイン","色","桃の絵","インパクト"]},
+{label:"가격 / 가성비",keywords:["770円","安い"]},
+{label:"브랜드(Anua)",keywords:["Anua","anua","アヌア"]},
+{label:"세럼 처방",keywords:["セラム処方"]}
+];
+var negativeCategories=[
+{label:"엑소좀 — 이해 어려움",keywords:["エクソソーム","ナノエクソソーム","エクソソーム浸透","えくそそ","エノエクソ","エクソソームが何","馴染みがない","エクソーム","聞き慣れない"]},
+{label:"'딜리버리' 표현 거부감",keywords:["デリバリー","集中デリバリー","密着デリバリー","肌へ集中デリバリー"]},
+{label:"10분 — 길다/효과 의문",keywords:["10分","10分間","10分で","10分は","10分集中"]},
+{label:"전문 용어 어려움",keywords:["わからない","わからん","難しい","頭に入らない","知らない言葉","想像できない","よくわからない","想像つかない","具体的にどういう"]},
+{label:"산뜻한 침투 — 비선호",keywords:["さっぱり浸透","さっぱり","さっぱりした","さわやか"]},
+{label:"콜라겐 — 관심 없음",keywords:["コラーゲン","コラーゲン配合","コラーゲンリバイタル"]},
+{label:"탄력(ハリ) — 관심 없음",keywords:["ハリ回復","ハリ","ハリケア","ハリやつや"]},
+{label:"저분자 — 이해 어려움",keywords:["低分子","低分子コラーゲン","低分子が分から"]},
+{label:"세럼/에센스 처방",keywords:["セラム処方","セラムとは"]},
+{label:"가격 우려",keywords:["値段","価格","高そう","高い"]},
+{label:"리프팅 시트 의문",keywords:["リフティング","リフトアップ","たるみ","リバイタル"]},
+{label:"시트마스크 자체 비선호",keywords:["マスク","シートマスク","使わない","普段からマスク","パックに興味"]},
+{label:"디자인/색감 불만",keywords:["デザインがきつ","海外製っぽい","写真","パッケージデザイン","違和感"]},
+{label:"펩타이드/볼륨 — 불명확",keywords:["ペプチド","10種ペプチド","ボリューム","3D"]}
+];
+var selectCategories=[
+{label:"효과가 높아 보임",keywords:["効果が高そう","効きそう","効果があり","効果が期待","効果が魅力","効果を実感","効果がより","魅力的な効果","ききそう","強力そう"]},
+{label:"패키지 / 디자인 / 색감",keywords:["パッケージ","デザイン","色味","見た目","色が綺","色あい","おしゃれ","かっこいい","きれい","綺麗","可愛い","高級感","明るい","輝","光","印象","目を引く","近未来","宇宙感","パワー","イラスト"]},
+{label:"엑소좀 성분 매력",keywords:["エクソソーム","エクソソーム成分","エクソソームが","コラーゲンエクソソーム"]},
+{label:"탄력(ハリ) 기대",keywords:["ハリ","張り","はり","引き締","ふっくら","もちもち","シワ"]},
+{label:"왠지 끌림 (なんとなく)",keywords:["なんとなく","何となく","何とな"]},
+{label:"침투력 기대",keywords:["浸透","さっぱり","すぐに浸透","浸透力","細胞の中"]},
+{label:"보습 / 윤기",keywords:["潤い","うるおい","保湿"]},
+{label:"콜라겐 기대",keywords:["コラーゲン"]},
+{label:"자기 피부에 맞을 것 같음",keywords:["自分の肌","自分に合って","自分が気にしている","私向け","自分が取り入れ","年代"]},
+{label:"최신/혁신적 느낌",keywords:["最近の言葉","新しい感じ","今話題","最近よく聞く","独自","サイエンス","新しさ"]},
+{label:"설명이 알기 쉬움",keywords:["わかりやすい","見やすい","イメージしやすい","コンセプトがわかり","説明文","横文字","キャッチコピー","説得力"]},
+{label:"소거법 / 이유 없음",keywords:["消去法","どちらでもいい","理由はない","強いて言えば","どちらの説明も似て"]},
+{label:"처짐(タルミ) 케어",keywords:["たるみ"]}
+];
+
+// ========== FUNCTIONS ==========
+var noResp=["なし","ない","特になし","特にない","特になかった","なかった","特に無し","特にありません","特にありませんでした。","ありません","ないです","特にないです","とくになし","とくにない","特にはない","特にはなし","無し","な","た","さ","か","ー","しろい","88","8","5","7","1","4","ははへはふはへ4チはさ","ボール","きへい","なしわやに","なしなし","特に決まっていないです","特にないです。","よい"];
+
+function categorize(raw,cats){
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0;});
+  var res=cats.map(function(cat){
+    var m=f.filter(function(item){return cat.keywords.some(function(kw){return item.indexOf(kw)>=0;});});
+    return{label:cat.label,count:m.length,examples:m.filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,12)};
+  });
+  res.sort(function(a,b){return b.count-a.count;});
+  return res.filter(function(r){return r.count>0;});
+}
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function buildChart(cid,data,cls){
+  var c=document.getElementById(cid);
+  if(!data.length){c.innerHTML='<p style="color:var(--text-dim)">데이터 없음</p>';return;}
+  var mx=data[0].count,h="";
+  data.forEach(function(item,i){
+    var pct=Math.max((item.count/mx)*85,8);
+    var tips=item.examples.map(function(ex){return'<div class="tooltip-item">'+esc(ex)+'</div>';}).join("");
+    h+='<div class="bar-row" style="animation:fadeIn .4s '+(i*.06)+'s both"><div class="bar-label">'+item.label+'</div><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+pct+'%"><span class="bar-count">'+item.count+'</span></div><div class="tooltip"><div class="tooltip-title">일본어 원문 예시 (최대 12개)</div>'+tips+'</div></div></div>';
+  });
+  c.innerHTML=h;
+}
+
+function tokenJP(text){
+  var chunks=text.split(/[、。　,\s・]+/).filter(function(s){return s.length>1;});
+  var result=[];
+  chunks.forEach(function(chunk){
+    if(chunk.length<=8){result.push(chunk);return;}
+    var parts=chunk.split(/(?:だから|ですから|なので|から|ので|けど|のに|ために|ている|ていて|ていた|している|しそう|できそう|ありそう|なりそう|がありそう|がよさそう|がある|がない|だと思う|だと感じ|と思った|と感じた|と思いました|と感じました|に感じた|に思った|を感じ|に興味|に惹かれ|に魅力|が好き|が良い|が良さそう|がいい|がよい|がきれい|のほうが|の方が|という|といった|のような|みたいな|っぽい|そうだ|そうな|ような|ようで|そうで|てみたい|てくれそう|てくれる|について|に対して|として|のため|をして|をする|をした|ことが|ことも|ことで|こと$)/).filter(function(s){return s.length>1;});
+    if(parts.length>1){
+      parts.forEach(function(p){var t=p.replace(/^[がをにでとはもへのや]+/,"").replace(/[がをにでとはもへのや]+$/,"").trim();if(t.length>1)result.push(t);});
+    }else{
+      var simpler=chunk.split(/(?:が|を|に|で|と|は|も|へ)/).filter(function(s){return s.length>2;});
+      if(simpler.length>1){simpler.forEach(function(p){if(p.length>1&&p.length<=20)result.push(p);});}
+      else{result.push(chunk.substring(0,16));}
+    }
+  });
+  return result.filter(function(s){return s.length>1&&s.length<=20;});
+}
+
+function buildWC(cid,raw){
+  var c=document.getElementById(cid);
+  var stop=["それ","これ","あれ","その","この","あの","よう","ほう","ところ","ため","もの","こちら","やはり","まだ","もう","よく","とても","かなり","少し","すごく"];
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0&&t.length>1;});
+  var freq={};
+  f.forEach(function(item){
+    var toks=tokenJP(item);
+    toks.filter(function(v,i,a){return a.indexOf(v)===i;}).forEach(function(tk){if(stop.indexOf(tk)<0)freq[tk]=(freq[tk]||0)+1;});
+  });
+  var keys=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];});
+  var merged={},skip={};
+  keys.forEach(function(k){
+    if(skip[k])return;var best=k,cnt=freq[k];
+    keys.forEach(function(k2){
+      if(k===k2||skip[k2])return;
+      if(k.length>=3&&k2.length>=3&&(k.indexOf(k2)>=0||k2.indexOf(k)>=0)){
+        var sh=k.length<=k2.length?k:k2,lo=k.length<=k2.length?k2:k;
+        if(sh.length>=3&&lo.length-sh.length<=4){cnt+=freq[k2];skip[k2]=true;best=sh;}
+      }
+    });
+    merged[best]=(merged[best]||0)+cnt;
+  });
+  var ent=Object.entries(merged).sort(function(a,b){return b[1]-a[1];});
+  var mx=ent.length?ent[0][1]:1,top=ent.slice(0,55);
+  for(var i=top.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=top[i];top[i]=top[j];top[j]=tmp;}
+  var h="";
+  top.forEach(function(e){
+    var r=e[1]/mx,sc;
+    if(r>.7)sc="wc-s7";else if(r>.5)sc="wc-s6";else if(r>.35)sc="wc-s5";else if(r>.2)sc="wc-s4";else if(r>.12)sc="wc-s3";else if(r>.06)sc="wc-s2";else sc="wc-s1";
+    h+='<span class="wc-word '+sc+'" title="'+e[1]+'回">'+esc(e[0])+'</span> ';
+  });
+  c.innerHTML=h;
+}
+
+function showTab(id){
+  document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  var idx=id==="tab1"?0:id==="tab2"?1:2;
+  document.querySelectorAll(".tab")[idx].classList.add("active");
+}
+
+buildChart("chart-positive",categorize(positiveRaw,positiveCategories),"positive");
+buildChart("chart-negative",categorize(negativeRaw,negativeCategories),"negative");
+buildChart("chart-select",categorize(selectRaw,selectCategories),"select");
+buildWC("wc-positive",positiveRaw);
+buildWC("wc-negative",negativeRaw);
+buildWC("wc-select",selectRaw);
+
+var st=document.createElement("style");
+st.textContent="@keyframes fadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}";
+document.head.appendChild(st);
+</script>
+</body>
+</html>

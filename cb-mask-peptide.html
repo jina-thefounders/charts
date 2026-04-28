@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>펩타이드 컨셉 분석</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c0a1a;--surface:#16132d;--surface2:#1e1a3a;--accent:#8b5cf6;--accent2:#a78bfa;--accent3:#c4b5fd;--positive:#34d399;--negative:#f87171;--select:#60a5fa;--text:#e2e0f0;--text-dim:#9896ac;--border:#2d2a4a}
+body{font-family:'Noto Sans KR','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.tabs{display:flex;justify-content:center;gap:4px;padding:24px 20px 0;position:sticky;top:0;background:var(--bg);z-index:100;border-bottom:1px solid var(--border)}
+.tab{padding:12px 28px;border:none;background:transparent;color:var(--text-dim);font-family:inherit;font-size:.9rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .3s}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.tab-panel{display:none;padding:40px 20px 60px;max-width:1100px;margin:0 auto}.tab-panel.active{display:block}
+.section-title{font-size:1.4rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.section-desc{color:var(--text-dim);font-size:.85rem;margin-bottom:32px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:500}
+.badge-positive{background:rgba(52,211,153,.15);color:var(--positive)}.badge-negative{background:rgba(248,113,113,.15);color:var(--negative)}.badge-select{background:rgba(96,165,250,.15);color:var(--select)}
+.chart-container{background:var(--surface);border-radius:16px;padding:32px;margin-bottom:40px;border:1px solid var(--border)}
+.bar-row{display:flex;align-items:center;margin-bottom:6px;position:relative;z-index:1}.bar-row:hover{z-index:100}
+.bar-label{width:200px;min-width:200px;font-size:.85rem;font-weight:500;text-align:right;padding-right:16px;color:var(--text)}
+.bar-track{flex:1;height:36px;background:var(--surface2);border-radius:6px;position:relative;overflow:visible;cursor:pointer}
+.bar-fill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.22,1,.36,1);position:relative;display:flex;align-items:center;padding-left:12px;min-width:fit-content}
+.bar-fill.positive{background:linear-gradient(90deg,rgba(52,211,153,.3),rgba(52,211,153,.15));border:1px solid rgba(52,211,153,.3)}
+.bar-fill.negative{background:linear-gradient(90deg,rgba(248,113,113,.3),rgba(248,113,113,.15));border:1px solid rgba(248,113,113,.3)}
+.bar-fill.select{background:linear-gradient(90deg,rgba(96,165,250,.3),rgba(96,165,250,.15));border:1px solid rgba(96,165,250,.3)}
+.bar-count{font-size:.8rem;font-weight:600;padding:0 10px;white-space:nowrap}
+.bar-fill.positive .bar-count{color:var(--positive)}.bar-fill.negative .bar-count{color:var(--negative)}.bar-fill.select .bar-count{color:var(--select)}
+.tooltip{display:none;position:absolute;left:0;top:42px;background:#1c1836;border:1px solid var(--accent);border-radius:10px;padding:14px 16px;z-index:9999;min-width:340px;max-width:460px;max-height:260px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.bar-track:hover .tooltip{display:block}
+.tooltip-title{font-size:.75rem;color:var(--accent2);margin-bottom:8px;font-weight:600}
+.tooltip-item{font-family:'Noto Sans JP',sans-serif;font-size:.78rem;color:var(--text-dim);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.5}.tooltip-item:last-child{border-bottom:none}
+.tooltip::-webkit-scrollbar{width:4px}.tooltip::-webkit-scrollbar-track{background:transparent}.tooltip::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+.wordcloud-container{background:var(--surface);border-radius:16px;padding:40px;margin-bottom:40px;border:1px solid var(--border);min-height:340px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px}
+.wc-word{display:inline-block;padding:4px 8px;border-radius:4px;font-family:'Noto Sans JP',sans-serif;transition:all .3s;cursor:default;line-height:1.3}
+.wc-word:hover{background:rgba(139,92,246,.15);transform:scale(1.08)}
+.wc-s1{font-size:.7rem;color:rgba(150,148,172,.6)}.wc-s2{font-size:.85rem;color:rgba(150,148,172,.8)}.wc-s3{font-size:1.05rem;color:var(--text-dim)}.wc-s4{font-size:1.3rem;color:var(--accent3);font-weight:400}.wc-s5{font-size:1.6rem;color:var(--accent2);font-weight:500}.wc-s6{font-size:2rem;color:var(--accent);font-weight:600}.wc-s7{font-size:2.4rem;color:#e0d4ff;font-weight:700}
+.divider{width:100%;height:1px;background:var(--border);margin:48px 0}
+.sub-heading{font-size:1.1rem;font-weight:600;margin-bottom:20px;color:var(--text)}
+@media(max-width:768px){.header h1{font-size:1.6rem}.bar-label{width:130px;min-width:130px;font-size:.75rem}.chart-container{padding:16px}.tabs{gap:0}.tab{padding:10px 14px;font-size:.8rem}.tooltip{min-width:260px;max-width:320px}}
+</style>
+</head>
+<body>
+<div class="tabs">
+<button class="tab active" onclick="showTab('tab1')">매력 포인트</button>
+<button class="tab" onclick="showTab('tab2')">비매력 포인트</button>
+<button class="tab" onclick="showTab('tab3')">선택 이유</button>
+</div>
+<div id="tab1" class="tab-panel active">
+<div class="section-title">매력적으로 느껴진 부분 <span class="badge badge-positive">Q1</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-positive"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-positive"></div>
+</div>
+<div id="tab2" class="tab-panel">
+<div class="section-title">관심 없었던 부분 <span class="badge badge-negative">Q2</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-negative"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-negative"></div>
+</div>
+<div id="tab3" class="tab-panel">
+<div class="section-title">선택 이유 <span class="badge badge-select">Q3</span></div>
+<div class="section-desc">이 컨셉을 1위로 선택한 응답자 대상 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-select"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-select"></div>
+</div>
+<script>
+var positiveRaw=["ペプチド", "ハリを取り戻す", "ぷるんとしたハリ感のある肌へケア", "3Dボリュームマスク", "超低分子コラーゲン", "#立体弾力", "コラーゲン", "コラーゲンペプチド", "コラーゲンが入っているのがよさそう", "肌に弾力を与える", "紫色", "3Dボリューム", "立体的なハリ", "立体ハリ", "ペプチド", "超低分子コラーゲン", "リフティングカットシート", "コラーゲンにこだわっている", "立体的なハリ", "コラーゲン", "低分子ペプチド", "3Dボリューム", "立体的なハリを取り戻す3Dボリュームマスク", "ぷるんとボリューム感のある肌へ戻す", "コラーゲン", "パッケージ", "低分子コラーゲンペプチドが肌にコラーゲンを満たし", "ペプチド", "立体弾力", "超低分子コラーゲン", "リフティングカットシート", "ボリューム肌に惹かれた", "立体弾力", "低分子コラーゲン", "ぷるんとしたハリ感", "3Dボリューム", "立体的なハリ", "3Dボリューム", "3Dボリュームマスク", "立体はり", "低分子コラーゲン", "さっぱり浸透", "超低分子コラーゲン", "パッケージ", "立体弾力", "ハリを取り戻す", "低分子コラーゲンを満たして、ぷるんとボリューム感のある肌へ戻すハリケアマスク", "コラーゲン", "コラーゲン", "コラーゲンペプチド", "ペプチド", "ペプチド", "コラーゲンが入っている", "ボリーム感のある肌", "コラーゲンがたっぷり", "立体弾力", "ぷるんとボリューム感のある肌へ", "立体的なハリを取り戻す", "さっぱり浸透", "3Dマスク", "ボリュームのある肌", "立体的なハリを戻す", "肌にすばやく密着し、ぷるんとしたハリ感のある肌へケア", "立体的なハリ", "10種ペプチド", "さわやか", "3Dボリューム", "超低分子コラーゲン", "10種ペプチド", "ぷるんと", "ペプチド", "コラーゲン、ペプチド", "ハリ感", "コラーゲンペプチド", "3D", "10種ペプチド", "コラーゲン", "3Dボリュームマスク", "リフティングカットシート", "さっぱり浸透してくれるのが魅力的", "たるみを引き上げる", "3Dボリューム", "ハリが出そう", "リフティング", "3Dボリューム", "ペプチドがよさそう", "低分子コラーゲンペプチド", "立体的な3d", "ぷるんとハリのある肌になれる", "引き締まった弾力感のあるコンディションに導く10種ペプチド", "3Dボリューム", "コラーゲンペプチド", "集中ハリケア", "立体的なハリを取り戻す", "ぷるんとボリューム感のある肌へ戻す", "10種ペプチドが気になる", "ハリのある肌", "超低分子コラーゲン", "低分子コラーゲン", "ぷるん", "コラーゲンが肌に良さそう", "高級感がある", "低分子コラーゲンペプチド", "ボリュームマスク", "低分子コラーゲン", "立体ハリ", "低分子コラーゲン", "集中ハリケア", "コラーゲン", "コラーゲン", "リフティングカットシート", "立体弾力", "パッケージがきれい", "立体弾力", "ハリケア", "さっぱり浸透", "10分間集中ハリケア", "立体弾力", "パッケージ", "密着力がある", "コラーゲン", "低分子コラーゲンペプチド", "低分子コラーゲン", "さっぱり浸透", "コラーゲン", "超低分子コラーゲン", "ペプチド", "パッケージの色あい", "立体弾力", "ぷるんとしたハリ", "3Dボリュームマスク", "コラーゲン", "10種ペプチド", "プルプルの肌になりそう", "弾力感", "コラーゲンペプチド", "コラーゲン", "3D", "密着感がある", "立体的なハリ", "ぷるんとしたハリ感が出る", "3D", "ペプチド", "低分子コラーゲン", "3Dボリューム", "コラーゲン", "ペプチド", "コラーゲン", "立体弾力", "立体弾力が気になる", "立体的なハリ", "はり", "低分子", "立体弾力", "ハリを取り戻す", "コラーゲン", "コラーゲンペプチド", "立体弾力", "コラーゲン", "立体弾力", "ハリケア", "低分子コラーゲン", "コラーゲンが肌に良さそう", "パッケージデザイン", "コラーゲン", "十種ペプチド", "3Dボリュームマスク", "紫の絵", "金額", "ぷるんとボリューム感のある肌へ戻す", "リフティング", "立体弾力", "吸収の早いコラーゲン", "コラーゲン", "コラーゲンペプチド", "香り", "10種ペプチド", "パッケージデザイン", "低分子コラーゲン", "3Dボリューム", "パッケージ", "低分子コラーゲンペプチド", "コラーゲンペプチド", "超低分子コラーゲン", "ハリケアマスク", "ボリューム", "コラーゲン", "10種ペプチド", "立体的なハリを取り戻す", "低分子コラーゲン", "低分子コラーゲンペプチド", "立体のはり", "吸収の早いコラーゲン", "ぷるんとしたハリ感は魅力的", "爽やか", "リフトアップ効果がある", "コラーゲン", "立体弾力", "ハリ感を実感できる", "立体弾力", "立体弾力", "立体弾力", "立体弾力", "立体弾力", "低分子コラーゲン", "立体的なハリ", "エクソソーム", "低分子コラーゲンペプチド", "10種ペプチド", "立体的なハリ", "10種ペプチド", "ハリ", "ぷるん", "立体弾力", "立体弾力", "立体ハリ", "コラーゲンペプチド", "さっぱり浸透しながらもハリ感を実感できる", "立体弾力", "10種ペプチド", "きれいな色", "立体弾力", "3Dボリューム", "ハリを取り戻す", "コラーゲン"];
+var negativeRaw=["はりけあ", "3Dボリュームマスク", "たるみ", "さっぱり浸透", "3Dボリューム", "10種ペプチド", "低分子コラーゲン", "低分子コラーゲン", "超低分子コラーゲン", "低分子が分からない", "効果", "高そう", "3Dボリューム", "立体弾力", "3Dボリューム", "密着力のあるエッセンス", "ハリ", "3Dボリューム", "ボリューム", "ペプチド", "10種ペプチド", "3Dボリュームの意味がわからなかった", "成分", "弾力", "コラーゲン", "密着力のあるエッセンス処方", "低分子", "低分子コラーゲン", "10分で効果があると思えない", "デザインがきつすぎる", "10分間集中", "10分間集中ハリケア", "低分子コラーゲンペプチド", "色合い", "3Dボリューム", "コラーゲン", "海外製っぽい", "超低分子コラーゲン", "3D", "コラーゲン", "10分間", "シートマスクであること", "低分子コラーゲン", "3Dボリューム", "3Dボリューム", "価格", "ペプチド", "ハリ", "3Dボリューム", "超低分子コラーゲン", "3D", "10種ペプチドがよくわからない", "低分子コラーゲン", "立体弾力", "ハリケアが中心", "ハリケアマスク", "さっぱり浸透", "全部", "3Dボリューム", "リフティングカット", "ペプチド", "専門用語が難しい", "10分間集中ハリケア", "低分子コラーゲン", "10分間", "3Dボリューム", "低分子が分からない", "立体弾力", "ハリ", "ペプチド", "エクソソーム", "成分", "コラーゲン", "低分子", "ペプチド", "立体弾力", "さっぱり浸透", "リフティングカットシート", "ペプチドという成分がよくわからない", "エッセンス処方", "価格の高さ", "3Dボリューム", "さっぱり浸透", "全部", "たるみがちな肌", "ハリ", "さっぱり", "ハリケア", "コラーゲンペプチド", "色味が難しい", "3Dボリュームマスク", "3Dボリューム", "3Dボリューム", "低分子", "10分間集中", "3Dボリューム", "エクソソーム", "10分間集中ハリケア", "爽やか", "ペプチド", "ペプチド", "使わない", "ハリケア中心", "ハリケア", "マスク", "3Dボリューム", "リフティングカットシート", "写真", "マスク", "コラーゲンペプチド", "たるみがちな"];
+var selectRaw=["効果のあるものが入ってる", "紫色が綺麗", "3Dボリュームマスクに惹かれた", "パッケージが好き", "見た目で", "超低分子コラーゲンがすごそう", "イメージがいい", "わかりやすい", "使い勝手が良さそう", "シワが改善しそう", "専門用語が多くすごそう", "立体ハリが気になる", "より肌に効果がありそう", "ペプチドで弾力のあるハリのある顔になれそう", "コラーゲンたっぷり", "日本語", "パッケージが魅力的", "安心感がある", "見た目が良い", "コラーゲンのプルンとした印象", "何となく", "エクソソームの有効性がよくわからない", "パッケージデザインが好み", "より効きそう", "効きそう", "3Dボリュームが気に入った", "惹かれる説明だった", "シンプル", "目を引く", "高級そう", "効果がありそう", "ぷるんとした印象がぴったり", "なんとなく", "パッケージが可愛い", "とにかく潤いそう", "横文字が少なくわかりやすい", "ハリに特化している", "安心感がある", "3Dに惹かれた", "なんとなく", "3Dマスク", "肌にハリが出そう", "リフトアップ", "コラーゲンペプチドが気になる", "デザインが良かった", "分かりやすかった", "効果がありそう", "ペプチドが気になる", "パッケージの色が綺麗", "なんとなく", "自分の年代にあってそう", "見た目がよい", "直感", "高級に見える", "説得力がある", "パッケージが好き", "3Dマスクが気になる", "色が綺麗", "立体/3Dに惹かれた", "ペプチドが入っていてお得感", "ハリが出そう", "かっこいい", "なんとなく好み", "エクソソームがわからない", "わかりやすい", "なんとなく", "自分にあってそう", "ぷるん感がある", "コラーゲンペプチドの方が馴染みある", "ペプチド成分が気になる", "ペプチドが良さそう", "きれい", "紫色が綺麗", "3Dボリュームマスクに惹かれた", "コラーゲンが強力そう", "想像しやすい", "きれい", "浸透して効果が高そう", "肌によさそう", "エクソソームは根拠がない", "コラーゲンがしっかり与えられそう", "ペプチド", "説明がわかりやすかった", "肌がもっちりしそう", "エクソソームは胡散臭すぎる", "目立つ", "パッケージが好み", "肌に密着してくれそう", "なんとなく", "エクソソームの有効性がわからない", "パッケージの色合いが好き", "3Dボリュームが気に入った", "なんとなく", "ペプチドを注目している", "効果が期待できる", "潤いがある", "見た目が強そう", "目につく", "ハリケアをしたい", "低分子コラーゲンペプチドが良さそう", "より効果がありそう", "肌が立体的になれそう", "ハリの回復が良さそう", "自分に合ってそう", "コンセプトが良い", "10種のペプチドが良い", "コラーゲンペプチド", "みずみずしい", "コラーゲンが良さそう", "何となく好み", "立体ハリに惹かれた", "パッケージ", "ぷるぷるもちもちな肌になりそう", "リフティング", "ハリが良く出そう", "効果が期待できる", "パッケージ的に気になる", "なんとなく", "効果がありそう", "なんとなく", "説明が分かりやすい", "立体のはりがきになる", "ぷるんとしたハリ肌は魅力的", "立体弾力というワード", "立体弾力というワード", "立体弾力というワード", "デザイン", "高級そうに見える", "ボリューム感が魅力的", "立体とか3Dがインパクトに残る", "立体弾力", "パッケージデザインが魅力的", "ハリ感が出そう", "使いやすそう", "ボリューム感のある肌へ戻すが印象的", "エクソソームがわからない", "ペプチドの方が使いやすそう", "なんとなく", "ぷるん感がある", "艶感があり綺麗", "先進的な感じ", "コラーゲンペプチドが気になる", "さっぱり使える感じが好み", "見た目", "10種ペプチドが気になる", "保湿してくれそう", "聞いた事のないワードが無かった", "きれい", "デザイン"];
+
+// ========== CATEGORIES ==========
+var positiveCategories=[{label:"입체 탄력 / 3D 볼륨",keywords:["立体弾力","3Dボリューム","3Dマスク","3D","立体ハリ","立体的なハリ","立体はり","立体感","ボリュームマスク","ボリューム感","ボリューム","ボリーム","立体のはり"]},{label:"콜라겐 (저분자 포함)",keywords:["コラーゲン","低分子コラーゲン","超低分子コラーゲン","コラーゲンペプチド","低分子コラーゲンペプチド","吸収の早いコラーゲン","低分子"]},{label:"탄력(ハリ) 회복/케어",keywords:["ハリ","はり","ハリ感","ハリケア","集中ハリケア","ハリを取り戻す","ハリが出そう","ハリのある肌","ハリ肌","ハリ感を実感","肌にハリ","ハリケアマスク"]},{label:"펩타이드",keywords:["ペプチド","10種ペプチド","十種ペプチド","10種のペプチド","低分子ペプチド"]},{label:"탱글탱글(ぷるん) 탄력감",keywords:["ぷるん","プルン","プルプル","ぷるんとした","ぷるんとボリューム","ぷるんとハリ"]},{label:"리프팅 / 인상 효과",keywords:["リフティング","たるみ","引き上げ","引き締まる","リフトアップ","肌を引き上げ"]},{label:"산뜻한 침투",keywords:["さっぱり浸透","さっぱり","さわやか","爽やか"]},{label:"10분 집중 케어",keywords:["10分","10分間"]},{label:"밀착감",keywords:["密着","密着力","密着感"]},{label:"패키지 / 디자인",keywords:["パッケージ","高級感","デザイン","紫色","紫の絵","きれいな色","色あい"]},{label:"가격",keywords:["770円","金額","高くなかった"]}];
+var negativeCategories=[{label:"3D 볼륨 - 와닿지 않음",keywords:["3Dボリューム","3Dボリュームマスク","3D","ボリューム","ボリュームマスク"]},{label:"저분자 콜라겐 - 이해 어려움",keywords:["低分子コラーゲン","超低分子コラーゲン","低分子が分から","低分子","低分子コラーゲンペプチド","低分子コラーゲンを満たす"]},{label:"펩타이드 - 불명확",keywords:["ペプチド","10種ペプチド","ペプチドという"]},{label:"콜라겐 - 관심 없음",keywords:["コラーゲン","コラーゲンペプチド"]},{label:"산뜻한 침투 - 비선호",keywords:["さっぱり浸透","さっぱり","爽やか"]},{label:"10분 - 효과 의문",keywords:["10分","10分間"]},{label:"탄력(ハリ) - 관심 없음",keywords:["ハリ","ハリケア","はりけあ","ハリカン"]},{label:"전문 용어 어려움",keywords:["わからない","難しい","頭に入らない","知らない言葉","想像できない","よくわからない"]},{label:"입체 탄력 - 비매력",keywords:["立体弾力","立体的なハリ"]},{label:"리프팅 시트 의문",keywords:["リフティング","たるみ"]},{label:"에센스 처방",keywords:["エッセンス","エッセンス処方"]},{label:"시트마스크 비선호",keywords:["マスク","シートマスク","使わない"]},{label:"가격 우려",keywords:["値段","価格","高そう","高い","価格の高さ"]},{label:"디자인 불만",keywords:["デザインがきつ","色合い","色味","海外製っぽい","写真"]},{label:"엑소좀 - 이해 어려움",keywords:["エクソソーム"]}];
+var selectCategories=[{label:"효과가 높아 보임",keywords:["効果","効きそう","すごそう","強力そう","期待できる","よさそう","良さそう","改善"]},{label:"패키지 / 디자인 / 색감",keywords:["パッケージ","デザイン","色","見た目","紫色","可愛い","きれい","綺麗","高級","おしゃれ","かっこいい","目を引く","目につく","目立つ","目に入り","シンプル","丸","印象","艶感","先進的"]},{label:"왠지 끌림(なんとなく)",keywords:["なんとなく","何となく","直感","好み","イメージがいい"]},{label:"설명이 알기 쉬움",keywords:["わかりやすい","わかりやす","判りやすい","分かりやす","イメージしやすい","想像しやすい","日本語","横文字","説得力"]},{label:"콜라겐/펩타이드 성분",keywords:["コラーゲン","ペプチド","低分子コラーゲンペプチド","成分"]},{label:"탄력(ハリ)/입체/3D 기대",keywords:["ハリ","弾力","立体ハリ","立体弾力","もちもち","プルン","ぷるん","ぷるぷる","3D","立体","ボリューム"]},{label:"엑소좀 불신",keywords:["エクソソーム"]},{label:"보습 기대",keywords:["潤い","うるおい","水分","保湿","みずみずしい"]},{label:"안심감/신뢰감",keywords:["安心","しっかり","説得力","研究"]},{label:"자기 피부에 맞을 것 같음",keywords:["自分","年代"]},{label:"리프팅 효과",keywords:["リフトアップ","リフティング"]},{label:"사용감 기대",keywords:["使い勝手","使い心地","使いやすそう","密着"]}];
+
+// ========== FUNCTIONS ==========
+var noResp=["なし","ない","特になし","特にない","特になかった","なかった","特に無し","特にありません","特にありませんでした。","ありません","ないです","特にないです","とくになし","とくにない","特にはない","特にはなし","無し","な","た","さ","か","ー","しろい","88","8","5","7","1","4","ははへはふはへ4チはさ","ボール","きへい","なしわやに","なしなし","特に決まっていないです","特にないです。","よい"];
+
+function categorize(raw,cats){
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0;});
+  var res=cats.map(function(cat){
+    var m=f.filter(function(item){return cat.keywords.some(function(kw){return item.indexOf(kw)>=0;});});
+    return{label:cat.label,count:m.length,examples:m.filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,12)};
+  });
+  res.sort(function(a,b){return b.count-a.count;});
+  return res.filter(function(r){return r.count>0;});
+}
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function buildChart(cid,data,cls){
+  var c=document.getElementById(cid);
+  if(!data.length){c.innerHTML='<p style="color:var(--text-dim)">데이터 없음</p>';return;}
+  var mx=data[0].count,h="";
+  data.forEach(function(item,i){
+    var pct=Math.max((item.count/mx)*85,8);
+    var tips=item.examples.map(function(ex){return'<div class="tooltip-item">'+esc(ex)+'</div>';}).join("");
+    h+='<div class="bar-row" style="animation:fadeIn .4s '+(i*.06)+'s both"><div class="bar-label">'+item.label+'</div><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+pct+'%"><span class="bar-count">'+item.count+'</span></div><div class="tooltip"><div class="tooltip-title">일본어 원문 예시 (최대 12개)</div>'+tips+'</div></div></div>';
+  });
+  c.innerHTML=h;
+}
+
+function tokenJP(text){
+  var chunks=text.split(/[、。　,\s・]+/).filter(function(s){return s.length>1;});
+  var result=[];
+  chunks.forEach(function(chunk){
+    if(chunk.length<=8){result.push(chunk);return;}
+    var parts=chunk.split(/(?:だから|ですから|なので|から|ので|けど|のに|ために|ている|ていて|ていた|している|しそう|できそう|ありそう|なりそう|がありそう|がよさそう|がある|がない|だと思う|だと感じ|と思った|と感じた|と思いました|と感じました|に感じた|に思った|を感じ|に興味|に惹かれ|に魅力|が好き|が良い|が良さそう|がいい|がよい|がきれい|のほうが|の方が|という|といった|のような|みたいな|っぽい|そうだ|そうな|ような|ようで|そうで|てみたい|てくれそう|てくれる|について|に対して|として|のため|をして|をする|をした|ことが|ことも|ことで|こと$)/).filter(function(s){return s.length>1;});
+    if(parts.length>1){
+      parts.forEach(function(p){var t=p.replace(/^[がをにでとはもへのや]+/,"").replace(/[がをにでとはもへのや]+$/,"").trim();if(t.length>1)result.push(t);});
+    }else{
+      var simpler=chunk.split(/(?:が|を|に|で|と|は|も|へ)/).filter(function(s){return s.length>2;});
+      if(simpler.length>1){simpler.forEach(function(p){if(p.length>1&&p.length<=20)result.push(p);});}
+      else{result.push(chunk.substring(0,16));}
+    }
+  });
+  return result.filter(function(s){return s.length>1&&s.length<=20;});
+}
+
+function buildWC(cid,raw){
+  var c=document.getElementById(cid);
+  var stop=["それ","これ","あれ","その","この","あの","よう","ほう","ところ","ため","もの","こちら","やはり","まだ","もう","よく","とても","かなり","少し","すごく"];
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0&&t.length>1;});
+  var freq={};
+  f.forEach(function(item){
+    var toks=tokenJP(item);
+    toks.filter(function(v,i,a){return a.indexOf(v)===i;}).forEach(function(tk){if(stop.indexOf(tk)<0)freq[tk]=(freq[tk]||0)+1;});
+  });
+  var keys=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];});
+  var merged={},skip={};
+  keys.forEach(function(k){
+    if(skip[k])return;var best=k,cnt=freq[k];
+    keys.forEach(function(k2){
+      if(k===k2||skip[k2])return;
+      if(k.length>=3&&k2.length>=3&&(k.indexOf(k2)>=0||k2.indexOf(k)>=0)){
+        var sh=k.length<=k2.length?k:k2,lo=k.length<=k2.length?k2:k;
+        if(sh.length>=3&&lo.length-sh.length<=4){cnt+=freq[k2];skip[k2]=true;best=sh;}
+      }
+    });
+    merged[best]=(merged[best]||0)+cnt;
+  });
+  var ent=Object.entries(merged).sort(function(a,b){return b[1]-a[1];});
+  var mx=ent.length?ent[0][1]:1,top=ent.slice(0,55);
+  for(var i=top.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=top[i];top[i]=top[j];top[j]=tmp;}
+  var h="";
+  top.forEach(function(e){
+    var r=e[1]/mx,sc;
+    if(r>.7)sc="wc-s7";else if(r>.5)sc="wc-s6";else if(r>.35)sc="wc-s5";else if(r>.2)sc="wc-s4";else if(r>.12)sc="wc-s3";else if(r>.06)sc="wc-s2";else sc="wc-s1";
+    h+='<span class="wc-word '+sc+'" title="'+e[1]+'回">'+esc(e[0])+'</span> ';
+  });
+  c.innerHTML=h;
+}
+
+function showTab(id){
+  document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  var idx=id==="tab1"?0:id==="tab2"?1:2;
+  document.querySelectorAll(".tab")[idx].classList.add("active");
+}
+
+buildChart("chart-positive",categorize(positiveRaw,positiveCategories),"positive");
+buildChart("chart-negative",categorize(negativeRaw,negativeCategories),"negative");
+buildChart("chart-select",categorize(selectRaw,selectCategories),"select");
+buildWC("wc-positive",positiveRaw);
+buildWC("wc-negative",negativeRaw);
+buildWC("wc-select",selectRaw);
+
+var st=document.createElement("style");
+st.textContent="@keyframes fadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}";
+document.head.appendChild(st);
+</script>
+</body>
+</html>

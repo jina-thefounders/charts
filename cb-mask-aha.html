@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHA 컨셉 분석</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#ffffff;--surface:#fff5f7;--surface2:#ffeef2;--accent:#ec4899;--accent2:#f472b6;--accent3:#fbcfe8;--positive:#ec4899;--negative:#a855f7;--select:#8b5cf6;--text:#1f1f1f;--text-dim:#6b7280;--border:#fce7f3}
+body{font-family:'Noto Sans KR','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.tabs{display:flex;justify-content:center;gap:4px;padding:18px 20px 0;position:sticky;top:0;background:var(--bg);z-index:100;border-bottom:1px solid var(--border)}
+.tab{padding:12px 28px;border:none;background:transparent;color:var(--text-dim);font-family:inherit;font-size:.9rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .3s}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none;padding:32px 20px 60px;max-width:1100px;margin:0 auto}.tab-panel.active{display:block}
+.section-title{font-size:1.3rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.section-desc{color:var(--text-dim);font-size:.85rem;margin-bottom:28px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:500}
+.badge-positive{background:rgba(236,72,153,.1);color:var(--positive)}.badge-negative{background:rgba(168,85,247,.1);color:var(--negative)}.badge-select{background:rgba(139,92,246,.1);color:var(--select)}
+.chart-container{background:var(--surface);border-radius:16px;padding:32px;margin-bottom:40px;border:1px solid var(--border)}
+.bar-row{display:flex;align-items:center;margin-bottom:6px;position:relative;z-index:1}.bar-row:hover{z-index:100}
+.bar-label{width:200px;min-width:200px;font-size:.85rem;font-weight:500;text-align:right;padding-right:16px;color:var(--text)}
+.bar-track{flex:1;height:36px;background:var(--surface2);border-radius:6px;position:relative;overflow:visible;cursor:pointer}
+.bar-fill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.22,1,.36,1);position:relative;display:flex;align-items:center;padding-left:12px;min-width:fit-content}
+.bar-fill.positive{background:linear-gradient(90deg,rgba(236,72,153,.2),rgba(236,72,153,.08));border:1px solid rgba(236,72,153,.25)}
+.bar-fill.negative{background:linear-gradient(90deg,rgba(168,85,247,.2),rgba(168,85,247,.08));border:1px solid rgba(168,85,247,.25)}
+.bar-fill.select{background:linear-gradient(90deg,rgba(139,92,246,.2),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.25)}
+.bar-count{font-size:.8rem;font-weight:600;padding:0 10px;white-space:nowrap}
+.bar-fill.positive .bar-count{color:var(--positive)}.bar-fill.negative .bar-count{color:var(--negative)}.bar-fill.select .bar-count{color:var(--select)}
+.tooltip{display:none;position:absolute;left:0;top:42px;background:#fff;border:1px solid var(--accent);border-radius:10px;padding:14px 16px;z-index:9999;min-width:340px;max-width:460px;max-height:260px;overflow-y:auto;box-shadow:0 8px 32px rgba(236,72,153,.15)}
+.bar-track:hover .tooltip{display:block}
+.tooltip-title{font-size:.75rem;color:var(--accent);margin-bottom:8px;font-weight:600}
+.tooltip-item{font-family:'Noto Sans JP',sans-serif;font-size:.78rem;color:var(--text-dim);padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04);line-height:1.5}.tooltip-item:last-child{border-bottom:none}
+.tooltip::-webkit-scrollbar{width:4px}.tooltip::-webkit-scrollbar-track{background:transparent}.tooltip::-webkit-scrollbar-thumb{background:var(--accent3);border-radius:4px}
+.wordcloud-container{background:var(--surface);border-radius:16px;padding:40px;margin-bottom:40px;border:1px solid var(--border);min-height:340px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px}
+.wc-word{display:inline-block;padding:4px 8px;border-radius:4px;font-family:'Noto Sans JP',sans-serif;transition:all .3s;cursor:default;line-height:1.3}
+.wc-word:hover{background:rgba(236,72,153,.1);transform:scale(1.08)}
+.wc-s1{font-size:.7rem;color:rgba(107,114,128,.5)}.wc-s2{font-size:.85rem;color:rgba(107,114,128,.7)}.wc-s3{font-size:1.05rem;color:var(--text-dim)}.wc-s4{font-size:1.3rem;color:var(--accent3);font-weight:400}.wc-s5{font-size:1.6rem;color:var(--accent2);font-weight:500}.wc-s6{font-size:2rem;color:var(--accent);font-weight:600}.wc-s7{font-size:2.4rem;color:#be185d;font-weight:700}
+.divider{width:100%;height:1px;background:var(--border);margin:48px 0}
+.sub-heading{font-size:1.1rem;font-weight:600;margin-bottom:20px;color:var(--text)}
+@media(max-width:768px){.bar-label{width:130px;min-width:130px;font-size:.75rem}.chart-container{padding:16px}.tabs{gap:0}.tab{padding:10px 14px;font-size:.8rem}.tooltip{min-width:260px;max-width:320px}}
+</style>
+</head>
+<body>
+<div class="tabs">
+<button class="tab active" onclick="showTab('tab1')">매력 포인트</button>
+<button class="tab" onclick="showTab('tab2')">관심없는 부분</button>
+<button class="tab" onclick="showTab('tab3')">선택 이유</button>
+</div>
+<div id="tab1" class="tab-panel active">
+<div class="section-title">매력적으로 느껴진 부분 <span class="badge badge-positive">Q1</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-positive"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-positive"></div>
+</div>
+<div id="tab2" class="tab-panel">
+<div class="section-title">관심 없었던 부분 <span class="badge badge-negative">Q2</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-negative"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-negative"></div>
+</div>
+<div id="tab3" class="tab-panel">
+<div class="section-title">선택 이유 <span class="badge badge-select">Q3</span></div>
+<div class="section-desc">이 컨셉을 1위로 선택한 응답자 대상 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-select"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-select"></div>
+</div>
+<script>
+var positiveRaw=["桃肌", "桃", "即効ピーリング", "つるすべキメ肌", "桃肌、ピーリング", "つるすべキメ肌", "桃肌", "たった1枚で叶う桃肌キメケア", "角質", "桃のような滑らかな素肌", "PEACH", "即効ピーリング", "つるすべ即効キメケアマスク", "桃の絵", "つるすべ桃肌", "角質をすっきり", "AHAが浮き上がった角質をすっきり整え", "桃のイラスト", "なめらかAHAピーリング", "なめらかAHAピーリングで即効つるすべ桃肌", "つるすべ", "桃", "角質除去、低価格", "角質を取れる", "即効つるすべ桃肌へ", "即効つるすべ桃肌", "桃", "ピーリング、うるおい", "桃", "ツヤ美白チャージ", "桃の写真", "桃肌", "デザインのかわいさ", "ピーリング、ガーゼ", "即効ピーリング", "角質が気になる肌", "浮き上がった角質をすっきり", "桃の果汁が入っているところ", "つるすべ桃肌", "アヌア", "即効ピーリング", "角栓", "ピーリング", "桃の果汁", "桃肌", "角質をすっきり整え", "ピーチ", "角質、ピーリング", "たった1枚で叶う桃肌キメケア", "桃", "桃と潤いが全面的", "ピーリングができる", "速攻ピーリング", "つるすべきめ肌", "AHAとピーリング", "即効ピーリング", "つるすべ速攻", "ツヤ美白", "桃", "AHA", "浮き上がった角質を整え", "即効ピーリング", "桃のように", "ツルスベ", "可愛い", "桃の果実感", "AHAピーリングで即効つるすべ肌", "桃", "写真", "つるすべ", "ももの果汁", "即効ピーリング", "即効つるすべ桃肌", "ピーチ", "角質をスッキリ整える", "角質を整える", "角質を整える", "デザイン", "桃のようになめらかな肌", "即効つるすべ桃肌へ", "アヌアは有名", "つるすべ", "角質のケアができる", "角質をすっきり整え", "peach aha", "速攻キメケアマスク", "桃の果汁がたっぷり", "角質が気になる肌に", "速攻キメケア", "角質 うるおい つるすべ", "桃肌キメケア", "桃肌キメケア", "ピーチ", "桃肌", "つるすべキメ肌", "桃の果汁", "桃が好きなので印象に残った", "即効ピーリング", "AHAピーリング", "ピーリング", "桃の果汁", "桃のフレッシュ感を感じるパッケージ", "浮いた角質", "速攻ピーリング、ツルスベ肌", "浮いた角質をやさしく整える", "桃のように即効キメケア", "ピーリングで即効つるすべ桃肌", "即効ピーリング", "桃肌", "peach aha", "速攻ピーリング", "桃の果汁をたっぷり", "桃の果汁をたっぷり抱き込んだ", "つるすべキメ肌", "桃のパッケージがかわいい", "角質が気になる肌に ピーリング", "桃の果汁", "ピーリング", "パッケージデザイン", "つるすべ", "角質、ピーリング、美白", "AHAピーリング", "保湿されそう", "桃を使っている", "みずみずしさ", "桃肌", "ピーチ", "速攻ピーリング", "即効という部分が期待できそう", "AHA", "角質が整えられそう", "桃のようになめらかな肌へ導く", "桃", "ピンク", "ピーリングができる", "桃のようになめらかな肌へ導く", "桃のようになめらかな肌へ導く", "速攻ピーリング", "AHAでつるすべ肌になる", "もも", "桃の果実を含んだ", "ピーリング効果があること", "角質を整える", "速攻ピーリング", "ピーリングで速攻つるすべ桃肌", "パッケージが綺麗", "AHAピーリング", "速攻キメケア", "桃の果汁が入っている", "1枚で複数の要素がある", "即効ピーリング", "潤い感がある", "角質を整えてなめらかな肌に導く", "ツヤ美白チャージ", "角質", "桃の果汁が入っていて良い匂いで幸福感に包まれそう", "なめらかな肌", "桃", "もも", "即効ピーリング", "つるすべキメ肌", "桃の果汁をたっぷり抱き込んだ", "即効ピーリング", "桃のパッケージ", "浮いた角質をやさしく整える", "ピーリング効果のあるAHA配合", "桃肌キメケア", "なめらかな肌へ導く", "速攻ピーリング", "つるすべキメ肌", "即効ピーリング", "即効ピーリング", "パッケージ", "浮き上がった角質をすっきり", "角質", "桃の果実感", "敏感肌でも初めて挑戦できるピーリングマスク", "桃のような", "即効ピーリング", "低刺激ピーリング", "角質を取る", "低刺激ピーリング", "アヌアが好き。角質ケアに興味がある", "ツヤ美白チャージ", "ピーリング", "たった1枚で叶う桃肌キメケア", "つるすべキメ肌", "即効ピーリング", "肌がきれいになりそう", "角質を整える", "ピーリングができる", "ピーチのパッケージ", "桃", "パッケージ", "桃の写真", "つるすべ即効キメケア", "桃", "もも", "つるすべ速攻、桃肌キメケア", "桃", "即効ピーリング", "桃の成分よさそう", "桃肌キメケア", "AHAが浮き上がった角質をすっきり整え", "角質を整える", "AHA", "速攻ピーリング", "なめらかな肌", "ピーリング", "桃の果汁を含んでいる", "うるおいジェリーウォーターエッセンス", "即効ピーリング", "ツヤ美白チャージ", "つるすべ", "即効ピーリング", "つるすべ", "即効ピーリング", "角質をすっきり整え", "桃のような滑らかな肌", "即効ピーリング", "即効ピーリング", "即効ピーリング", "AHAが浮き上がった角質をすっきり整える", "ツヤ美白チャージ", "1枚で即効キメケアが叶う", "可愛らしい", "浮き上がった角質", "桃", "刺激がないという点で肌に優しそう", "ピーリング", "ピーリング", "桃の果汁", "桃の絵", "モモのように滑らかな肌", "即効つるすべ桃肌", "即効つるすべ桃肌へ", "即効つるすべ", "ピーリング", "美白", "ガーゼマスク", "桃の絵柄", "AHAピーリング", "潤いがある", "速攻つるすべ", "みずみずしそう", "ピーリング", "香り", "つるすべキメ肌", "即効つるすべ桃肌へ", "低刺激ピーリング", "つるすべ", "即効つるすべ", "ピーリング", "桃肌", "即効ピーリング", "キメケアマスク", "即効ピーリング", "ピーリング", "キメケア", "ツヤ美白チャージ", "パッケージ", "パッケージ", "桃肌", "即効ピーリング", "つるすべキメ肌", "つるすべ桃肌", "角質を整える", "潤い感がある", "速攻ピーリング", "ツルスベ肌", "即効ピーリング", "つるすべ桃肌", "ピーチが良い", "つるすべキメ肌", "みずみずしい桃のパッケージ", "つるすべな肌になれる", "もものパッケージ", "肌がうるおいそう", "つるすべ即効", "パッケージデザインに魅力", "ピーリングがある", "ピーリングマスク", "肌がすべすべになりそう", "つるすべ", "つるすべ桃肌", "ガーゼシートは魅力的", "即効ピーリング", "角質、即効、ピーリング", "肌がなめらかになりそう", "つるすべ桃肌へ", "キメケア", "角質ケア", "即効ピーリング", "角質", "ツルスベキメ肌", "桃の果汁", "AHAが浮き上がった角質をすっきり整え", "ガーゼシート", "AHAピーリングで即効つるすべ桃肌へ", "AHA", "果汁を入れているのは珍しい", "AHAピーリング", "ツヤ美白チャージ、即効ピーリング", "つるすべ即効キメケアマスク", "みずみずしい", "桃の果汁をたっぷり", "浮き上がった角質", "桃のようになめらかな肌", "即効ピーリング", "たった1枚で叶う桃肌キメケア", "ピーチがいい", "浮き上がった角質を整える", "即効ピーリング", "浮いた角質", "低刺激が魅力的", "即効"];
+var negativeRaw=["桃の果汁", "AHA", "即効ピーリング", "つるすべキメ肌", "桃の果汁が染み込んでいる", "ガーゼシート", "桃の果汁", "桃", "桃の果汁", "桃", "ピーリング", "肌に合うかわからなかった", "桃、美白", "AHA", "桃肌キメケア", "桃の果汁をたっぷり抱き込んだ", "桃肌", "桃肌", "桃肌キメハダ", "桃の果汁", "桃", "ピーチ", "桃肌", "ピーチ", "ガーゼシート", "ガーゼシート", "速攻ピーリング", "桃のように", "桃の果汁", "枚数が少なくて高い", "ガーゼシート", "速攻ピーリング", "ピーチ", "桃の果汁をたっぷり抱き込んだ", "桃", "価格", "ピーリングの肌への刺激が気になる", "ガーゼシート", "値段が高い", "桃の果汁をたっぷり抱き込んだ", "ピーリング", "7枚770円", "7枚770円", "即効ピーリングが何かよくわからなかった", "ピーリング", "英語表記しかないのでどこのメーカーかわからず不安", "即効", "桃", "桃", "桃の果汁", "ピーリング", "anua", "AHAが何を指しているのか分からなかった", "ツルスベ絹肌", "AHAがどんなものなのか分からない", "ジェリーウォーターエッセンス", "AHA", "AHA", "効果がぱっと見分からない", "ピーリング", "つるすべキメ肌", "ピーチ", "桃肌", "AHAの意味がよくわからない", "桃の果汁をたっぷり抱き込んだ", "ANUA ピーチAHA グロウリファイニング マスク", "桃の果汁という香料ぽさ", "桃の果汁が使われていること", "桃の果汁", "つるすべキメ肌", "桃の果汁を抱き込んだ 果汁は別にいらない", "ピーリング", "桃の果汁", "桃肌", "ガーゼ素材", "桃肌", "たった1枚で叶う", "AHAが浮き上がった角質", "シートマスク", "桃肌キメケア", "即効ピーリング", "保湿感", "即効キメケアマスク", "浮いた角質", "桃の果汁たっぷり", "ピーリングが何かわからなかった", "桃の果汁", "桃", "桃肌", "日本語がない", "桃の写真", "美白", "英語", "ガーゼシート", "キメ肌", "桃のような", "AHAが分からない", "ガーゼシート", "キメ肌", "ガーゼシート", "今すぐ角質が気になる肌", "つるすべキメ肌", "AHAが分からない", "速攻ピーリング", "ガーゼシート", "英語ばかりで何がいいのかわからない", "キメケア", "ガーゼシート", "桃の果汁", "ガーゼシート", "ガーゼシート", "桃肌", "桃肌", "桃の果汁", "ピーリング", "桃肌", "桃の果汁", "シートマスクであること", "AHAとは", "桃肌キメケア", "低刺激ピーリング", "ピーリング", "桃の果汁入り", "桃", "AHA", "桃の果汁", "桃の果汁入り", "自分は使わなさそう", "たった一枚で叶う", "グロウリファイニングという単語に魅力を感じなかった", "桃は産毛がすごいイメージでつるすべな感じがしない", "ガーゼシート", "キメケア", "桃のような滑らかな肌へ導く", "ガーゼシート", "密着感に優れたガーゼシートで浮いた角質をやさしく整える", "桃の果汁", "即効ピーリングは少し怖い", "ツヤ美白チャージ", "ガーゼシート", "ガーゼシート", "桃肌", "桃の果汁をたっぷり抱き込んだアレルギー怖い", "つるすべ即効キメケアマスク", "速攻ピーリング", "ツヤ美白チャージ", "即効", "桃肌がよくわからなかった"];
+var selectRaw=["肌が潤いそう", "桃肌がとても気になる", "パッケージデザインがいい", "パッケージがより魅力", "みずみずしさがある", "よりみずみずしい素肌に導いてくれそう", "みずみずしい", "密着で美容成分が角質層に浸透しやすく魅力的", "何となく", "パッケージのイラストからみずみずしさが伝わる", "瑞々しさが伝わる", "みずみずしい感じがする", "良さそう", "つるんとした肌になれそう", "使いやすそう", "パッケージが好き", "みずみずしさが伝わる", "マスクでピーリングが斬新", "みずみずしい", "パッケージが可愛い", "より潤いがありそう", "自分に合ってると感じた", "角質をちゃんと取れそう", "パックは保湿のイメージ", "見た目がかわいい", "なんとなく", "より効果がありそう", "ピーリング効果が高そう", "良さそう", "角質ケアに効きそう", "高級感", "桃が綺麗に見えた", "なんとなく", "潤っている感じがする", "可愛い", "みずみずしい", "刺激が少なそう", "みずみずしい感じがした", "うるおいそうな感じ", "プルプル肌になりそう", "AHAの化粧品をよく使う", "パッケージがみずみずしい肌にしてくれそう", "潤いそう", "つるつるになりそう", "可愛い", "パッケージ", "きれい", "より水々しさが目立った", "うるおいが凄そう", "みずみずしさが伝わる", "綺麗", "うるおいを感じる", "よりみずみずしい感じがする", "直感", "みずみずしさ", "みずみずしい", "角質を整えてくれる", "みずみずしい", "前者の方がみずみずしさを感じるデザイン", "可愛い見た目", "ツヤ感の方が好き", "より角質ケアができそう", "みずみずしさをとても感じられた", "瑞々しい", "よりみずみずしい肌になれる", "すべすべ肌になりそう", "コンセプトが自分に合っていた", "より効果が期待できそう", "より角質ケアができそう", "みずみずしい肌へなれそう", "キメがよいきれいな肌になれそう", "キメがよいきれいな肌になれそう", "はじけるかんじが伝わる", "パッケージが好み", "みずみずしい感じがいい", "みずみずしさを感じてさわやか", "より瑞々しい肌になれそう", "こちらのほうが肌が整いそう", "瑞々しい感じで潤いそう", "ピーリング効果", "パッケージのはじける感じが好き", "パックのパッケージだとわかりやすい", "より効き目がありそう", "肌に優しそう", "日常使いできそう", "パッケージのイラストが水々しさ", "桃にかかる水のイメージが良い", "みずみずしさを感じる", "角質ケアをしっかり出来そう", "パッケージデザインが可愛らしい", "みずみずしい", "角質の部分で気になった", "みずみずしさがある", "みずみずしい", "フレッシュ", "みずみずしい感じがする", "即効がよかった", "角質ケアが出来そう", "潤いが出そうなパッケージ", "新しい雰囲気", "みずみずしい", "パッケージデザインが潤いを意識している", "水感が強くてうるおいを感じそう", "みずみずしそう", "パッケージが好み", "パッケージの見た目", "透明感が上がりそう", "効きそう", "自分の肌に合いそう", "新しい感じ", "速攻きめ肌というワード", "パッケージがより気になる", "肌に潤いを与えてくれそう", "より瑞々しい肌にできそう", "パッケージが目を惹く", "パッケージが良かった", "みずみずしいパッケージ 桃の果汁に興味", "なめらかが良い", "みずみずしさが多い", "なんとなく", "しっかりピーリングをしたい", "角質が綺麗にとれそう", "パッケージが良い", "パッケージの桃に大きな水滴でみずみずしさ AHA", "みずみずしい感じがする", "パッケージがいい", "何となく", "低刺激より即効の方が効きそう", "なんとなく", "爽やか", "即効ピーリングに興味 パケが可愛い", "パッケージがよい", "うるおい感が伝わる", "良さそう", "わかりやすく感じた", "内容がわかりやすかった", "みずみずしい", "潤う", "水が綺麗", "より肌に効果がありそう", "桃のみずみずしさが伝わる", "みずみずしさがある", "潤いたっぷりな印象", "良い", "敏感肌に特化", "即行ピーリング", "デザインが好み", "選択したパッケージの方が潤いそう", "効果が自分に合ってそう", "分からない単語がなかった", "ピーリング効果が高そう", "ももの感じのみずみずしさがわかりやすい", "パッケージが好き", "みずみずしいデザイン", "グロウリファイニング マスクの方が潤いが実感できそう", "みずみずしい", "ピーリング効果がより高そう", "みずみずしさが感じられる", "パッケージによりみずみずしさ", "みずみずしい", "なんとなく", "今すぐ角質が気になる", "目立つ気がする", "美白", "瑞々しい感じが強い", "より潤うそう", "なんとなく良さそう", "なんとなく", "潤いがある感じ", "パッケージもかわいい", "みずみずしさがある", "つるすべになりたい", "即効性がありそう", "即効ピーリングの効果が気になる", "より高級感がある", "パッケージがよりみずみずしい", "パッケージがみずみずしく感じた", "角質を整えるところが気に入った", "うるおいを与えてくれそう", "パッケージが良かった", "つる肌になれそう", "うるおいが良い", "魅力的", "まだパッケージがマシ", "プルプルしそう", "肌に浸透してなめらかにしてくれそう", "可愛い", "水も滴るという表記", "何となく", "即効ピーリングに惹かれた", "すぐに効き目がありそう", "つるすべ桃肌が魅力的 説明が簡潔でわかりやすい", "みずみずしい", "なんとなくデザインが好き", "水分量が多そう", "AHAが浮き上がった角質をすっきり整えるが肌に負担をかけなさそう", "AHAピーリングで即効つるすべ桃肌へに惹かれた", "水", "攻めのケアをしたいのでAHAを選びたい", "即効というのが良かった", "直感", "効果が高そう", "自分に合ってる", "効果が現れる方が大切", "かわいい", "より瑞々しい肌になれそう", "なんとなく", "瑞々しい感じで潤いそう"];
+var positiveCategories=[
+{label:"즉효 필링",keywords:["即効ピーリング","速攻ピーリング","なめらかAHAピーリング","ピーリング","低刺激ピーリング","ピーリングができる","ピーリング効果","ピーリングマスク"]},
+{label:"매끈매끈 결 피부(つるすべ)",keywords:["つるすべ","ツルスベ","つるすべキメ肌","つるすべ桃肌","つるすべ即効","つるすべ速攻","すべすべ","なめらか"]},
+{label:"복숭아(桃)/피치",keywords:["桃","ピーチ","桃肌","もも","PEACH","peach","桃のよう","桃の絵","桃の写真","桃のイラスト","桃のパッケージ"]},
+{label:"각질 케어",keywords:["角質","角栓","角質を整え","角質をすっきり","角質をスッキリ","角質ケア","角質が気になる","角質除去","角質を取"]},
+{label:"AHA 성분",keywords:["AHA","aha"]},
+{label:"윤기 미백 차지",keywords:["ツヤ美白","美白","美肌"]},
+{label:"복숭아 과즙",keywords:["桃の果汁","果汁","桃の成分","桃の果実","ももの果汁"]},
+{label:"패키지/디자인",keywords:["パッケージ","デザイン","可愛い","可愛らしい","かわいさ","綺麗","きれい","ピンク","写真","イラスト","フレッシュ感"]},
+{label:"10분 / 1장으로 완성",keywords:["たった1枚","1枚で","即効","速攻"]},
+{label:"보습/촉촉함",keywords:["うるおい","潤い","保湿","みずみずし","みずみずしさ","みずみずしそう"]},
+{label:"가제 시트",keywords:["ガーゼ"]},
+{label:"브랜드(Anua)",keywords:["アヌア","anua","ANUA"]},
+{label:"저자극",keywords:["低刺激","敏感肌","やさしく"]}
+];
+var negativeCategories=[
+{label:"복숭아 과즙 - 불필요",keywords:["桃の果汁","果汁","桃の果実"]},
+{label:"복숭아/피치 - 비매력",keywords:["桃","ピーチ","桃肌","桃のよう","桃の写真","桃の絵","桃は産毛"]},
+{label:"가제 시트 - 비매력",keywords:["ガーゼシート","ガーゼ素材","ガーゼ"]},
+{label:"필링 - 자극 우려",keywords:["ピーリング","即効ピーリング","速攻ピーリング","即効","速攻"]},
+{label:"AHA - 이해 어려움",keywords:["AHA","AHAが何","AHAが分から","AHAがどんな","AHAの意味"]},
+{label:"매끈매끈 결 피부 - 비매력",keywords:["つるすべ","ツルスベ","キメ肌","キメケア","桃肌キメ"]},
+{label:"가격 우려",keywords:["値段","価格","高い","枚数が少なくて高い","770円","たかい"]},
+{label:"영어/브랜드 불명",keywords:["英語","英語表記","anua","ANUA","日本語がない","英語ばかり"]},
+{label:"젤리워터에센스 - 불명확",keywords:["ジェリーウォーターエッセンス","グロウリファイニング"]},
+{label:"시트마스크 비선호",keywords:["シートマスク","使わなさそう"]},
+{label:"미백/보습 관련",keywords:["美白","保湿感","ツヤ美白"]},
+{label:"기타 효과 의문",keywords:["効果がぱっと見分からない","たった1枚","たった一枚","肌に合うかわから","アレルギー","密着感"]}
+];
+var selectCategories=[
+{label:"촉촉함/미즈미즈시이",keywords:["みずみずし","瑞々し","水々し","水感","フレッシュ","はじける","水が綺麗","水も滴る","水分量","水"]},
+{label:"패키지/디자인",keywords:["パッケージ","デザイン","見た目","可愛い","かわいい","きれい","綺麗","高級感","好み","目を惹く","イラスト","目立つ"]},
+{label:"각질 케어 기대",keywords:["角質","角質ケア","角質を整え","角質を取","角質が気になる"]},
+{label:"왠지 끌림(なんとなく)",keywords:["なんとなく","何となく","何とな","直感"]},
+{label:"보습/윤기 기대",keywords:["潤い","うるおい","潤う","潤っ","保湿","肌が潤い"]},
+{label:"필링 효과 기대",keywords:["ピーリング","即効ピーリング","速攻ピーリング","AHA"]},
+{label:"매끈매끈 피부 기대",keywords:["つるすべ","つるつる","すべすべ","なめらか","つるんと","つる肌","プルプル"]},
+{label:"효과가 높아 보임",keywords:["効果","効きそう","効き目","即効","速攻","期待できそう"]},
+{label:"자기 피부에 맞음",keywords:["自分に合って","自分の肌","コンセプトが自分","敏感肌"]},
+{label:"설명이 알기 쉬움",keywords:["わかりやすい","わかりやす","分かりやす","簡潔"]},
+{label:"미백 기대",keywords:["美白","透明感"]}
+];
+var noResp=["なし","ない","特になし","特にない","特になかった","なかった","特に無し","特にありません","特にありませんでした。","ありません","ないです","特にないです","とくになし","とくにない","特にはない","特にはなし","無し","な","た","さ","か","ー","しろい","88","8","5","7","1","4","ははへはふはへ4チはさ","ボール","きへい","なしわやに","なしなし","特に決まっていないです","特にないです。","よい"];
+
+function categorize(raw,cats){
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0;});
+  var res=cats.map(function(cat){
+    var m=f.filter(function(item){return cat.keywords.some(function(kw){return item.indexOf(kw)>=0;});});
+    return{label:cat.label,count:m.length,examples:m.filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,12)};
+  });
+  res.sort(function(a,b){return b.count-a.count;});
+  return res.filter(function(r){return r.count>0;});
+}
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function buildChart(cid,data,cls){
+  var c=document.getElementById(cid);
+  if(!data.length){c.innerHTML='<p style="color:var(--text-dim)">데이터 없음</p>';return;}
+  var mx=data[0].count,h="";
+  data.forEach(function(item,i){
+    var pct=Math.max((item.count/mx)*85,8);
+    var tips=item.examples.map(function(ex){return'<div class="tooltip-item">'+esc(ex)+'</div>';}).join("");
+    h+='<div class="bar-row" style="animation:fadeIn .4s '+(i*.06)+'s both"><div class="bar-label">'+item.label+'</div><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+pct+'%"><span class="bar-count">'+item.count+'</span></div><div class="tooltip"><div class="tooltip-title">일본어 원문 예시 (최대 12개)</div>'+tips+'</div></div></div>';
+  });
+  c.innerHTML=h;
+}
+
+function tokenJP(text){
+  var chunks=text.split(/[、。　,\s・]+/).filter(function(s){return s.length>1;});
+  var result=[];
+  chunks.forEach(function(chunk){
+    if(chunk.length<=8){result.push(chunk);return;}
+    var parts=chunk.split(/(?:だから|ですから|なので|から|ので|けど|のに|ために|ている|ていて|ていた|している|しそう|できそう|ありそう|なりそう|がありそう|がよさそう|がある|がない|だと思う|だと感じ|と思った|と感じた|と思いました|と感じました|に感じた|に思った|を感じ|に興味|に惹かれ|に魅力|が好き|が良い|が良さそう|がいい|がよい|がきれい|のほうが|の方が|という|といった|のような|みたいな|っぽい|そうだ|そうな|ような|ようで|そうで|てみたい|てくれそう|てくれる|について|に対して|として|のため|をして|をする|をした|ことが|ことも|ことで|こと$)/).filter(function(s){return s.length>1;});
+    if(parts.length>1){
+      parts.forEach(function(p){var t=p.replace(/^[がをにでとはもへのや]+/,"").replace(/[がをにでとはもへのや]+$/,"").trim();if(t.length>1)result.push(t);});
+    }else{
+      var simpler=chunk.split(/(?:が|を|に|で|と|は|も|へ)/).filter(function(s){return s.length>2;});
+      if(simpler.length>1){simpler.forEach(function(p){if(p.length>1&&p.length<=20)result.push(p);});}
+      else{result.push(chunk.substring(0,16));}
+    }
+  });
+  return result.filter(function(s){return s.length>1&&s.length<=20;});
+}
+
+function buildWC(cid,raw){
+  var c=document.getElementById(cid);
+  var stop=["それ","これ","あれ","その","この","あの","よう","ほう","ところ","ため","もの","こちら","やはり","まだ","もう","よく","とても","かなり","少し","すごく"];
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0&&t.length>1;});
+  var freq={};
+  f.forEach(function(item){
+    var toks=tokenJP(item);
+    toks.filter(function(v,i,a){return a.indexOf(v)===i;}).forEach(function(tk){if(stop.indexOf(tk)<0)freq[tk]=(freq[tk]||0)+1;});
+  });
+  var keys=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];});
+  var merged={},skip={};
+  keys.forEach(function(k){
+    if(skip[k])return;var best=k,cnt=freq[k];
+    keys.forEach(function(k2){
+      if(k===k2||skip[k2])return;
+      if(k.length>=3&&k2.length>=3&&(k.indexOf(k2)>=0||k2.indexOf(k)>=0)){
+        var sh=k.length<=k2.length?k:k2,lo=k.length<=k2.length?k2:k;
+        if(sh.length>=3&&lo.length-sh.length<=4){cnt+=freq[k2];skip[k2]=true;best=sh;}
+      }
+    });
+    merged[best]=(merged[best]||0)+cnt;
+  });
+  var ent=Object.entries(merged).sort(function(a,b){return b[1]-a[1];});
+  var mx=ent.length?ent[0][1]:1,top=ent.slice(0,55);
+  for(var i=top.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=top[i];top[i]=top[j];top[j]=tmp;}
+  var h="";
+  top.forEach(function(e){
+    var r=e[1]/mx,sc;
+    if(r>.7)sc="wc-s7";else if(r>.5)sc="wc-s6";else if(r>.35)sc="wc-s5";else if(r>.2)sc="wc-s4";else if(r>.12)sc="wc-s3";else if(r>.06)sc="wc-s2";else sc="wc-s1";
+    h+='<span class="wc-word '+sc+'" title="'+e[1]+'回">'+esc(e[0])+'</span> ';
+  });
+  c.innerHTML=h;
+}
+
+function showTab(id){
+  document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  var idx=id==="tab1"?0:id==="tab2"?1:2;
+  document.querySelectorAll(".tab")[idx].classList.add("active");
+}
+
+buildChart("chart-positive",categorize(positiveRaw,positiveCategories),"positive");
+buildChart("chart-negative",categorize(negativeRaw,negativeCategories),"negative");
+buildChart("chart-select",categorize(selectRaw,selectCategories),"select");
+buildWC("wc-positive",positiveRaw);
+buildWC("wc-negative",negativeRaw);
+buildWC("wc-select",selectRaw);
+
+var st=document.createElement("style");
+st.textContent="@keyframes fadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}";
+document.head.appendChild(st);
+
+</script>
+</body>
+</html>

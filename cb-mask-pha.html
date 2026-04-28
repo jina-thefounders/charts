@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHA 컨셉 분석</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#ffffff;--surface:#fff5f7;--surface2:#ffeef2;--accent:#ec4899;--accent2:#f472b6;--accent3:#fbcfe8;--positive:#ec4899;--negative:#a855f7;--select:#8b5cf6;--text:#1f1f1f;--text-dim:#6b7280;--border:#fce7f3}
+body{font-family:'Noto Sans KR','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.tabs{display:flex;justify-content:center;gap:4px;padding:18px 20px 0;position:sticky;top:0;background:var(--bg);z-index:100;border-bottom:1px solid var(--border)}
+.tab{padding:12px 28px;border:none;background:transparent;color:var(--text-dim);font-family:inherit;font-size:.9rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .3s}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none;padding:32px 20px 60px;max-width:1100px;margin:0 auto}.tab-panel.active{display:block}
+.section-title{font-size:1.3rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.section-desc{color:var(--text-dim);font-size:.85rem;margin-bottom:28px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:500}
+.badge-positive{background:rgba(236,72,153,.1);color:var(--positive)}.badge-negative{background:rgba(168,85,247,.1);color:var(--negative)}.badge-select{background:rgba(139,92,246,.1);color:var(--select)}
+.chart-container{background:var(--surface);border-radius:16px;padding:32px;margin-bottom:40px;border:1px solid var(--border)}
+.bar-row{display:flex;align-items:center;margin-bottom:6px;position:relative;z-index:1}.bar-row:hover{z-index:100}
+.bar-label{width:200px;min-width:200px;font-size:.85rem;font-weight:500;text-align:right;padding-right:16px;color:var(--text)}
+.bar-track{flex:1;height:36px;background:var(--surface2);border-radius:6px;position:relative;overflow:visible;cursor:pointer}
+.bar-fill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.22,1,.36,1);position:relative;display:flex;align-items:center;padding-left:12px;min-width:fit-content}
+.bar-fill.positive{background:linear-gradient(90deg,rgba(236,72,153,.2),rgba(236,72,153,.08));border:1px solid rgba(236,72,153,.25)}
+.bar-fill.negative{background:linear-gradient(90deg,rgba(168,85,247,.2),rgba(168,85,247,.08));border:1px solid rgba(168,85,247,.25)}
+.bar-fill.select{background:linear-gradient(90deg,rgba(139,92,246,.2),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.25)}
+.bar-count{font-size:.8rem;font-weight:600;padding:0 10px;white-space:nowrap}
+.bar-fill.positive .bar-count{color:var(--positive)}.bar-fill.negative .bar-count{color:var(--negative)}.bar-fill.select .bar-count{color:var(--select)}
+.tooltip{display:none;position:absolute;left:0;top:42px;background:#fff;border:1px solid var(--accent);border-radius:10px;padding:14px 16px;z-index:9999;min-width:340px;max-width:460px;max-height:260px;overflow-y:auto;box-shadow:0 8px 32px rgba(236,72,153,.15)}
+.bar-track:hover .tooltip{display:block}
+.tooltip-title{font-size:.75rem;color:var(--accent);margin-bottom:8px;font-weight:600}
+.tooltip-item{font-family:'Noto Sans JP',sans-serif;font-size:.78rem;color:var(--text-dim);padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04);line-height:1.5}.tooltip-item:last-child{border-bottom:none}
+.tooltip::-webkit-scrollbar{width:4px}.tooltip::-webkit-scrollbar-track{background:transparent}.tooltip::-webkit-scrollbar-thumb{background:var(--accent3);border-radius:4px}
+.wordcloud-container{background:var(--surface);border-radius:16px;padding:40px;margin-bottom:40px;border:1px solid var(--border);min-height:340px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px}
+.wc-word{display:inline-block;padding:4px 8px;border-radius:4px;font-family:'Noto Sans JP',sans-serif;transition:all .3s;cursor:default;line-height:1.3}
+.wc-word:hover{background:rgba(236,72,153,.1);transform:scale(1.08)}
+.wc-s1{font-size:.7rem;color:rgba(107,114,128,.5)}.wc-s2{font-size:.85rem;color:rgba(107,114,128,.7)}.wc-s3{font-size:1.05rem;color:var(--text-dim)}.wc-s4{font-size:1.3rem;color:var(--accent3);font-weight:400}.wc-s5{font-size:1.6rem;color:var(--accent2);font-weight:500}.wc-s6{font-size:2rem;color:var(--accent);font-weight:600}.wc-s7{font-size:2.4rem;color:#be185d;font-weight:700}
+.divider{width:100%;height:1px;background:var(--border);margin:48px 0}
+.sub-heading{font-size:1.1rem;font-weight:600;margin-bottom:20px;color:var(--text)}
+@media(max-width:768px){.bar-label{width:130px;min-width:130px;font-size:.75rem}.chart-container{padding:16px}.tabs{gap:0}.tab{padding:10px 14px;font-size:.8rem}.tooltip{min-width:260px;max-width:320px}}
+</style>
+</head>
+<body>
+<div class="tabs">
+<button class="tab active" onclick="showTab('tab1')">매력 포인트</button>
+<button class="tab" onclick="showTab('tab2')">관심없는 부분</button>
+<button class="tab" onclick="showTab('tab3')">선택 이유</button>
+</div>
+<div id="tab1" class="tab-panel active">
+<div class="section-title">매력적으로 느껴진 부분 <span class="badge badge-positive">Q1</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-positive"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-positive"></div>
+</div>
+<div id="tab2" class="tab-panel">
+<div class="section-title">관심 없었던 부분 <span class="badge badge-negative">Q2</span></div>
+<div class="section-desc">키워드를 한국어 카테고리로 분류 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-negative"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-negative"></div>
+</div>
+<div id="tab3" class="tab-panel">
+<div class="section-title">선택 이유 <span class="badge badge-select">Q3</span></div>
+<div class="section-desc">이 컨셉을 1위로 선택한 응답자 대상 · 바 위에 마우스를 올리면 일본어 원문 예시가 표시됩니다</div>
+<div class="chart-container" id="chart-select"></div>
+<div class="divider"></div>
+<div class="sub-heading">워드클라우드 — 일본어 로데이터</div>
+<div class="wordcloud-container" id="wc-select"></div>
+</div>
+<script>
+var positiveRaw=["低刺激", "低刺激ピーリング", "ふわすべキメ肌", "低刺激", "桃肌", "低刺激ピーリング", "敏感肌でも安心して使用出来る", "即効ピーリング", "ピーリングマスク", "桃の絵", "低刺激ピーリング", "低刺激のピーリング効果", "キメケア", "敏感肌でも初めて挑戦できるピーリングマスク", "桃のイラスト", "敏感肌ピーリング", "たった1枚で叶う桃肌キメケア", "低刺激", "桃の果汁", "低刺激", "角質を取れる", "ふわすべキメ肌", "密着感に優れたガーゼ素材", "桃", "ツヤキメ肌", "桃", "ツヤ美白チャージ", "桃の写真", "ピーリングケア", "低刺激", "ピーリング、敏感肌", "低刺激ピーリング", "低刺激ピーリング", "浮いた角質", "桃が含まれている", "低刺激ピーリング", "角質だけを取る", "高級そうなパッケージ", "低刺激ピーリング", "美白", "美白", "低刺激ピーリング", "桃の果汁", "キメハダ", "低刺激ピーリング", "ピーチ", "ピーリング、つや", "たった1枚で叶う桃肌キメケア", "桃", "肌に艶やかさが出そう", "パッケージが可愛い", "低刺激ピーリングで敏感肌でもはじめてできるピーリング", "低刺激ピーリング", "AHA、ピーリング", "低刺激ピーリング", "つるすべ速攻", "ツヤ美白", "桃", "PHA", "桃PHAが角質だけを優しく整える", "美白チャージ", "やわらかな桃肌", "ももが可愛い", "桃の果実感", "ツヤ美白チャージ", "桃", "写真", "低刺激", "桃の果汁", "低刺激ピーリング 桃肌", "即効つるすべ桃肌", "桃", "明るく柔らか", "モモpha", "ピーリング", "角質を整える", "桃デザイン", "桃のようになめらかな肌", "桃PHAが角質だけをやさしくオフ", "肌に良さそう", "ふわすべ", "優しく角質ケアできる", "敏感肌でも初めて挑戦できるピーリングマスク", "ふわすべ", "速攻キメケア", "ツヤキメ肌", "桃の果汁がたっぷり", "低刺激ピーリング", "桃PHAが角質だけをやさしくオフ", "速攻キメケア", "角質だけをやさしくオフ", "ふわすべキメ肌", "ふわすべキメ肌", "角質オフ", "艶肌になれる", "敏感肌でも挑戦できるというのが新しい", "桃の果汁", "ピンク色が可愛い", "ふわすべ肌", "桃の果汁", "敏感肌でも使える", "刺激なく明るくやわらかな桃肌へ", "ピーリング", "ピーリング", "敏感肌でも使えそう", "桃の果汁", "桃のフォルムと色味", "敏感肌", "浮いた角質を優しく整える", "低刺激ピーリング", "敏感肌でも", "値段が安くて敏感肌でも使える", "敏感肌", "初めて挑戦", "ツヤ美白", "低刺激ピーリング", "低刺激 敏感肌", "peach aha", "低刺激", "桃の果汁をたっぷり", "低刺激というのが使いやすそう", "美白チャージ", "低刺激ピーリング", "桃のパッケージがかわいい", "敏感肌でも", "桃の果汁", "敏感肌でも使えるピーリングマスク", "PHA", "低刺激ピーリング、美白", "低刺激ピーリング", "ふわすべキメ肌", "ピーリング", "桃のえ", "桃肌", "低刺激ピーリング", "桃肌が可愛い", "AHA", "低刺激の部分", "敏感肌でも初めて挑戦できる", "桃", "ピンク", "敏感肌でも挑戦できるピーリングマスク", "うるおいジェリーウォーターエッセンス", "たった1枚で叶う桃肌キメケア", "速攻ピーリング", "AHA", "ガーゼ素材", "桃の果汁", "低刺激でピーリングできる", "ピーリング", "低刺激ピーリング", "PHA低刺激ピーリング", "密着性に優れたガーゼ素材", "桃PHA", "たった一枚で叶う", "桃果汁が入っている", "ガーゼ要素が新しい", "即効ピーリング", "敏感肌でも使用できる", "ツヤ美白", "角質", "うるおいチャージ", "ふわすべ", "低刺激", "もも", "低刺激ピーリング", "ふわすべキメ肌", "低刺激ピーリング", "桃のパッケージ", "低刺激ピーリング", "桃のパッケージ", "ジェリーウォーターエッセンス", "敏感肌でも初めて挑戦できるピーリングマスク", "低刺激ピーリング", "低刺激ピーリング", "低刺激ピーリング", "低刺激ピーリング", "パッケージ", "PHA低刺激ピーリング", "アヌア", "保湿感", "敏感肌でも初めて挑戦できるピーリングマスク", "桃PHAが角質を優しくオフ", "敏感肌", "ピーリングマスク", "低刺激ピーリング", "低刺激ピーリング", "低刺激ピーリング", "アヌアが好き", "低刺激ピーリング", "ピーリング", "たった1枚で叶う桃肌キメケア", "ツヤキメ肌", "低刺激ピーリング", "敏感肌でも大丈夫", "ピーリングマスク", "ピーリングができる", "ピーチのパッケージ", "桃", "パッケージ", "桃の写真", "低刺激ピーリング", "ピーチの柄", "もも", "桃肌キメケア", "桃", "敏感肌でも挑戦できる", "敏感肌にも角質はたまるから桃PHAが角質だけをやさしくオフ", "潤いありそう", "桃肌キメケア", "刺激なく明るくやわらかな桃肌へ", "低刺激", "うるおいジェリーウォーターエッセンス", "敏感肌", "明るくやわらか", "低刺激ピーリング", "低刺激で肌に優しい", "桃の果汁", "低刺激ピーリング", "低刺激ピーリング", "ふわすべキメ肌", "低刺激", "ツルツルになる", "ツヤキメ肌", "角質だけをやさしくオフ", "敏感肌でも挑戦できるピーリング", "敏感肌でも使えるピーリングマスク", "敏感肌でも初めて挑戦できるピーリングマスク", "低刺激ピーリング", "肌に密着して浸透する", "桃", "ツヤキメ肌", "敏感肌でも使える低刺激", "パッケージ", "低刺激ピーリング", "ふわすべ", "刺激がない肌に優しそう", "桃果汁でプルプルになれそう", "桃", "ピーリング", "桃の果汁", "桃の絵", "低刺激なところ", "低刺激", "敏感肌にも桃PHAが角質だけをやさしくオフ", "ツヤキメ肌", "低刺激ピーリング", "見た目がかわいい", "角質", "角質", "ピーリングマスク", "桃の絵柄", "ピーチ", "角質だけをやさしくオフ", "桃の写真", "敏感肌でも使える", "ピーチのようにぴちぴちになれそう", "桃肌キメケア", "香り", "ふわすべキメ肌", "敏感肌でも初めて挑戦できるピーリングマスク", "低刺激ピーリング", "ふわすべ", "敏感肌挑戦できる", "やさしくオフ", "桃肌に惹かれる", "低刺激ピーリング", "ピーリングマスク", "敏感肌でも挑戦できるピーリングマスク", "低刺激ピーリング ふわすべキメ肌", "ピーリング", "敏感肌でも使える 低刺激ピーリング", "ガーゼ素材", "桃のパッケージ", "パッケージ", "ふわすべキメ肌", "PHA低刺激", "ふわすべキメ肌 桃の果汁", "敏感肌でも使える", "低刺激", "スベスベ感", "低刺激ピーリング", "低刺激", "低刺激ピーリング", "角質だけを優しくオフ", "ピーチが良い", "低刺激ピーリング", "桃のパッケージ", "敏感肌でも使えるコンセプト", "パッケージ", "肌がプルプルしそう", "桃肌キメケア ふわすべキメ肌", "パッケージデザイン ピンク色", "キメが整う", "ピーリングマスク", "毛穴ケアできそう", "桃の主張が激しい", "低刺激なのは魅力的で桃もいい", "敏感肌でも挑戦できる", "低刺激 キメ肌 ウォーター", "刺激が少なさそう", "やわらかな桃肌へ", "ピーチ", "角質ケア出来る", "ピーリングマスク", "敏感肌でも使えるピーリング", "敏感肌でも初めて挑戦できるピーリングマスク", "敏感肌", "敏感肌にも桃PHAが角質だけをやさしくオフ", "低刺激ピーリングは魅力的", "桃PHAが角質だけをやさしくオフ", "もも", "低刺激ピーリング", "桃PHAという単語を初めて聞いた", "低刺激ピーリング", "ツヤ美白チャージ", "低刺激ピーリング ふわすべキメ肌", "アヌア", "保湿力がありそう", "たった1枚で叶う桃肌キメケア", "角質を優しくオフ", "桃", "ピーリングマスク", "低刺激ピーリング", "たった一枚で叶う桃肌キメケア", "ピーチがいい", "敏感肌でも初めて挑戦できるピーリングマスク", "敏感肌でも挑戦できる", "低刺激ピーリング", "低刺激ピーリング", "低刺激ピーリングは肌に優しそう", "低刺激"];
+var negativeRaw=["桃の果汁", "桃の果汁をたっぷり抱え込んだ", "ピーリング", "ふわすべキメ肌", "全部英語", "敏感肌", "桃の果汁", "桃PHA", "桃", "ジェリーウォーター", "ピーリング", "香り", "桃", "ツヤキメ肌", "桃の果汁をたっぷり抱き込んだ", "PHAがわからなかった", "桃肌キメケア", "桃の果汁", "桃肌", "桃肌", "桃肌キメハダ", "ガーゼ素材", "桃", "ピーチ", "桃肌", "ピーチ", "ガーゼ素材な点", "初めての挑戦", "速攻ピーリング", "桃の果汁", "桃の果汁", "枚数が少なくて高い", "桃の果汁", "低刺激ピーリング", "低刺激", "桃の果汁をたっぷり抱き込んだ", "桃", "肌への刺激面ピーリング", "ガーゼ素材", "敏感肌", "値段が高い", "桃の果汁をたっぷり抱き込んだ", "肌への刺激面ピーリング", "7枚770円", "7枚770円", "低刺激ピーリングと言われても疑わしい", "ガーゼ素材", "どこのメーカーか分からない", "7枚770円 高い", "即効", "モモ", "桃", "桃の果汁", "桃の果汁 桃PHA", "ピーリング", "ana", "PHAが何を指してるのかわからなかった", "ふわすべキメ肌", "桃PHAがどういうものか想像できない", "敏感肌の部分が自分には合わない", "ジェリーウォーターエッセンス", "ジェリーウォーターエッセンス", "ジェリーウォーターエッセンス", "ジェリーウォーターエッセンス", "PHA", "AHA", "ピーリング", "やわらかなモモ肌へ", "ピーチ", "ピーリングの部分", "PHA低刺激ピーリングのPHAがよくわからない", "低刺激", "桃の果汁", "ピーリング", "桃の果汁という香料っぽさ", "桃の果汁が使われていること", "桃の果汁", "ツルスベキメ肌", "桃PHAというキーワード", "ピーリング", "桃の果汁", "ふわすべ", "低刺激ピーリング", "桃肌", "ガーゼ素材", "フワキメ肌", "英語の表記が多い", "たった1枚で叶う", "桃肌へ", "シートマスク", "桃肌キメケア", "桃の果汁をたっぷり", "スキンケア", "桃の果汁", "浮いた角質", "桃の果汁", "低刺激ピーリングが何かわからなかった", "桃の果汁", "桃", "桃肌", "日本語があまりない", "桃の写真", "少し値段が高い", "美白", "英語のパッケージ", "キメ肌", "桃の果汁", "キメ肌が初めて聞いた言葉", "低刺激ピーリング", "桃pha", "ガーゼ素材", "ガーゼ素材", "ふわすべキメ肌", "桃PHAがなんなのか分からなかった", "桃", "ガーゼ素材", "ジェリーウォーター", "ガーゼ素材", "敏感肌", "桃", "桃の果汁をたっぷり抱き込んだ", "桃肌", "桃肌", "桃肌", "桃PHA", "桃肌", "桃の果汁", "シートマスクであること", "アウラとは", "ふわすべキメ肌", "敏感肌でも角質はたまるから", "ピーリング", "ピーリングマスク", "桃の果汁が入っている", "桃", "PHA", "桃の果汁", "桃の果汁入り", "そもそも使わない商品", "PHA", "ピーリングに関心が持てなかった", "ピーチ", "甘い匂いがしそう", "ふわすべキメ肌", "桃の果汁が合わなさそう", "初めて挑戦できる", "ピーリング", "桃肌", "桃肌", "低刺激ピーリング", "密着感に優れたガーゼ素材", "桃の果汁", "桃の果汁", "ガーゼ素材", "ガーゼ素材", "桃肌", "桃アレルギーなので怖い", "桃肌キメケア", "桃が自分に合わない", "桃PHA", "桃", "桃肌がどのような肌なのかよくわからない"];
+var selectRaw=["肌がぷりんとなりそう", "低刺激の方が自分にあいそう", "敏感肌でもピーリングができる", "低刺激というところに惹かれた", "イラスト", "ピーリングマスクが新しい", "わちゃわちゃしてない", "名前が分かりやすい", "ピーリングは肌に辛い時がある", "新しい", "みずみずしいパッケージ", "パッケージが優しい", "なんとなく", "パッケージの桃が美味しそう", "下の方が色薄くて美味しそう", "艶感を感じる", "低刺激で肌に優しそう", "敏感肌でも使える", "美白", "美白", "低刺激がいい", "見た目が可愛い", "低刺激でピーリングができる", "自分に合っている気がした", "乾燥・敏感肌なので低刺激に惹かれた", "角質を取り除く", "桃の香りが強そう", "敏感肌へ優しく効果も期待できそう", "桃の成分が入っているとわかりやすい", "肌に優しそう", "桃がきれい", "敏感肌でも使える", "敏感肌", "低刺激ピーリング", "敏感肌でもというのが魅力的", "肌に優しそう", "肌に優しそう", "色合い", "速攻ピーリングだと刺激が強そう 低刺激の方が安心感がある", "肌への刺激が少なそう", "桃が強調されている", "肌に優しそうで誰でも使えそう", "可愛い", "低刺激だから使いやすい", "肌が弱い", "低刺激で使いやすそう", "ピーリングが気になった", "桃が美味しそう", "シンプルで桃がめだつ", "説得力がある", "敏感肌でも使える", "PHAきいたことある", "肌に優しそう", "見やすい", "桃のみずみずしさがシンプルに伝わる", "自分向き", "桃の魅力がシンプルに伝わる", "pha", "可愛い", "パッケージが可愛い", "なんとなく", "敏感肌でも使えることがわかり肌に優しそう", "パッケージデザインが好き", "低刺激ピーリングのが肌に負担がかからなさそう", "自分の悩みに合っている", "PHAのわーどがある", "シンプルでわかりやすい", "桃のような潤いが伝わる", "なんとなく", "アヌアが好きでパッケージで選んだ", "わかりやすくてパッケージも好き", "シンプルな感じがいい", "敏感肌向けで低刺激でお肌にやさしそう", "肌に合いそう", "下の候補はごちゃごちゃして桃なのか分からなかった", "かわいい", "低刺激ピーリングが良さそう", "美味しそう", "なんとなく", "敏感肌でも挑戦できる", "桃が目立ってとても可愛い", "桃のみずみずしさが伝わる", "低刺激", "すべすべになりそう", "低刺激のピーリングがきになる", "肌を整えてくれるイメージ", "匂いがいい", "角質ケアに徹している", "敏感肌でも使える方が魅力的", "敏感肌でも使えて刺激が少なそう", "敏感肌ピーリング", "敏感肌でも使えそう", "刺激が強そうに感じた", "シンプルで可愛い", "おいしそう", "シンプル", "かわいい", "肌が整いそう", "シンプルな方がすき", "分かりやすかった", "なんとなく", "敏感肌でも使えるかもしれない", "ブライトが嬉しい", "見やすい", "低刺激", "敏感肌でも使えると記載があった", "敏感肌にも使えるので肌に優しそう", "桃がすてき", "敏感肌でも挑戦できるのが魅力的", "より効果が期待できる", "パッケージの見た目", "敏感肌でも使えるところに魅力", "ブライトニング効果に惹かれた", "みずみずしい感じ", "桃感がつよい", "低刺激", "肌に優しそう", "低刺激ピーリングのほうが肌に優しいイメージ", "ピーリング効果がありそう", "敏感肌でも使えそう", "肌に負担なく角質オフできそう", "かわいい", "パッケージデザインから優しい雰囲気", "新鮮さがある", "優しそう", "グロウリファイニングは加工がすごいので現実味がない", "低刺激が魅力的", "自分に合いそう", "シンプルで良い", "ピーリングなのに敏感肌でも使える", "敏感肌", "低刺激ピーリングは魅力的で桃もいい", "桃が目立つ", "低刺激ピーリングが魅力的", "敏感肌にも使える", "桃肌がどんな風になるか気になる パッケージが可愛い", "角質をオフしてくれそう", "デザインがいい", "果肉が美味しそうでみずみずしい", "即効という部分に疑念があった", "ブライトが入っている方が自分に合っている", "低刺激から始め後から即効に変えれる"];
+var positiveCategories=[
+{label:"저자극 필링",keywords:["低刺激ピーリング","低刺激","PHA低刺激","低刺激の","低刺激で","低刺激なところ","低刺激 敏感肌"]},
+{label:"민감 피부도 OK",keywords:["敏感肌","敏感肌でも","敏感肌ピーリング","初めて挑戦"]},
+{label:"복숭아(桃)/피치",keywords:["桃","ピーチ","桃肌","もも","モモ","桃のイラスト","桃の写真","桃のえ","桃デザイン","桃のフォルム","桃のパッケージ","ピーチの"]},
+{label:"보송보송 결 피부(ふわすべ)",keywords:["ふわすべ","ふわすべキメ肌","ツヤキメ肌","キメケア","キメハダ","キメが整う","ツルツル","スベスベ"]},
+{label:"각질 케어",keywords:["角質","角栓","角質を整え","角質をすっきり","角質オフ","角質だけを","角質ケア"]},
+{label:"필링 전반",keywords:["ピーリング","ピーリングマスク","ピーリングケア","ピーリングができる","速攻ピーリング","即効ピーリング"]},
+{label:"복숭아 과즙",keywords:["桃の果汁","果汁","桃果汁","桃の果実"]},
+{label:"윤기 미백 차지",keywords:["ツヤ美白","美白","美白チャージ","ブライト"]},
+{label:"패키지/디자인",keywords:["パッケージ","可愛い","ピンク","デザイン","かわいい","見た目","高級そう","色味"]},
+{label:"PHA/AHA 성분",keywords:["PHA","AHA","桃PHA","peach aha","モモpha"]},
+{label:"1장으로 완성",keywords:["たった1枚","たった一枚","即効","速攻"]},
+{label:"가제 소재",keywords:["ガーゼ素材","ガーゼ"]},
+{label:"보습/촉촉함",keywords:["うるおい","潤い","保湿","みずみずし","ジェリーウォーター"]},
+{label:"브랜드(Anua)",keywords:["アヌア","ANUA"]}
+];
+var negativeCategories=[
+{label:"복숭아 과즙 - 불필요",keywords:["桃の果汁","果汁","桃の果実"]},
+{label:"복숭아/피치 - 비매력",keywords:["桃","ピーチ","桃肌","モモ","桃のよう","桃の写真","桃が自分に合わない","桃アレルギー"]},
+{label:"가제 소재 - 비매력",keywords:["ガーゼ素材","ガーゼ"]},
+{label:"PHA/桃PHA - 이해 어려움",keywords:["PHA","桃PHA","PHAが何","PHAがわから","PHAがどう","桃PHAがなん"]},
+{label:"필링 - 자극 우려",keywords:["ピーリング","低刺激ピーリング","速攻ピーリング","肌への刺激"]},
+{label:"보송보송 결 피부 - 비매력",keywords:["ふわすべ","ツルスベ","キメ肌","フワキメ","キメケア","やわらかなモモ肌"]},
+{label:"가격 우려",keywords:["値段","価格","高い","枚数が少なくて高い","770円"]},
+{label:"영어/브랜드 불명",keywords:["英語","英語表記","ana","アウラとは","日本語がない","英語ばかり","英語のパッケージ","全部英語"]},
+{label:"젤리워터에센스 - 불명확",keywords:["ジェリーウォーターエッセンス","ジェリーウォーター"]},
+{label:"민감 피부 - 해당 없음",keywords:["敏感肌","敏感肌の部分"]},
+{label:"저자극 - 의심",keywords:["低刺激","低刺激ピーリングと言われても疑わしい"]},
+{label:"미백 관련",keywords:["美白"]},
+{label:"시트마스크 비선호",keywords:["シートマスク","使わない"]}
+];
+var selectCategories=[
+{label:"저자극/민감 피부도 OK",keywords:["低刺激","敏感肌","肌に優しそう","肌に優しい","肌が弱い","刺激が少な","負担なく","負担がかから","安心感","安心して","優しそう","優しい雰囲気"]},
+{label:"패키지/디자인/비주얼",keywords:["パッケージ","デザイン","見た目","可愛い","かわいい","きれい","シンプル","桃が目立つ","桃が美味しそう","美味しそう","おいしそう","イラスト","色合い","色薄く","見やすい","桃感","桃がすてき","果肉"]},
+{label:"왠지 끌림(なんとなく)",keywords:["なんとなく","何となく","直感"]},
+{label:"필링 효과 기대",keywords:["ピーリング","ピーリングマスク","角質","角質ケア","角質をオフ","角質を取"]},
+{label:"촉촉함/미즈미즈시이",keywords:["みずみずし","潤い","うるおい","水","ぷりん","プルプル","すべすべ","ツルツル"]},
+{label:"자기 피부에 맞음",keywords:["自分に合って","自分向き","自分の悩み","自分にあいそう","肌に合いそう"]},
+{label:"미백/브라이트닝",keywords:["美白","ブライト"]},
+{label:"설명이 알기 쉬움",keywords:["わかりやすい","わかりやす","分かりやす","名前が分かりやすい","シンプルでわかり"]},
+{label:"새로움/신선함",keywords:["新しい","新鮮","初めて"]},
+{label:"향기 기대",keywords:["匂い","香り","桃の香り"]},
+{label:"효과가 높아 보임",keywords:["効果","効きそう","効き目","期待できる","肌が整い"]}
+];
+var noResp=["なし","ない","特になし","特にない","特になかった","なかった","特に無し","特にありません","特にありませんでした。","ありません","ないです","特にないです","とくになし","とくにない","特にはない","特にはなし","無し","な","た","さ","か","ー","しろい","88","8","5","7","1","4","ははへはふはへ4チはさ","ボール","きへい","なしわやに","なしなし","特に決まっていないです","特にないです。","よい"];
+
+function categorize(raw,cats){
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0;});
+  var res=cats.map(function(cat){
+    var m=f.filter(function(item){return cat.keywords.some(function(kw){return item.indexOf(kw)>=0;});});
+    return{label:cat.label,count:m.length,examples:m.filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,12)};
+  });
+  res.sort(function(a,b){return b.count-a.count;});
+  return res.filter(function(r){return r.count>0;});
+}
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function buildChart(cid,data,cls){
+  var c=document.getElementById(cid);
+  if(!data.length){c.innerHTML='<p style="color:var(--text-dim)">데이터 없음</p>';return;}
+  var mx=data[0].count,h="";
+  data.forEach(function(item,i){
+    var pct=Math.max((item.count/mx)*85,8);
+    var tips=item.examples.map(function(ex){return'<div class="tooltip-item">'+esc(ex)+'</div>';}).join("");
+    h+='<div class="bar-row" style="animation:fadeIn .4s '+(i*.06)+'s both"><div class="bar-label">'+item.label+'</div><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+pct+'%"><span class="bar-count">'+item.count+'</span></div><div class="tooltip"><div class="tooltip-title">일본어 원문 예시 (최대 12개)</div>'+tips+'</div></div></div>';
+  });
+  c.innerHTML=h;
+}
+
+function tokenJP(text){
+  var chunks=text.split(/[、。　,\s・]+/).filter(function(s){return s.length>1;});
+  var result=[];
+  chunks.forEach(function(chunk){
+    if(chunk.length<=8){result.push(chunk);return;}
+    var parts=chunk.split(/(?:だから|ですから|なので|から|ので|けど|のに|ために|ている|ていて|ていた|している|しそう|できそう|ありそう|なりそう|がありそう|がよさそう|がある|がない|だと思う|だと感じ|と思った|と感じた|と思いました|と感じました|に感じた|に思った|を感じ|に興味|に惹かれ|に魅力|が好き|が良い|が良さそう|がいい|がよい|がきれい|のほうが|の方が|という|といった|のような|みたいな|っぽい|そうだ|そうな|ような|ようで|そうで|てみたい|てくれそう|てくれる|について|に対して|として|のため|をして|をする|をした|ことが|ことも|ことで|こと$)/).filter(function(s){return s.length>1;});
+    if(parts.length>1){
+      parts.forEach(function(p){var t=p.replace(/^[がをにでとはもへのや]+/,"").replace(/[がをにでとはもへのや]+$/,"").trim();if(t.length>1)result.push(t);});
+    }else{
+      var simpler=chunk.split(/(?:が|を|に|で|と|は|も|へ)/).filter(function(s){return s.length>2;});
+      if(simpler.length>1){simpler.forEach(function(p){if(p.length>1&&p.length<=20)result.push(p);});}
+      else{result.push(chunk.substring(0,16));}
+    }
+  });
+  return result.filter(function(s){return s.length>1&&s.length<=20;});
+}
+
+function buildWC(cid,raw){
+  var c=document.getElementById(cid);
+  var stop=["それ","これ","あれ","その","この","あの","よう","ほう","ところ","ため","もの","こちら","やはり","まだ","もう","よく","とても","かなり","少し","すごく"];
+  var f=raw.filter(function(r){var t=r.trim();return t&&noResp.indexOf(t)<0&&t.length>1;});
+  var freq={};
+  f.forEach(function(item){
+    var toks=tokenJP(item);
+    toks.filter(function(v,i,a){return a.indexOf(v)===i;}).forEach(function(tk){if(stop.indexOf(tk)<0)freq[tk]=(freq[tk]||0)+1;});
+  });
+  var keys=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];});
+  var merged={},skip={};
+  keys.forEach(function(k){
+    if(skip[k])return;var best=k,cnt=freq[k];
+    keys.forEach(function(k2){
+      if(k===k2||skip[k2])return;
+      if(k.length>=3&&k2.length>=3&&(k.indexOf(k2)>=0||k2.indexOf(k)>=0)){
+        var sh=k.length<=k2.length?k:k2,lo=k.length<=k2.length?k2:k;
+        if(sh.length>=3&&lo.length-sh.length<=4){cnt+=freq[k2];skip[k2]=true;best=sh;}
+      }
+    });
+    merged[best]=(merged[best]||0)+cnt;
+  });
+  var ent=Object.entries(merged).sort(function(a,b){return b[1]-a[1];});
+  var mx=ent.length?ent[0][1]:1,top=ent.slice(0,55);
+  for(var i=top.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=top[i];top[i]=top[j];top[j]=tmp;}
+  var h="";
+  top.forEach(function(e){
+    var r=e[1]/mx,sc;
+    if(r>.7)sc="wc-s7";else if(r>.5)sc="wc-s6";else if(r>.35)sc="wc-s5";else if(r>.2)sc="wc-s4";else if(r>.12)sc="wc-s3";else if(r>.06)sc="wc-s2";else sc="wc-s1";
+    h+='<span class="wc-word '+sc+'" title="'+e[1]+'回">'+esc(e[0])+'</span> ';
+  });
+  c.innerHTML=h;
+}
+
+function showTab(id){
+  document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  var idx=id==="tab1"?0:id==="tab2"?1:2;
+  document.querySelectorAll(".tab")[idx].classList.add("active");
+}
+
+buildChart("chart-positive",categorize(positiveRaw,positiveCategories),"positive");
+buildChart("chart-negative",categorize(negativeRaw,negativeCategories),"negative");
+buildChart("chart-select",categorize(selectRaw,selectCategories),"select");
+buildWC("wc-positive",positiveRaw);
+buildWC("wc-negative",negativeRaw);
+buildWC("wc-select",selectRaw);
+
+var st=document.createElement("style");
+st.textContent="@keyframes fadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}";
+document.head.appendChild(st);
+
+
+</script>
+</body>
+</html>
