@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANUA × Dr. Marisa Garshick — 컨설팅 인사이트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#0047AB;
+    --primary-dark:#00337A;
+    --primary-container:#dce8fb;
+    --on-primary-container:#001a4d;
+    --secondary:#41597a;
+    --surface:#f9f9f9;
+    --card:#ffffff;
+    --low:#f3f3f3;
+    --on-surface:#1b1b1b;
+    --on-variant:#444746;
+    --outline:#c4c7c5;
+    --new:#f97316;
+    --new-bg:#ffedd5;
+    --font:'Manrope','Noto Sans KR',sans-serif;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--font);
+    background:var(--surface);
+    color:var(--on-surface);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    padding:40px 20px 80px;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+
+  .confidential{
+    display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.08em;
+    color:var(--primary-dark);background:var(--primary-container);
+    padding:5px 11px;border-radius:999px;margin-bottom:20px;
+  }
+  header{border-bottom:3px solid var(--primary);padding-bottom:26px;margin-bottom:26px;}
+  .eyebrow{font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--primary);margin-bottom:12px;}
+  h1{font-size:32px;font-weight:600;line-height:1.25;letter-spacing:-0.01em;margin-bottom:16px;}
+  h1 .accent{color:var(--primary);}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 26px;font-size:13px;color:var(--on-variant);margin-top:4px;}
+  .meta b{font-weight:600;color:var(--on-surface);}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:30px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tabs::-webkit-scrollbar{height:0;}
+  .tab{
+    flex-shrink:0;border:1px solid var(--outline);background:var(--card);color:var(--on-variant);
+    font-family:var(--font);font-size:13.5px;font-weight:600;
+    padding:9px 16px;border-radius:999px;cursor:pointer;transition:all .15s ease;white-space:nowrap;
+  }
+  .tab:hover{border-color:var(--primary);color:var(--primary);}
+  .tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+  .panel{display:none;animation:fade .25s ease;}
+  .panel.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  /* Overview */
+  .glance{background:var(--card);border:1px solid var(--outline);border-radius:var(--radius);padding:26px 28px;margin-bottom:20px;}
+  .glance h2{font-size:13px;font-weight:600;letter-spacing:0.04em;color:var(--on-variant);margin-bottom:18px;}
+  .glance-row{display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--low);}
+  .glance-row:first-of-type{border-top:none;padding-top:0;}
+  .gtag{flex-shrink:0;width:26px;height:26px;border-radius:7px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+  .gtext .gname{font-size:12.5px;font-weight:600;color:var(--primary);margin-bottom:2px;}
+  .gtext .gline{font-size:14px;}
+
+  .newbox{background:var(--new-bg);border:1px solid #fed7aa;border-radius:var(--radius);padding:24px 28px;}
+  .newbox h2{font-size:13px;font-weight:700;letter-spacing:0.04em;color:var(--new);margin-bottom:6px;}
+  .newbox .sub{font-size:12.5px;color:var(--on-variant);margin-bottom:16px;}
+  .newbox ul{list-style:none;display:grid;gap:11px;}
+  .newbox li{font-size:14px;padding-left:22px;position:relative;}
+  .newbox li::before{content:"";position:absolute;left:0;top:10px;width:8px;height:8px;border-radius:50%;background:var(--new);}
+  .newbox li b{font-weight:600;}
+
+  /* Product */
+  .phead{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+  .pnum{width:34px;height:34px;border-radius:9px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .ptitle{font-size:20px;font-weight:600;letter-spacing:-0.01em;}
+  .ptitle span{display:block;font-size:11px;font-weight:600;letter-spacing:0.04em;color:var(--on-variant);margin-top:3px;}
+
+  .takeaway{background:var(--primary);color:#fff;border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;font-size:15px;font-weight:500;line-height:1.55;}
+  .takeaway .lbl{display:block;font-size:10px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.72);margin-bottom:6px;}
+
+  .card{background:var(--card);border:1px solid var(--outline);border-radius:var(--radius);padding:8px 26px;}
+  .insight{padding:16px 0;border-top:1px solid var(--low);display:flex;gap:16px;}
+  .insight:first-child{border-top:none;}
+  .ilabel{flex-shrink:0;width:110px;font-size:12px;font-weight:600;letter-spacing:0.02em;color:var(--secondary);padding-top:2px;}
+  .ibody{font-size:14.5px;}
+  .ibody b{font-weight:600;}
+  .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.04em;padding:2px 8px;border-radius:5px;margin-right:8px;vertical-align:1.5px;}
+  .tag.key{background:var(--primary-container);color:var(--primary-dark);}
+  .tag.new{background:var(--new-bg);color:var(--new);}
+  .tag.watch{background:#fce8e6;color:#b3261e;}
+
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--outline);font-size:11.5px;color:var(--on-variant);line-height:1.8;}
+  footer b{color:var(--on-surface);font-weight:600;}
+
+  @media(max-width:640px){
+    body{padding:24px 14px 60px;}
+    h1{font-size:25px;}
+    .insight{flex-direction:column;gap:5px;}
+    .ilabel{width:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Dr. Marisa Garshick <span class="accent">컨설팅 리포트</span></h1>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="ov">전체</button>
+    <button class="tab" data-tab="a">A. 데일리 패드</button>
+    <button class="tab" data-tab="b">B. 다크립</button>
+    <button class="tab" data-tab="c">C. 립 트리트먼트</button>
+    <button class="tab" data-tab="d">D. 아젤라익 클렌저</button>
+    <button class="tab" data-tab="e">E. OTC 젤크림</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="panel active" id="ov">
+    <div class="glance">
+      <h2>한눈에 보기</h2>
+      <div class="glance-row"><div class="gtag">A</div><div class="gtext"><div class="gname">데일리 패드</div><div class="gline">매일 사용은 정당화 가능. "모공" 스토리에서 순한 데일리 리뉴얼로 전환하고 익숙한 마일드 산을 앞세울 것.</div></div></div>
+      <div class="glance-row"><div class="gtag">B</div><div class="gtext"><div class="gname">다크립</div><div class="gline">"다크립"보다 밝고 균일한 입술로 리프레이밍하고, 활성 치료가 아닌 유지·예방용으로 설계할 것.</div></div></div>
+      <div class="glance-row"><div class="gtag">C</div><div class="gtext"><div class="gname">모이스처라이징 립 트리트먼트</div><div class="gline">명확한 화이트 스페이스. 바세린·아쿠아퍼 수준의 보호력을 더 나은 센소리얼로 구현하고, 가능하면 SPF 탑재.</div></div></div>
+      <div class="glance-row"><div class="gtag">D</div><div class="gtext"><div class="gname">아젤라익 젤 클렌저</div><div class="gline">현 제형 그대로 경쟁력 있음. 로제이셔라는 두 번째 고가치 타겟이 열림.</div></div></div>
+      <div class="glance-row"><div class="gtag">E</div><div class="gtext"><div class="gname">아젤라익 워터젤 크림 (OTC)</div><div class="gline">젤과 에멀전 사이 고민 지점(젤은 범용성·접근성, 에멀전은 민감성 피부 적합). 여드름 치료제가 아니라 여드름 피부에 맞는 보습제로 포지셔닝.</div></div></div>
+    </div>
+
+    <div class="newbox">
+      <h2>새롭게 발견된 기회</h2>
+      <div class="sub">닥터가 자발적으로 제안한 방향. 제품팀 공유 검토 필요.</div>
+      <ul>
+        <li><b>로제이셔 클렌저 라인 확장</b> - 아젤라익 클렌저의 크림 타입 버전으로 미충족 로제이셔 고객 공략</li>
+        <li><b>다크립 리프레이밍</b> - "다크립" 대신 밝고 균일한 입술로 소구해 더 넓고 안전한 타겟 확보</li>
+        <li><b>립 보습제 SPF 공백</b> - 실제 보습과 SPF를 겸비한 립 제품이 드물며, 다크립 예방과도 직결</li>
+        <li><b>틴티드 브라이트닝 글로스</b> - 커버(camouflage)와 색소 개선 효능을 동시에</li>
+        <li><b>데이/나이트 립 분리</b> - 가벼운 SPF 데이 제품 + 리치한 오버나이트 트리트먼트</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- A -->
+  <div class="panel" id="a">
+    <div class="phead"><div class="pnum">A</div><div class="ptitle">Barrier Reboot 데일리 패드<span>데일리 각질 패드</span></div></div>
+    <div class="takeaway"><span class="lbl">핵심 요약</span>매일 사용은 정당화 가능하지만, 핵심은 "모공" 언어에서 순한 데일리 리뉴얼로 포지셔닝을 옮기고 익숙한 마일드 산을 낮은 농도로 쓰는 것.</div>
+    <div class="card">
+      <div class="insight"><div class="ilabel">산 방향</div><div class="ibody"><span class="tag key">Key</span>데일리 패드에는 <b>락틱애씨드 또는 만델릭애씨드</b>를 선호, 농도는 <b>2~5%</b> 수준. 시트릭애씨드는 덜 익숙해서 (ANUA의 신성분 도입 이력을 고려하면) "흥미로운 신성분" 전략으로는 가능하나 강한 성능이 입증되진 않음. 글리콜릭을 앞세우는 건 지양 - 소비자가 매일 쓰기엔 너무 강하다고 인식. 듀얼/하이브리드 산도 옵션.</div></div>
+      <div class="insight"><div class="ilabel">근거 데이터</div><div class="ibody"><b>자극 테스트와 민감성 피부 테스트</b>가 pH·산 함량 데이터보다 소비자와 의사 모두에게 더 설득력 있음. "써도 자극 없다"가 더 쉽고 강한 클레임.</div></div>
+      <div class="insight"><div class="ilabel">pH</div><div class="ibody">균형 있게, <b>pH 5~6</b> 정도. 민감성 피부라도 크게 벗어나지 않음.</div></div>
+      <div class="insight"><div class="ilabel">사용 가이드</div><div class="ibody">패치 테스트; 주 2~3회로 시작해 내성 되는 만큼 매일까지 증량; 레티노이드·BP 병용 주의(박스가 아닌 웹사이트면 충분); SPF 필수 병행.</div></div>
+      <div class="insight"><div class="ilabel">병용 리스크</div><div class="ibody"><b>레티노이드가 핵심.</b> 같은 루틴은 괜찮지만 동시 사용은 지양 - 격일, 또는 패드는 아침·레티노이드는 밤.</div></div>
+      <div class="insight"><div class="ilabel">라인업 명확성</div><div class="ibody"><span class="tag key">Key</span>클래리파잉 vs 타이트닝 구분이 <b>한눈에 직관적이지 않음</b>. 데일리 패드에서 "모공" 프레임을 빼고 전반적 광채·안티에이징(AHA 효능)으로 연결; 위클리 클래리파잉 패드는 BHA를 명확한 주인공으로. 위클리 제품 네이밍으로 "더 강한 쪽"임을 시그널. 스페셜 케어 날엔 데일리 패드를 생략하도록 안내.</div></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="panel" id="b">
+    <div class="phead"><div class="pnum">B</div><div class="ptitle">다크립 탐색<span>임상 탐색</span></div></div>
+    <div class="takeaway"><span class="lbl">핵심 요약</span>"다크립"보다 밝고 균일한 입술로 리프레이밍하고, 활성 염증 상태가 아닌 유지·예방용으로 제품을 설계할 것.</div>
+    <div class="card">
+      <div class="insight"><div class="ilabel">발생 빈도</div><div class="ibody">최상위 고민은 아니지만 해당 환자는 매우 신경 씀. <b>어두운 피부톤</b>에서 더 흔함. 밝은 피부에서는 멜라스마 관련(자외선·호르몬, "립라이너" 형태)인 경우가 많음.</div></div>
+      <div class="insight"><div class="ilabel">원인 · 주의</div><div class="ibody"><span class="tag watch">주의</span>입술 색소침착은 유전보다 <b>이전·만성 염증</b>에서 비롯되는 경우가 많음. 기존 자극으로 어두워진 부위에 활성 성분을 바르면 오히려 악화될 수 있음. 닥터는 치료 전 먼저 염증을 진정(단기 스테로이드)시킴 - 따라서 제품은 활성 flare가 아닌 유지·회복 후 단계에 적합.</div></div>
+      <div class="insight"><div class="ilabel">마케팅 리프레이밍</div><div class="ibody"><span class="tag key">Key</span>"다크립"보다 <b>칙칙함·불균일·밝기</b>로 소구할 것. "다크립"에 끌리는 사람은 실제 기저 문제가 있는 경우가 많고 그 모집단은 작음; 밝고 건강한 입술 메시지가 더 넓고 안전한 타겟에 닿음.</div></div>
+      <div class="insight"><div class="ilabel">TXA vs 대안</div><div class="ibody">TXA는 임상적으로 말이 되지만 입술에서 <b>섭취 문제</b>(경구약으로도 존재; 립 licking 등으로 삼킬 수 있음) 때문에 안전성 분석을 원함. 더 순하고 입술에 적합한 <b>나이아신아마이드 또는 아젤라익애씨드</b>를 선호.</div></div>
+      <div class="insight"><div class="ilabel">일상 케어</div><div class="ibody">페트롤라툼 기반, 무향 베이스; 브라이트닝 각도로 비타민 C. 아이디어: 커버 기능 + 기저 브라이트닝을 겸한 <b>틴티드 글로스</b>.</div></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="panel" id="c">
+    <div class="phead"><div class="pnum">C</div><div class="ptitle">Barrier Reboot 모이스처라이징 립 트리트먼트<span>립 배리어 케어</span></div></div>
+    <div class="takeaway"><span class="lbl">핵심 요약</span>바세린·아쿠아퍼 수준의 보호력을 훨씬 나은 센소리얼로 구현하는 명확한 화이트 스페이스가 있으며, SPF를 더하면 카테고리를 정의하는 승부수가 됨.</div>
+    <div class="card">
+      <div class="insight"><div class="ilabel">카테고리 필요성</div><div class="ibody"><span class="tag key">Key</span>강한 예스. 대부분의 립 제품이 보습은 되지만 진짜 오클루시브 배리어를 만들지 못해 환자에게 바세린·아쿠아퍼 전환을 자주 권함. 기회는 <b>"같은 과학, 더 우아한 센소리얼"</b>.</div></div>
+      <div class="insight"><div class="ilabel">"립 배리어" 표현</div><div class="ibody">잘 통함. "배리어"는 이미 피부에서 익숙하고 입술로 자연스럽게 확장됨.</div></div>
+      <div class="insight"><div class="ilabel">페트롤라툼 약점</div><div class="ibody">일부 소비자의 안전성 우려; 용기(jar)+손가락 도포의 불편함; 낮 시간 번들거림·끈적임(밤엔 괜찮음). <b>이 센소리얼 공백이 승부처.</b></div></div>
+      <div class="insight"><div class="ilabel">페트롤라툼-프리</div><div class="ibody"><b>기본적으로는 페트롤라툼 기반을 선호.</b> 다만 페트롤라툼-프리의 가벼운 제형으로 간다면, <b>세라마이드 + 글리세린·HA</b>로 아주 무거운 오클루시브 없이 구현 가능(시어버터도 가능하나 알레르기 유발 가능성 확인 필요). <span class="tag new">제안</span>이 경우 <b>비타민 C 등 브라이트닝 성분 + 틴티드 + SPF</b>를 담아 "데이케어 제품"으로 어필하는 방향도 좋겠다는 제안.</div></div>
+      <div class="insight"><div class="ilabel">마무리감</div><div class="ibody">진짜 갈라지고 건조한 입술엔 Type A(리치 오클루시브). <b>데이(가벼움)/나이트(리치) 분리</b> 지지.</div></div>
+      <div class="insight"><div class="ilabel">SPF</div><div class="ibody"><span class="tag new">New</span>SPF와 실제 보습을 겸비한 립 제품이 드묾. 데이 버전에 SPF 탑재 시 시장 공백을 메우고 <b>다크립 예방과도 직결</b>(색소침착엔 늘 자외선 차단이 기본).</div></div>
+      <div class="insight"><div class="ilabel">컨셉 보드</div><div class="ibody"><b>텍스처 중심안이 우세.</b> 입술은 얼굴만큼 성분 스토리가 익숙하지 않음; 버터리·쿠션·멜팅 언어가 번들거림이 아닌 보습으로 읽힘, 튜브가 용기보다 사용 편의성 높음. 카피 노트: "튜브 밤 끈적임" 대신 "립 제품의 1순위 불만인 끈적임"이 더 명확.</div></div>
+      <div class="insight"><div class="ilabel">성분</div><div class="ibody"><span class="tag key">Key</span><b>ML3 + 펩타이드 + 세라마이드</b> 조합은 신뢰도 높고 호평. 메시지는 <b>세라마이드를 앞세울 것</b>(배리어로 보편 인지); 펩타이드는 헤드라인 비중 축소(소비자는 펩타이드를 주름과 연결, "내 입술은 주름 없는데"). 추가 성분 하나: HA 또는 글리세린.</div></div>
+      <div class="insight"><div class="ilabel">K-Pharmacy</div><div class="ibody">뷰티·미디어 맥락에선 안전하고 매력적("K-beauty 신제품 립" 헤드라인 통함), 진료실 안에선 셀링포인트로 약함(환자는 과학을 원함). 스토리를 쓴다면 가장 설득력 있는 성분은 덜 익숙한 <b>enoxolone(에녹솔론)</b>을 서사로 엮는 것, allantoin·dexpanthenol보다.</div></div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="panel" id="d">
+    <div class="phead"><div class="pnum">D</div><div class="ptitle">아젤라익 젤 클렌저<span>여드름 클렌저</span></div></div>
+    <div class="takeaway"><span class="lbl">핵심 요약</span>현 제형 그대로 강력하고 진짜 센소리얼 차별점이 있으며, 로제이셔라는 두 번째 고가치 타겟이 열림.</div>
+    <div class="card">
+      <div class="insight"><div class="ilabel">샘플 평가</div><div class="ibody">매우 만족. <b>젤-투-폼 라더</b>가 진짜 차별점 - 대부분의 여드름·살리실릭 클렌저는 젤 전용이라 센소리얼이 약함. 아젤라익인데도 건조하지 않음.</div></div>
+      <div class="insight"><div class="ilabel">신규 세그먼트</div><div class="ibody"><span class="tag new">제안</span><b>로제이셔 피부</b> 탐색을 제안하심. 로제이셔 환자는 쉬운 OTC 옵션이 없음(설퍼 워시는 불쾌하고 접근 어려움). 라인 확장 제안: 여드름용은 이 젤-투-폼 유지, 로제이셔용은 <b>크림 타입 클렌저</b> 버전을 별도로 두는 방향.</div></div>
+      <div class="insight"><div class="ilabel">메커니즘</div><div class="ibody">워시오프에서도 아젤라익은 일정 효과(BP·살리실릭과 유사), 일반 여드름 클렌저보다 순함. 리브온만큼은 아니지만 없는 것보다 나음.</div></div>
+      <div class="insight"><div class="ilabel">포뮬러 추가</div><div class="ibody">여드름 버전엔 <b>PHA 또는 ~0.5% 살리실릭 산</b>으로 모공 클렌징 시그널("아젤라익 플러스" 같은 네이밍). 로제이셔 버전엔 <b>나이아신아마이드 또는 센텔라</b>로 진정.</div></div>
+      <div class="insight"><div class="ilabel">타겟 · 루틴</div><div class="ibody"><b>민감성 동반 경중도 여드름</b>; 가슴·등과 여드름 흉터·색소침착(아젤라익애씨드가 색소에 도움). 밤 레티노이드와 짝지어 <b>아침 클렌저</b>로 포지셔닝.</div></div>
+      <div class="insight"><div class="ilabel">추천 멘트</div><div class="ibody">"과도한 유분을 제거하면서도 피부에 순하게 작용하도록 이 제품을 권합니다"(클레임 허용 시 진정·항염 표현 추가).</div></div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="panel" id="e">
+    <div class="phead"><div class="pnum">E</div><div class="ptitle">아젤라익 워터젤 크림<span>여드름 OTC 보습제</span></div></div>
+    <div class="takeaway"><span class="lbl">핵심 요약</span>젤과 에멀전 사이의 고민 지점 - 젤은 범용성·접근성, 에멀전은 민감성 피부 적합. 어느 쪽이든 여드름 치료제가 아니라 여드름 피부에 맞는 보습제로 포지셔닝할 것.</div>
+    <div class="card">
+      <div class="insight"><div class="ilabel">텍스처</div><div class="ibody"><span class="tag key">Key</span><b>젤 vs 에멀전은 실제 고민 지점.</b> 젤은 더 범용적이고 흔한 제형이라 <b>접근성이 좋음</b>(가볍고 모공 막힘 적고 "수분 갇힘" 느낌 적음). 다만 <b>민감성 피부</b>를 고려하면 에멀전이 더 어울림. 넓은 여드름 시장 공략이면 젤, 민감성 타겟 비중이 크면 에멀전 쪽.</div></div>
+      <div class="insight"><div class="ilabel">농도</div><div class="ibody">보습제에서는 <b>아젤라익 함량이 덜 중요</b> - 세럼처럼 주인공이 아님. 어느 정도 들어있으면 충분.</div></div>
+      <div class="insight"><div class="ilabel">포지셔닝</div><div class="ibody"><span class="tag key">Key</span><b>여드름 피부에 잘 맞고 부가 효능이 있는 보습제</b>로 프레이밍, 여드름 치료제가 아님. 보습제를 고르는 경증 여드름에 최적; 중증 여드름엔 부적합(처방 + 순한 보조 보습제 필요).</div></div>
+    </div>
+  </div>
+
+  <footer>
+    AAB2026
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+</script>
+</body>
+</html>
