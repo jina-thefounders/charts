@@ -1,0 +1,401 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>협업 만족도 중간 리포트</title><style>
+:root{--ink:#17241c;--muted:#5f7268;--line:#e2ece6;--bg:#ffffff;--card:#ffffff;--accent:#1f7a4d;--accent-dark:#155c39;--accent-soft:#eef6f1;}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;color:var(--ink);background:#ffffff;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:40px 28px 80px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:28px;margin:.2em 0 .1em;letter-spacing:-.01em}
+h2{font-size:19px;margin:44px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent);display:inline-block}
+h3{font-size:15px;margin:26px 0 10px;color:var(--accent)}
+.sub{color:var(--muted);font-size:14px;margin:0}
+.note{background:var(--accent-soft);border:1px solid #cfe6da;border-radius:10px;padding:14px 16px;font-size:13px;color:#1c5b3c;margin:18px 0}
+.note b{color:#134430}
+.tabs{display:flex;gap:6px;margin:26px 0 0;border-bottom:2px solid var(--line)}
+.tabbtn{appearance:none;border:0;background:none;font:inherit;font-weight:600;font-size:15px;color:var(--muted);padding:12px 20px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.15s}
+.tabbtn:hover{color:var(--ink)}
+.tabbtn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.panel{display:none;animation:fade .2s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px}
+.card.biz::before{background:#1f7a4d}.card.non::before{background:#6cbf95}
+.card .lbl{font-size:13px;color:var(--muted);font-weight:600}
+.card .big{font-size:38px;font-weight:700;line-height:1;margin:8px 0 2px}
+.card .meta{font-size:12.5px;color:var(--muted)}.card .meta b{color:var(--ink)}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:13px}
+.dt th,.dt td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+.dt thead th{background:#f2f8f4;font-weight:600;font-size:11px;color:var(--muted);vertical-align:bottom}
+.dt th.rot{white-space:nowrap;font-size:10.5px}
+.dt td.tname,.dt th.tname{text-align:left;font-weight:600;white-space:nowrap;padding-left:14px}
+.dt td.nn{color:var(--muted)}
+.chip{display:inline-block;min-width:38px;padding:3px 6px;border-radius:6px;font-weight:600;font-variant-numeric:tabular-nums}
+.pill{font-weight:700}
+.cmp{width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cmp th,.cmp td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:middle}
+.cmp thead th{background:#f2f8f4;color:var(--muted);font-weight:600;font-size:12px}
+.cmp .tname{font-weight:600;white-space:nowrap}
+.cbar small{color:var(--muted);margin-left:8px;font-size:11px}
+.bar{position:relative;background:#eef0f4;border-radius:6px;height:22px;width:180px;display:inline-block;vertical-align:middle}
+.barfill{position:absolute;left:0;top:0;bottom:0;border-radius:6px}
+.barval{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#333;font-variant-numeric:tabular-nums}
+.gap{font-weight:700;font-variant-numeric:tabular-nums}
+.gap.pos{color:#3f9d6d}.gap.neg{color:#d15e4e}.gap.zero{color:var(--muted)}
+.na{color:#c9ced6}
+ul.ins{list-style:none;padding:0;margin:14px 0}
+ul.ins li{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 16px;margin-bottom:10px;font-size:14px}
+ul.ins li b{color:var(--accent)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:10px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+/* raw tab */
+.tnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+.tchip{font-size:13px;text-decoration:none;color:var(--accent);background:#fff;border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-weight:600}
+.tchip b{color:var(--muted);font-weight:600;margin-left:2px}
+.tchip:hover{border-color:var(--accent)}
+.teamblk{margin:30px 0}
+.teamh{font-size:18px;color:var(--ink);margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent);display:flex;align-items:baseline;gap:10px}
+.teamh .cnt{font-size:13px;color:var(--muted);font-weight:600}
+.qc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.qmeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;color:#fff}
+.badge.biz{background:#1f7a4d}.badge.non{background:#6cbf95}
+.dept{font-size:13px;color:var(--ink);font-weight:600}
+.rank{font-size:12px;color:var(--muted);margin-left:auto}
+.qrow{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:7px 0}
+.qrow+.qrow{border-top:1px solid #f2f3f6}
+.qlab{font-size:12px;font-weight:700;padding-top:2px}
+.qlab.pos{color:#3f9d6d}.qlab.neg{color:#d15e4e}.qlab.imp{color:#c08a2b}
+.qtxt{font-size:14px;color:var(--ink);white-space:normal}
+.qtxt .empty{color:#b9bec8;font-style:italic;font-size:13px}
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+@media(max-width:640px){.cards{grid-template-columns:1fr}.bar{width:120px}.qrow{grid-template-columns:1fr;gap:3px}.qlab{padding-top:6px}}
+@media print{body{background:#fff}.wrap{padding:0}.tabs{display:none}.panel{display:block!important}.card,.tblwrap,.cmp,.qc,.teamblk{break-inside:avoid}}
+</style></head><body><div class="wrap">
+<p class="eyebrow">사내 협업 만족도 조사 · 중간 집계</p>
+<h1>프로덕트 본부 협업 만족도 리포트</h1>
+<p class="sub">응답자 14명이 협업 빈도 상위 팀을 최대 5개 선택 → 팀별 11개 항목(1~5점) 평가 + 주관식 3문항.</p>
+<div class="tabs">
+  <button class="tabbtn active" onclick="showTab(0)">① 집계 리포트</button>
+  <button class="tabbtn" onclick="showTab(1)">② 주관식 원문 (팀별)</button>
+</div>
+<div class="panel active" id="p0">
+<div class="note"><b>집계 기준</b> · <b>사업부</b> = 평가자 소속 <b>본부명에 "사업본부"</b> 포함(일본사업본부·한국사업본부). 그 외는 <b>비사업부</b>. 점수 1~5점(높을수록 긍정), '해당없음' 제외. 표본이 작아(사업부 4명) 개별 팀 수치는 경향 참고용.</div>
+<div class="cards">
+  <div class="card biz"><div class="lbl">사업부 소속 평가자</div><div class="big">3.22</div>
+    <div class="meta">평균 종합만족 · 10항목 평균 <b>3.39</b></div>
+    <div class="meta" style="margin-top:8px">평가자 <b>4명</b> · 팀 평가 <b>10건</b></div></div>
+  <div class="card non"><div class="lbl">비사업부 소속 평가자</div><div class="big">3.70</div>
+    <div class="meta">평균 종합만족 · 10항목 평균 <b>3.63</b></div>
+    <div class="meta" style="margin-top:8px">평가자 <b>10명</b> · 팀 평가 <b>27건</b></div></div>
+</div>
+<h2>두 그룹이 공통으로 평가한 팀 비교</h2>
+<p class="sub">양쪽 평가자가 모두 평가한 팀. <b>차이</b>는 (사업부 − 비사업부) 종합만족.</p>
+<table class="cmp"><thead><tr><th>팀</th><th>사업부 종합만족</th><th>비사업부 종합만족</th><th>차이</th></tr></thead>
+<tbody><tr><td class="tname">RA팀</td>
+      <td class="cbar"><div class="bar"><div class="barfill" style="width:73%;background:#7cae5b"></div><span class="barval">3.67</span></div><small>n=3</small></td>
+      <td class="cbar"><div class="bar"><div class="barfill" style="width:77%;background:#7cae5b"></div><span class="barval">3.83</span></div><small>n=6</small></td>
+      <td class="gap neg">-0.16</td></tr><tr><td class="tname">리테일 프로덕트팀</td>
+      <td class="cbar"><div class="bar"><div class="barfill" style="width:60%;background:#e0a83d"></div><span class="barval">3.00</span></div><small>n=4</small></td>
+      <td class="cbar"><div class="bar"><div class="barfill" style="width:73%;background:#7cae5b"></div><span class="barval">3.67</span></div><small>n=6</small></td>
+      <td class="gap neg">-0.67</td></tr><tr><td class="tname">프로덕트팀</td>
+      <td class="cbar"><div class="bar"><div class="barfill" style="width:60%;background:#e0a83d"></div><span class="barval">3.00</span></div><small>n=3</small></td>
+      <td class="cbar"><div class="bar"><div class="barfill" style="width:67%;background:#e0a83d"></div><span class="barval">3.33</span></div><small>n=6</small></td>
+      <td class="gap neg">-0.33</td></tr></tbody></table>
+<div class="legend"><span><i class="sw" style="background:#3f9d6d"></i>4.0+</span><span><i class="sw" style="background:#7cae5b"></i>3.5–3.9</span><span><i class="sw" style="background:#e0a83d"></i>3.0–3.4</span><span><i class="sw" style="background:#d76a5b"></i>3.0 미만</span></div>
+<h2>핵심 관찰</h2>
+<ul class="ins">
+<li><b>사업부 평가자가 프로덕트 계열 팀을 더 박하게 봤어요.</b> 공통 3팀 모두 사업부 점수가 같거나 낮았고, <b>리테일 프로덕트팀</b>이 사업부 3.00 vs 비사업부 3.67로 격차 최대(−0.67).</li>
+<li><b>프로덕트팀·리테일 프로덕트팀이 하위권.</b> 전체 종합만족 프로덕트팀 3.22, 리테일 프로덕트팀 3.44 — 상위권(MI·R&I 4.00, RA 3.78)과 격차.</li>
+<li><b>사업부 평가는 3개 팀에 집중.</b> 프로덕트팀·리테일 프로덕트팀·RA팀 — 실제 사업 접점이 이 세 팀에 몰려 있음을 시사.</li>
+</ul>
+<h2>사업부 평가자 — 팀별 상세</h2>
+<h3>소속: 일본사업본부·한국사업본부 (4명, 10건)</h3><div class="tblwrap"><table class="dt">
+    <thead><tr><th class="tname">팀</th><th>n</th><th class="rot">협업태도</th><th class="rot">커뮤니케이션</th><th class="rot">R&amp;R·책임명확성</th><th class="rot">요청·정보명확성</th><th class="rot">응답태도</th><th class="rot">일정준수</th><th class="rot">결과물품질</th><th class="rot">전문성</th><th class="rot">문제해결력·유연성</th><th class="rot">업무기여도</th><th class="rot">종합만족도</th><th>10항목<br>평균</th></tr></thead>
+    <tbody><tr><td class="tname">RA팀</td><td class="nn">3</td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td style="font-weight:700"><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td class="pill">3.53</td></tr><tr><td class="tname">프로덕트팀</td><td class="nn">3</td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.67</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.67</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td style="font-weight:700"><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td class="pill">3.10</td></tr><tr><td class="tname">리테일 프로덕트팀</td><td class="nn">4</td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.25</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.25</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.25</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td style="font-weight:700"><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td class="pill">3.50</td></tr></tbody></table></div>
+<h2>비사업부 평가자 — 팀별 상세</h2>
+<h3>소속: 프로덕트본부·글로벌 마케팅 1~3본부·SCM본부 (10명, 27건)</h3><div class="tblwrap"><table class="dt">
+    <thead><tr><th class="tname">팀</th><th>n</th><th class="rot">협업태도</th><th class="rot">커뮤니케이션</th><th class="rot">R&amp;R·책임명확성</th><th class="rot">요청·정보명확성</th><th class="rot">응답태도</th><th class="rot">일정준수</th><th class="rot">결과물품질</th><th class="rot">전문성</th><th class="rot">문제해결력·유연성</th><th class="rot">업무기여도</th><th class="rot">종합만족도</th><th>10항목<br>평균</th></tr></thead>
+    <tbody><tr><td class="tname">MI팀</td><td class="nn">2</td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.50</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">5.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">5.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">5.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.50</span></td><td style="font-weight:700"><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td class="pill">4.40</td></tr><tr><td class="tname">R&amp;I팀</td><td class="nn">3</td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td style="font-weight:700"><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td class="pill">4.13</td></tr><tr><td class="tname">RA팀</td><td class="nn">6</td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.17</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.83</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.83</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.83</span></td><td style="font-weight:700"><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.83</span></td><td class="pill">3.72</td></tr><tr><td class="tname">제품 교육팀</td><td class="nn">4</td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td style="font-weight:700"><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td class="pill">3.83</td></tr><tr><td class="tname">리테일 프로덕트팀</td><td class="nn">6</td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.17</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td style="font-weight:700"><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td class="pill">3.47</td></tr><tr><td class="tname">프로덕트팀</td><td class="nn">6</td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.17</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.67</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.83</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.67</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.17</span></td><td style="font-weight:700"><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td class="pill">3.07</td></tr></tbody></table></div>
+<h2>참고: 전체(합산) 팀별 상세</h2>
+<h3>사업부+비사업부 합산 (14명, 37건)</h3><div class="tblwrap"><table class="dt">
+    <thead><tr><th class="tname">팀</th><th>n</th><th class="rot">협업태도</th><th class="rot">커뮤니케이션</th><th class="rot">R&amp;R·책임명확성</th><th class="rot">요청·정보명확성</th><th class="rot">응답태도</th><th class="rot">일정준수</th><th class="rot">결과물품질</th><th class="rot">전문성</th><th class="rot">문제해결력·유연성</th><th class="rot">업무기여도</th><th class="rot">종합만족도</th><th>10항목<br>평균</th></tr></thead>
+    <tbody><tr><td class="tname">MI팀</td><td class="nn">2</td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.50</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">5.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">5.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">5.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.50</span></td><td style="font-weight:700"><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td class="pill">4.40</td></tr><tr><td class="tname">R&amp;I팀</td><td class="nn">3</td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.33</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td style="font-weight:700"><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td class="pill">4.13</td></tr><tr><td class="tname">RA팀</td><td class="nn">9</td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.78</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.78</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.56</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.44</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.44</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.78</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.67</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.78</span></td><td style="font-weight:700"><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.78</span></td><td class="pill">3.66</td></tr><tr><td class="tname">제품 교육팀</td><td class="nn">4</td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#3f9d6d1a;color:#3f9d6d">4.00</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td style="font-weight:700"><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.75</span></td><td class="pill">3.83</td></tr><tr><td class="tname">리테일 프로덕트팀</td><td class="nn">10</td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.60</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.60</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.50</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.40</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.10</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.30</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.70</span></td><td><span class="chip" style="background:#7cae5b1a;color:#7cae5b">3.60</span></td><td style="font-weight:700"><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.44</span></td><td class="pill">3.48</td></tr><tr><td class="tname">프로덕트팀</td><td class="nn">9</td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.00</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.22</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.89</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.78</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.33</span></td><td><span class="chip" style="background:#d76a5b1a;color:#d76a5b">2.89</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.22</span></td><td><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.11</span></td><td style="font-weight:700"><span class="chip" style="background:#e0a83d1a;color:#e0a83d">3.22</span></td><td class="pill">3.08</td></tr></tbody></table></div>
+</div>
+<div class="panel" id="p1">
+<div class="note">각 팀을 평가한 응답자의 주관식 3문항(<b>만족·유지할 점 / 불만족 이유 / 개선 제안</b>)을 <b>원문 그대로</b> 수록했습니다. 응답자 그룹(사업부·비사업부)과 소속·선택 순위를 함께 표기했고, 미기재 항목은 '—'로 표시했습니다. 팀 순서는 응답 건수 많은 순.</div>
+<div class="tnav"><a class="tchip" href="#tm-0">리테일 프로덕트팀 <b>10</b></a><a class="tchip" href="#tm-1">프로덕트팀 <b>9</b></a><a class="tchip" href="#tm-2">RA팀 <b>9</b></a><a class="tchip" href="#tm-3">제품 교육팀 <b>4</b></a><a class="tchip" href="#tm-4">R&amp;I팀 <b>3</b></a><a class="tchip" href="#tm-5">MI팀 <b>2</b></a></div>
+<section id="tm-0" class="teamblk"><h3 class="teamh">리테일 프로덕트팀 <span class="cnt">10건</span></h3><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">한국사업본부 · 한국 영업팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">데이터 아웃 등 일정 딜레이 되지 않도록 더욱 신경써주셨으면 합니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">리테일러와 협의가 완료된 상황에서 추가 디자인/문구 수정 등 빈도가 잦은 편은 아니나 몇 차례 발생</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">사전에 크기, 문구 등 품질/RA 파트 통해 더블체크 후 진행되었으면 이런 상황이 발생하지 않았을거라 생각됩니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">한국사업본부 · 한국 그로스팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">기획세트 패키지 작업하면서 생기는 이슈나 진행상황을 중간 공유 주셔서 빠르게 파악할 수 있어 좋았음.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">일본사업본부 · 일본 마케팅 1팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">아웃풋, 보수적인 커뮤니케이션 태도</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">실수 없는 아웃풋 도출, 상대방의 입장을 이해하려는 커뮤니케이션 태도가 필요할 것 같습니다</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">한국사업본부 · 한국 영업팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · RA팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">새롭게 진행되는 프로젝트로 소통을 상당히 많이 진행하는데 정말 함께 협업한다는 느낌으로 소통 및 문제 해결에 힘써주십니다. 소통, 업무 진행 방식 등에 있어서 꼼꼼하면서도 명확 신속하게 처리되는 부분들에 있어 감사드립니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">SCM본부 · 품질팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">성숙한 동료의식으로, 협업부서와 원활히 커뮤니케이션해주셔서 협업이 항상 즐겁습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">정확한 정보를 작성해야 할 때, 작성이 늦게 되거나 실수가 잦은 부분은 아쉽습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">담당 업무를 놓치지 않고 꼼꼼히 검토해주신다면 협업이 보다 수월해질 것 같습니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · 리테일마케팅팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">주인의식을 갖고 함께 문제를 대응함</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">속도가 느리고 실수가 반복됨</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">시스템적으로 보완이 된다는 느낌이 없음. 팀장 레벨에서 상황을 인지하지 못하고 있고 실무진들끼리 해결함</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 3본부 · Global Marketing팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">요청드린 업무를 협의한 기한 내에 완료하심</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">우리 부서가 요청할 업무에 대한 이해도가 낮은데 알려주실 분이 없거나 참조할 정보가 없음, 담당자 분들이 업무 문의나 요청에 대해 종종 다소 날 서 있거나 수동적으로 느껴짐</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">리테일 프로덕트 팀 자체의 문제라기 보다는 사업부와 협력하는 과정에서 서로의 상황이나 프로세스에 대한 맥락을 공유하고 스몰톡하면서 라포 쌓을 수 없어서였던 것 같다는 추측</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">SCM본부 · 구매팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">유관부서와 협업 시 본인의 R&amp;R 외에도 협업을 위해 도움을 주는 방식이 만족스러웠습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">세부적으로 협조를 구할때의 히스토리나 사유에 대한 정보가 부족하였고 병렬로 여러팀에 확인을 요청하여 매 프로젝트시에 본인 R&amp;R인지?에 대한 혼선이 있었습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">메인 담당자를 지정하여 소통이 중복되지 않게 운영되면 좋을 것 같습니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · Key Account</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">직접적으로 협업했던 경험은 없었습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">직접적으로 협업했던 사례는 없었습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">구체적 협업 사례가 없었습니다.</div></div>
+        </div></section><section id="tm-1" class="teamblk"><h3 class="teamh">프로덕트팀 <span class="cnt">9건</span></h3><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">일본사업본부 · 일본 마케팅 1팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">의사소통이 원활하지 않고 의사소통의 속도와 내용의 영향으로 매출 로스가 있었다고 생각됨</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">속도, 내용 측면에서 원활한 커뮤니케이션을 희망합니다</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">한국사업본부 · 한국 영업팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">한국사업본부 · 한국 영업팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">일정이 딜레이 되는 경우 미리 말씀주시면 좋겠습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">없습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">없습니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · 리테일마케팅팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">제품이나 시장에 대한 인사이트와 플랜을 전혀 제공 받을 수 없었음. 리테일러와의 협상과정에서 프로덕트의 도움을 받지 못함</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">아웃풋, 일정 가시성</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">마일스톤 및 일정 공유</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 1본부 · 스케일업 TF</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">스케일업 TF팀 특성상 협업할 기회가 많지 않아, 유의미한 답변이 어려운 점 양해 부탁드립니다ㅠㅜ 감사합니다!!</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">마찬가지로 협업할 기회가 많지 않아 유의미한 답변이 어렵습니다..ㅠㅜ</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">n/a</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">SCM본부 · 구매팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">브랜드 마다 다르긴하나 킥오프부터 세부 소통 및 희망 부분을 정확히 전달하는 방식은 유지하였으면 좋겠습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">GWP 및 시딩키트 제작 시 희망하는 제작 사양 및 원하는 제품 타겟에 대한 설명이 부족한 경우가 많았습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">요청하는 부분(사이즈, 타겟, 재질, 브랜드 컨셉 등)을 정확히 전달하여야 정밀한 제작 공정을 잘 모르더라도 각 부서에서 팔로우업할 수 있는 부분을 디벨롭 하며 진행 할 수 있을 것이라 생각됩니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · RA팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">수많은 프로젝트를 함께 진행하고 있는데, 모든 업무를 놓치지 않고 주도적으로 진행해주시는 부분이 좋습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">SCM본부 · 품질팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">신제품 처방 변경 등 이슈에 대해 발벗고 나서서 미팅을 주도하고 협업부서에 제 때 필요한 정보를 공유하는 프로페셔널한 모습이 협업에 도움이 되었습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">아누아 프로덕트팀 전체 태그 시 아무도 답변하지 않아, 확인을 했는지 알 수 없었던 경험이 몇 번 있었습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">전체팀태그 후 전달하는 내용에 대해, 적어도 &#x27;확인했구나&#x27; 정도는 알 수 있게 해주시면 좋겠습니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · Key Account</span>
+          <span class="rank">4순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">bi-weekly 미팅 때 빠른 답변과 의사 결정을 내릴 수 있게 도움을 주셔서 좋았습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">없었습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">만족했습니다.</div></div>
+        </div></section><section id="tm-2" class="teamblk"><h3 class="teamh">RA팀 <span class="cnt">9건</span></h3><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">한국사업본부 · 한국 그로스팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">급건으로 문안 검토 요청드리는 건에 대해서도 항상 빠르고 꼼꼼하게 검토해주셔서 업무에 차질없이 진행할 수 있었음</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">개별적인 협업 이슈는 아니나, 처음 업무 요청할 때 업무 요청 보드 노션에서 찾아서 작성하려고 했는데 문안 검토 관련해서는 어디에 요청해야 하는지 찾기 어려웠음. 업무 요청 보드 통해서 요청받는 프로세스라면, 타 부서에서 작성하기 쉽도록 개편되면 훨씬 수월할 것 같음.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">일본사업본부 · 일본 마케팅 1팀</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">전문적인 의견 제시</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">보수적인 커뮤니케이션 태도</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">감안 가능안 대안 제시</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge biz">사업부</span>
+          <span class="dept">한국사업본부 · 한국 영업팀</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 3본부 · Global Marketing팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">담당자가 한 명임</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">앖음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">없음</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · 프로덕트 이노베이션팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">아직 제대로 된 협업은 없지만 제품에 대한 인증을 받을 때 필요한 부분에 대해 피드백을 많이 받고 있습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">딱히 없음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">딱히 없음</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · Key Account</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">문의에 대해 빠른 답변 및 대응을 해주셔서 좋았습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">없습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">만족했습니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · 프로덕트팀</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">개개인 소통시에 커뮤니케이션 이슈는 없음</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">전달주시는 내용이 이해하기 어렵고 실무에 적용하려면 또 다시 질문을 해야함. 전달주신 자료를 이해하지 못해 질문하면 다시 자료를 보라는 답변이 옴. 문안검수 일정이 빠르게 진행되지 않음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">전달주시는 자료가 다소 이해하기 어려우니 추가 질문에 대해 공무원같은 답변이 아닌 함께 해결하고자 하는 태도로 답변이 왔으면 합니다</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · 리테일마케팅팀</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">집중 대응 기간에 필요한 의견을 전달해줌</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">안되는게 너무 많고 피드백 전달이 늦음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">문제 해결 방법에 대한 고민, 타사 사례 활용</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">SCM본부 · 품질팀</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">빠른 정보공유로 사전에 준비해야하는 부분에 대해 발빠르게 준비할 수 있게 해주시는 전문성이 항상 도움이 됩니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">R&amp;R이 합의되지 않은 업무에 대해 자연스럽게 타팀에게 요청하시는 건들에 대해 팀 내, 외부적으로 잡음이 생겼고 협업이 조심스러워졌습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">뒷짐 지고 있는 느낌보단, 적극적으로 인볼브 해주시는 모습을 보여주시면 협업부서들도 서로 힘이 나고 좋을 것 같습니다.</div></div>
+        </div></section><section id="tm-3" class="teamblk"><h3 class="teamh">제품 교육팀 <span class="cnt">4건</span></h3><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">SCM본부 · 품질팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">없습니다</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">없습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">없습니다</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · Key Account</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">House of Sephora 행사 진행 시 교육 및 행사 운영 전반적인 업무 도와주셨던 점, 행사 이후 피드백에 대해 공유를 자세하게, 빨리 해주셔서 좋았습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">없습니다.</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">만족스러운 협업이었습니다.</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · 프로덕트 이노베이션팀</span>
+          <span class="rank">4순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">아직 협업은 없습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">딱히 없음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">딱히 없음</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">글로벌 마케팅 2본부 · 리테일마케팅팀</span>
+          <span class="rank">4순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">큰 문제없이 진행되었음</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">실제로 리테일러에게 어떤 영향을 주고 있는지 모르겠음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">더 범용적인 자료 제공, 새로운 국가와 리테일러 대응 시 활용할 수 있는 툴킷</div></div>
+        </div></section><section id="tm-4" class="teamblk"><h3 class="teamh">R&amp;I팀 <span class="cnt">3건</span></h3><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · 프로덕트팀</span>
+          <span class="rank">2순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">성분 등 도움 요청드리면 빠르게 회신이 오고 이슈 발생시에도 함께 대처하려 노력해주셨습니다</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">크게 없습니다</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">크게 이슈없음</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · 프로덕트 이노베이션팀</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">아직 협업은 없습니다. 디바이스 기전에 맞는 스킨 케어 제품을 개발할 때 많은 도움이 될 것 같습니다</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">딱히 없음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">딱히 없음</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · RA팀</span>
+          <span class="rank">3순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">RA 업무의 특징적인 부분과 가장 밀접하게 연결된 프로젝트를 진행하고 있는데, R&amp;I팀의 니즈와 유관부서의 니즈, RA팀의 피드백을 적절히 잘 조율해주시고 정확한 의사결정을 위하여 대면미팅을 잡아주시는 등 주도적으로 업무에 임해주셔서 협업함에 있어 만족스러웠습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt"><span class="empty">— (미기재)</span></div></div>
+        </div></section><section id="tm-5" class="teamblk"><h3 class="teamh">MI팀 <span class="cnt">2건</span></h3><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · 프로덕트팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">빠른 업무소통</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">미팅에서 다소 강압적인 커뮤니케이션 방식으로 말씀하셔서 기분이 상하는 일이 여럿 있었습니다</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">상호 존중하는 태도가 기반이었으면 합니다</div></div>
+        </div><div class="qc">
+          <div class="qmeta"><span class="badge non">비사업부</span>
+          <span class="dept">프로덕트본부 · 프로덕트 이노베이션팀</span>
+          <span class="rank">1순위 선택</span></div>
+          <div class="qrow"><div class="qlab pos">만족 · 유지할 점</div><div class="qtxt">일정 관련 이슈나, 타 부서와의 조율이 필요할 경우 적극적으로 나서서 해결해 주실려고 하는게 좋았습니다.</div></div>
+          <div class="qrow"><div class="qlab neg">불만족 이유</div><div class="qtxt">딱히 없음</div></div>
+          <div class="qrow"><div class="qlab imp">개선 제안</div><div class="qtxt">기존대로 하되 제품 스펙에 대한 협상이 있었으면 더 좋을듯</div></div>
+        </div></section>
+</div>
+<footer>응답 원자료 기반 자동 집계 중간 결과. '사업부' 분류는 소속 본부명 기준이며 조직 정의와 다르면 재분류 가능. 주관식은 오타·표현 포함 원문 그대로입니다.</footer>
+</div>
+<script>
+function showTab(i){
+  document.querySelectorAll('.tabbtn').forEach((b,j)=>b.classList.toggle('active',i===j));
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+</script></body></html>
