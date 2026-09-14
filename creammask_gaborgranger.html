@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>크림마스크 가버그레인저 가격 분석</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root{
+    --surface:#f9f9f9; --card:#ffffff; --low:#f4f6f9;
+    --ink:#1b1b1b; --ink-2:#55585e; --line:#e2e4e8; --line-2:#c9ccd2;
+    --cobalt:#1E50B4; --cobalt-ink:#122f6e; --cobalt-bg:#E9EFFB;
+    --orange:#E7622E; --orange-ink:#8a3413; --orange-bg:#FBEDE6;
+    --font:'Manrope',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font);background:var(--surface);color:var(--ink);
+       font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:960px;margin:0 auto;padding:48px 32px 64px;}
+  .eyebrow{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--cobalt);}
+  h1{font-size:34px;font-weight:500;letter-spacing:-0.01em;margin:10px 0 8px;line-height:1.2;}
+  h1 .hl{color:var(--cobalt);}
+  .sub{font-size:15px;color:var(--ink-2);max-width:640px;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+  .chip{font-size:12px;font-weight:500;color:var(--ink-2);background:var(--card);
+        border:1px solid var(--line);border-radius:9999px;padding:5px 13px;}
+  .chip b{color:var(--ink);font-weight:600;}
+  .divider{height:1px;background:var(--line);margin:32px 0;}
+  h2{font-size:22px;font-weight:500;letter-spacing:-0.01em;padding-bottom:10px;
+     border-bottom:1px solid var(--line-2);margin-bottom:20px;display:flex;
+     align-items:baseline;justify-content:space-between;gap:12px;}
+  h2 .ctx{font-size:12px;font-weight:500;color:var(--ink-2);text-transform:uppercase;letter-spacing:0.06em;}
+  h3{font-size:13px;font-weight:600;color:var(--ink-2);text-transform:uppercase;
+     letter-spacing:0.06em;margin:0 0 12px;}
+  section{margin-bottom:44px;}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:26px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .kpi .lab{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-2);}
+  .kpi .val{font-size:30px;font-weight:500;letter-spacing:-0.01em;margin-top:6px;color:var(--ink);}
+  .kpi .val.c{color:var(--cobalt);} .kpi .val.o{color:var(--orange);}
+  .kpi .note{font-size:12px;color:var(--ink-2);margin-top:3px;}
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:760px){.cards2{grid-template-columns:1fr;}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;}
+  .chart-h{font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:12px;}
+  .chart-box{position:relative;width:100%;height:230px;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--ink-2);margin-bottom:10px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .sw{width:14px;height:3px;border-radius:2px;display:inline-block;}
+  .sw.dash{height:0;border-top:3px dashed var(--cobalt);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{background:var(--low);font-weight:600;color:var(--ink-2);
+           font-size:11px;letter-spacing:0.04em;text-transform:uppercase;border-bottom:1px solid var(--line-2);}
+  tr.hl td{background:var(--orange-bg);font-weight:600;color:var(--orange-ink);}
+  tr.hl td:first-child{color:var(--orange-ink);}
+  .callout{background:var(--cobalt-bg);border:1px solid #cdd9f4;border-radius:12px;
+           padding:22px 24px;}
+  .callout h3{color:var(--cobalt-ink);}
+  .callout ul{list-style:none;display:flex;flex-direction:column;gap:12px;}
+  .callout li{font-size:14px;color:var(--ink);padding-left:22px;position:relative;line-height:1.55;}
+  .callout li::before{content:"";position:absolute;left:2px;top:8px;width:8px;height:8px;
+                      border-radius:50%;background:var(--cobalt);}
+  .callout li b{font-weight:600;color:var(--cobalt-ink);}
+  .takeaways{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:760px){.takeaways{grid-template-columns:1fr;}}
+  .tk{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);
+      border-radius:0 12px 12px 0;padding:16px 18px;}
+  .tk.o{border-left-color:var(--orange);}
+  .tk .t{font-size:14px;font-weight:600;margin-bottom:5px;color:var(--ink);}
+  .tk .d{font-size:13px;color:var(--ink-2);line-height:1.5;}
+  .note-box{background:var(--low);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .note-box p{font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:8px;}
+  .note-box p:last-child{margin-bottom:0;}
+  .note-box b{color:var(--ink);font-weight:600;}
+  .rec{border:1px solid var(--line-2);border-radius:12px;overflow:hidden;}
+  .rec .band{background:var(--cobalt);color:#fff;padding:18px 24px;}
+  .rec .band .lab{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;opacity:.8;}
+  .rec .band .price{font-size:30px;font-weight:600;margin-top:2px;}
+  .rec .band .price small{font-size:14px;font-weight:500;opacity:.85;}
+  .rec .body{background:var(--card);padding:20px 24px;}
+  .rec .body ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+  .rec .body li{font-size:13.5px;color:var(--ink);padding-left:20px;position:relative;}
+  .rec .body li::before{content:"→";position:absolute;left:0;color:var(--cobalt);font-weight:600;}
+  .rec .body li.no::before{content:"×";color:var(--orange);}
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
+         display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-2);}
+  footer b{color:var(--cobalt);font-weight:600;letter-spacing:0.04em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Market Intelligence · Pricing Research</div>
+    <h1>크림마스크 <span class="hl">가버그레인저</span> 가격 분석</h1>
+    <p class="sub">일본 시장 크림마스크 런칭가 도출을 위한 Gabor–Granger 조사 결과. 전체 응답자와 고관여(KB≥17) 세그먼트를 비교해 최적 가격대를 제시합니다.</p>
+    <div class="meta">
+      <span class="chip">프로젝트 <b>2607</b></span>
+      <span class="chip">방법 <b>Gabor–Granger</b></span>
+      <span class="chip">응답 <b>N=304</b></span>
+      <span class="chip">통화 <b>¥ (税込)</b></span>
+      <span class="chip">작성 <b>2026.08</b></span>
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <section>
+    <h2>핵심 요약 <span class="ctx">Executive Summary</span></h2>
+    <div class="takeaways">
+      <div class="tk">
+        <div class="t">매출 최적가 ¥875 (税込)</div>
+        <div class="d">전체·고관여 두 세그먼트, 그리고 빈칸 처리 방식과 무관하게 매출 극대화 지점은 ¥875로 동일. 실무 추천 밴드는 ¥840~¥875.</div>
+      </div>
+      <div class="tk">
+        <div class="t">¥790~¥875 매출 평탄 구간</div>
+        <div class="d">이 밴드 안에서는 가격을 올려도 상대매출 변화가 거의 없음(316→334). 가격 결정에 여유(latitude)가 있음.</div>
+      </div>
+      <div class="tk o">
+        <div class="t">¥1,000 심리벽 확인</div>
+        <div class="d">¥1,000을 넘어서며 구매의향이 전 구간 중 가장 크게 꺾임(구매의향자 기준 약 −12%p). ¥990 등 大台 회피 가격이 유효.</div>
+      </div>
+      <div class="tk o">
+        <div class="t">고관여층 = 전환율 상승, 상한 불변</div>
+        <div class="d">KB≥17 고객은 지불 상한이 높아지는 게 아니라 같은 가격대에서 사는 비율이 3~4%p 높음. 액션은 가격 인상이 아닌 전환 촉진.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>조사 개요 <span class="ctx">Methodology</span></h2>
+    <div class="note-box">
+      <p>수요·매출 곡선은 각 응답자의 <b>lastagreedprice(구매 동의 최고가 = 지불의향 상한)</b>를 기반으로 산출했습니다. 가격 P에서의 구매의향 = "상한이 P 이상인 응답자 비율", 상대매출 = P × 구매의향.</p>
+      <p><b>빈 lastagreedprice는 어떤 가격에도 구매 동의하지 않은 비구매자</b>로 간주해 분모에 포함했습니다(전체 N=304 중 구매동의 128명). <b>minprice는 구매 여부와 무관한 별개 필드</b>로 판단해 곡선 산출에서 제외했습니다. 모든 가격은 税込 기준입니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>전체 응답자 결과 <span class="ctx">All Respondents · N=304</span></h2>
+    <div class="kpis">
+      <div class="kpi"><div class="lab">응답자</div><div class="val">304<span style="font-size:15px;color:var(--ink-2)">명</span></div><div class="note">구매동의 128명</div></div>
+      <div class="kpi"><div class="lab">매출 최적가</div><div class="val c">¥875</div><div class="note">税込 · 25엔 그리드</div></div>
+      <div class="kpi"><div class="lab">¥875 구매의향</div><div class="val">38.2%</div><div class="note">전체 대비</div></div>
+      <div class="kpi"><div class="lab">심리가격 최적</div><div class="val c">¥840</div><div class="note">테스트 포인트 중</div></div>
+    </div>
+    <div class="cards2">
+      <div class="card">
+        <div class="chart-h">수요곡선 — 가격별 구매의향</div>
+        <div class="chart-box"><canvas id="c_demT" role="img" aria-label="전체 응답자 수요곡선. 가격이 오를수록 구매의향 감소, ¥1,000 부근 급락."></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chart-h">매출 곡선 — 가격 × 구매의향 (상대)</div>
+        <div class="chart-box"><canvas id="c_revT" role="img" aria-label="전체 응답자 상대매출 곡선. ¥875에서 최대."></canvas></div>
+      </div>
+    </div>
+    <div style="height:16px"></div>
+    <div class="card">
+      <h3>심리가격 포인트별 상세</h3>
+      <table>
+        <thead><tr><th>税込 가격</th><th>구매의향</th><th>상대매출</th></tr></thead>
+        <tbody id="tblT"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>고관여 세그먼트 (KB≥17) <span class="ctx">High-Involvement · N=162</span></h2>
+    <div class="kpis">
+      <div class="kpi"><div class="lab">고관여 응답자</div><div class="val">162<span style="font-size:15px;color:var(--ink-2)">명</span></div><div class="note">전체의 53%</div></div>
+      <div class="kpi"><div class="lab">구매동의</div><div class="val">75<span style="font-size:15px;color:var(--ink-2)">명</span></div><div class="note">세그먼트 내</div></div>
+      <div class="kpi"><div class="lab">매출 최적가</div><div class="val c">¥875</div><div class="note">전체와 동일</div></div>
+      <div class="kpi"><div class="lab">¥875 구매의향</div><div class="val o">41.4%</div><div class="note">전체 대비 +3.2%p</div></div>
+    </div>
+    <div class="cards2">
+      <div class="card">
+        <div class="chart-h">수요곡선 비교 — 고관여 vs 전체</div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--orange)"></span>고관여 (KB≥17)</span>
+          <span><span class="sw dash"></span>전체</span>
+        </div>
+        <div class="chart-box"><canvas id="c_cmp" role="img" aria-label="고관여와 전체 수요곡선 비교. 고관여 곡선이 전 구간에서 위에 위치."></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chart-h">매출 곡선 비교 — 고관여 vs 전체</div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--orange)"></span>고관여</span>
+          <span><span class="sw dash"></span>전체</span>
+        </div>
+        <div class="chart-box"><canvas id="c_cmpRev" role="img" aria-label="고관여와 전체 상대매출 곡선 비교."></canvas></div>
+      </div>
+    </div>
+    <div style="height:16px"></div>
+    <div class="card">
+      <h3>세그먼트 비교 (심리가격 포인트)</h3>
+      <table>
+        <thead><tr><th>税込 가격</th><th>전체 의향</th><th>고관여 의향</th><th>고관여 상대매출</th></tr></thead>
+        <tbody id="tblK"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>런칭가 권고 <span class="ctx">Recommendation</span></h2>
+    <div class="rec">
+      <div class="band">
+        <div class="lab">권장 런칭 가격대</div>
+        <div class="price">¥840 ~ ¥875 <small>税込</small></div>
+      </div>
+      <div class="body">
+        <ul>
+          <li><b>매출 극대화 밴드.</b> 두 가격 모두 ¥900 미만이며 ¥1,000 심리벽에서 안전하게 이격.</li>
+          <li><b>¥890 옵션.</b> "¥900 직전" 포지셔닝이 필요할 때 선택지이나 상대매출은 ¥840 대비 약 7% 낮음.</li>
+          <li class="no"><b>¥990 이상 비권장.</b> ¥1,000 벽 직전 저항이 이미 반영되어 구매의향이 26%까지 하락.</li>
+          <li><b>고관여(KB) 고객 액션.</b> 가격 인상이 아닌 이 가격대에서의 전환 촉진·이탈 방지에 집중.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>유의사항 <span class="ctx">Caveats</span></h2>
+    <div class="note-box">
+      <p><b>고관여 세그먼트 표본.</b> N=162, 그중 구매동의 75명. ¥1,100 이상 고가 구간은 해당 응답자가 10명 안팎으로, 수치는 방향성 참고용으로 해석하는 것이 안전합니다.</p>
+      <p><b>빈 값 정의.</b> 빈 lastagreedprice를 "비구매자"로 처리했습니다. 퀄트릭스 GG 문항 세팅에서 전 가격 거절 시 공백 처리가 맞는지 최종 확인을 권장합니다.</p>
+      <p><b>minprice 제외 근거.</b> 구매동의자(평균 807엔)와 비동의자(814엔)의 minprice 분포가 사실상 동일해 구매 여부와 무상관 → GG 수락 래더가 아닌 별개 질문으로 판단.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span><b>ANUA</b> · Market Intelligence</span>
+    <span>Gabor–Granger Pricing · 2026.08</span>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var grid=[750,775,800,825,850,875,900,925,950,975,1000,1025,1050,1075,1100,1125,1150,1175,1200,1225];
+  var T={dem:[42.1,41.8,41.1,39.5,38.8,38.2,34.2,33.2,32.2,31.2,26.0,22.7,21.7,21.7,19.4,14.1,12.5,8.2,4.9,2.0],
+         rev:[316,324,329,326,330,334,308,307,306,305,260,233,228,233,213,159,144,97,59,24]};
+  var K={dem:[46.3,45.7,45.1,43.2,42.0,41.4,37.7,36.4,35.8,34.6,29.0,23.5,22.2,22.2,21.0,17.3,14.2,8.6,4.9,1.9],
+         rev:[347,354,360,356,357,362,339,337,340,337,290,240,233,239,231,194,163,102,59,23]};
+  var pts=[790,840,890,940,990,1040,1090,1140,1190];
+  var Tp={dem:[41.1,38.8,34.2,32.2,26.0,21.7,19.4,12.5,4.9],rev:[325,326,304,303,257,226,212,142,59]};
+  var Kp={dem:[45.1,42.0,37.7,35.8,29.0,22.2,21.0,14.2,4.9],rev:[356,353,335,337,287,231,229,162,59]};
+  var COBALT='#1E50B4', ORANGE='#E7622E', INK='#8a8d93', GRIDC='#eceef1';
+  var OPT=5; // ¥875
+
+  function pr(base){return grid.map(function(_,i){return i===OPT?6:0;});}
+  function pc(c){return grid.map(function(_,i){return i===OPT?ORANGE:c;});}
+  var baseX={grid:{display:false},ticks:{color:INK,font:{size:10},maxRotation:45,minRotation:45,
+             callback:function(v){var l=this.getLabelForValue(v);return (l%50===40||l===750||l%250===0)?'¥'+l:'';}}};
+  function opts(pct){return {responsive:true,maintainAspectRatio:false,animation:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{title:function(it){return '¥'+it[0].label+' 税込';},
+      label:function(c){return c.parsed.y+(pct?'%':' (상대매출)');}}}},
+    scales:{x:baseX,y:{grid:{color:GRIDC},ticks:{color:INK,font:{size:10},
+      callback:function(v){return pct?v+'%':v;}},beginAtZero:true}}};}
+
+  new Chart(document.getElementById('c_demT'),{type:'line',
+    data:{labels:grid,datasets:[{data:T.dem,borderColor:COBALT,backgroundColor:'rgba(30,80,180,0.07)',
+      fill:true,tension:0.3,borderWidth:2,pointRadius:pr(),pointBackgroundColor:pc(COBALT),pointBorderColor:'#fff',pointBorderWidth:2}]},
+    options:opts(true)});
+  new Chart(document.getElementById('c_revT'),{type:'line',
+    data:{labels:grid,datasets:[{data:T.rev,borderColor:ORANGE,backgroundColor:'rgba(231,98,46,0.07)',
+      fill:true,tension:0.3,borderWidth:2,pointRadius:pr(),pointBackgroundColor:pc(ORANGE),pointBorderColor:'#fff',pointBorderWidth:2}]},
+    options:opts(false)});
+
+  function cmp(id,tk,tt,pct){
+    new Chart(document.getElementById(id),{type:'line',
+      data:{labels:grid,datasets:[
+        {data:tk,borderColor:ORANGE,backgroundColor:'rgba(231,98,46,0.06)',fill:true,tension:0.3,borderWidth:2,
+         pointRadius:pr(),pointBackgroundColor:pc(ORANGE),pointBorderColor:'#fff',pointBorderWidth:2},
+        {data:tt,borderColor:COBALT,borderDash:[6,4],fill:false,tension:0.3,borderWidth:2,pointRadius:0}
+      ]},options:opts(pct)});
+  }
+  cmp('c_cmp',K.dem,T.dem,true);
+  cmp('c_cmpRev',K.rev,T.rev,false);
+
+  var tb=document.getElementById('tblT');
+  pts.forEach(function(p,i){
+    var hl=(p===840)?' class="hl"':'';
+    tb.insertAdjacentHTML('beforeend','<tr'+hl+'><td>¥'+p.toLocaleString()+'</td><td>'+Tp.dem[i].toFixed(1)+'%</td><td>'+Tp.rev[i]+'</td></tr>');
+  });
+  var tk=document.getElementById('tblK');
+  pts.forEach(function(p,i){
+    var hl=(p===840)?' class="hl"':'';
+    tk.insertAdjacentHTML('beforeend','<tr'+hl+'><td>¥'+p.toLocaleString()+'</td><td>'+Tp.dem[i].toFixed(1)+'%</td><td>'+Kp.dem[i].toFixed(1)+'%</td><td>'+Kp.rev[i]+'</td></tr>');
+  });
+})();
+</script>
+</body>
+</html>
