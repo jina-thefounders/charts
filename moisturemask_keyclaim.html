@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>수분 마스크 키클레임 조사 분석 리포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F9FD; --surface:#FFFFFF; --ink:#17384F; --muted:#5E7A8D; --line:#D7E8F2; --tint:#E5F3FB;
+  --ca:#2E9BDB; --cb:#1BAE9F; --cc:#6C7FEA; --track:#EAF3F8; --warn:#E07A5F;
+  --hero1:#DDF1FC; --hero2:#F3F9FD;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1D28; --surface:#152838; --ink:#E2EFF6; --muted:#9BB3C2; --line:#24405A; --tint:#1A3447;
+    --ca:#5DB8EC; --cb:#3FCFC0; --cc:#97A5F5; --track:#20384C; --warn:#F0937A;
+    --hero1:#163447; --hero2:#0E1D28; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1D28; --surface:#152838; --ink:#E2EFF6; --muted:#9BB3C2; --line:#24405A; --tint:#1A3447;
+  --ca:#5DB8EC; --cb:#3FCFC0; --cc:#97A5F5; --track:#20384C; --warn:#F0937A;
+  --hero1:#163447; --hero2:#0E1D28; color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+/* hero */
+.hero{background:linear-gradient(180deg,var(--hero1),var(--hero2));padding:52px 0 0;position:relative}
+.hero .kpis{margin-bottom:20px}
+.kicker{color:var(--ca);font-weight:500;font-size:.88rem;margin:0 0 10px}
+h1{font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.25;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 32px;max-width:62ch}
+.wave{display:block;width:100%;height:34px;margin-top:-6px}
+.wave path{fill:var(--bg)}
+.claims{margin:0 0 18px}
+.claims-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.claim{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;padding:12px 16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.cl-k{font-size:.82rem;color:var(--muted)}
+.cl-v{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;font-weight:700;font-size:1.3rem;color:var(--c)}
+.claims-note{font-size:.8rem;color:var(--muted);margin:8px 2px 0}
+.kc{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;font-weight:700;font-size:.92rem;margin-left:6px;opacity:.85}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.kpi .v{font-size:1.9rem;font-weight:700;line-height:1.1}
+.kpi .v small{font-size:1rem;font-weight:500;color:var(--muted);margin-left:4px}
+.kpi .l{color:var(--muted);font-size:.86rem;margin-top:6px}
+.kpi .note{font-size:.76rem;color:var(--muted);margin-top:4px}
+.kpi .best{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:.92rem}
+.kpi .best b{color:var(--ca);font-size:1.15rem}
+/* insights */
+.insight{margin:4px 0 8px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--cb);border-radius:14px;padding:22px 26px}
+.insight h2{font-size:1.05rem;margin:0 0 10px}
+.insight ul{margin:0;padding-left:1.1em}
+.insight li{margin:6px 0;max-width:95ch}
+.insight b{color:var(--ink);background:linear-gradient(transparent 62%,var(--tint) 62%)}
+.caveat{font-size:.82rem;color:var(--muted);margin-top:12px}
+/* sections */
+section{margin:44px 0}
+section>h2{font-size:1.35rem;margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 20px;max-width:90ch;font-size:.92rem}
+.block{margin-bottom:30px}
+.block-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.block-head h3{margin:0;font-size:1.1rem}
+.block-head p{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.86rem;color:var(--muted)}
+.pill{background:var(--tint);color:var(--ink);border-radius:999px;padding:3px 12px;font-size:.8rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cc,.rc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;border-top:4px solid var(--c)}
+.cA{--c:var(--ca)} .cB{--c:var(--cb)} .cC{--c:var(--cc)}
+.cc header,.rc header{display:flex;justify-content:space-between;align-items:baseline}
+h4{margin:0;font-size:1.05rem;color:var(--c)}
+.n{font-size:.82rem;color:var(--muted)}
+.big{margin:12px 0 4px;display:flex;align-items:baseline;gap:10px}
+.big strong{font-size:2.4rem;line-height:1;color:var(--c)}
+.big span,.hi span{font-size:.82rem;color:var(--muted)}
+.hi{display:flex;align-items:baseline;gap:8px;margin-bottom:14px}
+.hi strong{font-size:1.2rem}
+.dist-row,.cat{display:grid;align-items:center;gap:10px;margin:7px 0;font-size:.84rem}
+.dist-row{grid-template-columns:34px 1fr 92px}
+.cat{grid-template-columns:minmax(0,1.25fr) 1fr 22px}
+.track{height:10px;background:var(--track);border-radius:999px;overflow:hidden;display:block}
+.fill{display:block;height:100%;background:var(--c);border-radius:999px}
+.dv{text-align:right;white-space:nowrap}.dv em{color:var(--muted);font-style:normal}
+.dk{color:var(--muted)}
+.cv{text-align:right;font-weight:700}
+.low .fill{background:var(--warn)}
+h5{font-size:.82rem;color:var(--muted);font-weight:500;margin:14px 0 6px}
+.cloud{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 12px;min-height:120px;padding:14px 8px;background:var(--tint);border-radius:12px;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;line-height:1.25}
+.w{font-weight:700;color:var(--c)}
+.w.t1{opacity:.72}.w.t2{color:var(--ink);opacity:.6}
+.empty{color:var(--muted);font-size:.85rem}
+footer{color:var(--muted);font-size:.8rem;border-top:1px solid var(--line);padding:22px 0 40px;margin-top:20px}
+@media (max-width:900px){.kpis,.claims-row{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
+@media (max-width:420px){.wrap{padding:0 16px}.kpi .v{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">New Product Key-Claim Research · Concept A / B / C</p>
+    <h1>수분 마스크 키클레임 조사 분석 리포트</h1>
+    <p class="sub">컨셉보드(A·B·C) 평가 / 구매의향 스코어 · 구매이유 분석 · 컨셉별 비교</p>
+    <div class="claims"><div class="claims-row"><div class="claim cA"><span class="cl-k">컨셉 A</span><span class="cl-v" lang="ja">集中うるおいブースト</span></div><div class="claim cB"><span class="cl-k">컨셉 B</span><span class="cl-v" lang="ja">集中うるおいケア</span></div><div class="claim cC"><span class="cl-k">컨셉 C</span><span class="cl-v" lang="ja">うるおいキープケア</span></div></div><p class="claims-note">패키지 디자인, 성분 표기(ヒアルロン酸・アミノ酸・セラミド), 「10分集中ケア」, 7枚入은 세 안 모두 동일하고 키클레임 문구만 다름.</p></div>
+    <div class="kpis"><div class="kpi"><div class="v">158<small>명</small></div><div class="l">전체 대상 고객</div><div class="best">최고 의향 <b>컨셉 A</b> (3.70)</div><div class="note">컨셉 간 차이 유의하지 않음 · p = 0.57</div></div><div class="kpi"><div class="v">113<small>명</small></div><div class="l">오프라인 구매 고객</div><div class="best">최고 의향 <b>컨셉 A</b> (3.56)</div><div class="note">컨셉 간 차이 유의하지 않음 · p = 0.71</div></div><div class="kpi"><div class="v">170<small>명</small></div><div class="l">KB 상위 50% 고객</div><div class="best">최고 의향 <b>컨셉 B</b> (3.58)</div><div class="note">컨셉 간 차이 유의하지 않음 · p = 0.50</div></div></div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 28 C 180 6 360 6 540 24 S 900 44 1080 26 S 1320 8 1440 22 L1440 46 L0 46 Z"/></svg>
+</header>
+
+<main class="wrap">
+  <div class="insight">
+    <h2>◆ 분석 인사이트</h2>
+    <ul>
+      <li>세 고객군 모두 키클레임별 구매의향 차이가 <b>통계적으로 유의할 만큼 크지는 않음</b>(p = 0.57 / 0.71 / 0.50). 다만 일반적인 마스크팩 구매 고객군인 전체 대상(A 3.70 · B 3.44 · C 3.57)과 오프라인 구매 고객(A 3.56 · B 3.34 · C 3.42)에서는 <b>키클레임 A(集中うるおいブースト)</b>가, KB 점수가 높은 고객군(A 3.44 · B 3.58 · C 3.28)에서는 <b>키클레임 B(集中うるおいケア)</b>가 더 높은 점수를 받음.</li>
+      <li>주관식 분석에서도 세 키클레임 모두 1순위 선호 이유가 <b>'보습·촉촉함 기대'</b>(A 17 · B 17 · C 14)로 같았고, 워드클라우드에서도 키클레임별 특이점은 발견되지 않음.</li>
+      <li>세 키클레임은 패키지·성분 표기가 동일하고 문구만 달라, <b>근본적인 차이가 적었던 것</b>이 이러한 결과로 이어진 것으로 추정됨.</li>
+      <li><b>결론: 오프라인 구매 고객을 타겟으로 하는 키클레임인 만큼, 오프라인 구매 고객군에서 1순위로 선택된 A안(集中うるおいブースト)으로 진행하는 것이 타당함.</b></li>
+    </ul>
+    <p class="caveat">컨셉별 n은 32~59명, 이유 분석 그룹은 7~29명으로 방향성 참고용. 응답은 TEST 행만 제외하고 전부 포함(동일 문구 반복 응답 포함). 세 폼에 같은 사람이 중복 응답했을 가능성도 있어, 컨셉 간 차이가 실제보다 작게 나타났을 수 있음.</p>
+  </div>
+
+  <section>
+    <h2>1. 구매의향 스코어 (컨셉 A·B·C 별)</h2>
+    <p class="lead">세 고객군으로 나누어 집계. <b>전체 대상</b>: 최근 6개월 내 시트마스크 구매 경험 있음 + 시트마스크(1매·5~10매·28~30매 중 어느 것이든) 사용경험 있음. <b>오프라인 구매</b>: 시트마스크 구매처에 오프라인 채널 포함 + 최근 6개월 내 구매. <b>KB 상위 50%</b>: KB_final 15점 이상(전체 응답자 중앙값)만 기준으로 하고 다른 조건은 두지 않음. 세 고객군은 서로 겹칠 수 있음. TEST 응답만 제외. 컨셉별로 각기 다른 키클레임 응답을 분리 집계.</p>
+    <div class="block"><div class="block-head"><div><h3>전체 대상 고객</h3><p>최근 6개월 내 시트마스크 구매 · 시트마스크 사용경험 있음</p></div>
+<div class="meta"><span>전체 n = 158 · 평균 3.56</span><span class="pill">컨셉 간 차이 p = 0.57 (ANOVA, 유의하지 않음)</span></div></div>
+<div class="grid3"><article class="cc cA"><header><h4>컨셉 A <span class="kc" lang="ja">集中うるおいブースト</span></h4><span class="n">n = 46</span></header>
+<div class="big"><strong>3.70</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>54%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:32.6%"></span></span><span class="dv">15명 <em>(32.6%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:21.7%"></span></span><span class="dv">10명 <em>(21.7%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:30.4%"></span></span><span class="dv">14명 <em>(30.4%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:13.0%"></span></span><span class="dv">6명 <em>(13.0%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:2.2%"></span></span><span class="dv">1명 <em>(2.2%)</em></span></div></div></article><article class="cc cB"><header><h4>컨셉 B <span class="kc" lang="ja">集中うるおいケア</span></h4><span class="n">n = 59</span></header>
+<div class="big"><strong>3.44</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>49%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:27.1%"></span></span><span class="dv">16명 <em>(27.1%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:22.0%"></span></span><span class="dv">13명 <em>(22.0%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:28.8%"></span></span><span class="dv">17명 <em>(28.8%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:11.9%"></span></span><span class="dv">7명 <em>(11.9%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:10.2%"></span></span><span class="dv">6명 <em>(10.2%)</em></span></div></div></article><article class="cc cC"><header><h4>컨셉 C <span class="kc" lang="ja">うるおいキープケア</span></h4><span class="n">n = 53</span></header>
+<div class="big"><strong>3.57</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>51%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:28.3%"></span></span><span class="dv">15명 <em>(28.3%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:22.6%"></span></span><span class="dv">12명 <em>(22.6%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:35.8%"></span></span><span class="dv">19명 <em>(35.8%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:3.8%"></span></span><span class="dv">2명 <em>(3.8%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:9.4%"></span></span><span class="dv">5명 <em>(9.4%)</em></span></div></div></article></div></div><div class="block"><div class="block-head"><div><h3>오프라인 구매 고객</h3><p>시트마스크를 오프라인 채널에서 구매 · 최근 6개월 내 구매</p></div>
+<div class="meta"><span>전체 n = 113 · 평균 3.43</span><span class="pill">컨셉 간 차이 p = 0.71 (ANOVA, 유의하지 않음)</span></div></div>
+<div class="grid3"><article class="cc cA"><header><h4>컨셉 A <span class="kc" lang="ja">集中うるおいブースト</span></h4><span class="n">n = 32</span></header>
+<div class="big"><strong>3.56</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>47%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:21.9%"></span></span><span class="dv">7명 <em>(21.9%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:25.0%"></span></span><span class="dv">8명 <em>(25.0%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:40.6%"></span></span><span class="dv">13명 <em>(40.6%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:12.5%"></span></span><span class="dv">4명 <em>(12.5%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:0.0%"></span></span><span class="dv">0명 <em>(0.0%)</em></span></div></div></article><article class="cc cB"><header><h4>컨셉 B <span class="kc" lang="ja">集中うるおいケア</span></h4><span class="n">n = 41</span></header>
+<div class="big"><strong>3.34</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>44%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:17.1%"></span></span><span class="dv">7명 <em>(17.1%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:26.8%"></span></span><span class="dv">11명 <em>(26.8%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:36.6%"></span></span><span class="dv">15명 <em>(36.6%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:12.2%"></span></span><span class="dv">5명 <em>(12.2%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:7.3%"></span></span><span class="dv">3명 <em>(7.3%)</em></span></div></div></article><article class="cc cC"><header><h4>컨셉 C <span class="kc" lang="ja">うるおいキープケア</span></h4><span class="n">n = 40</span></header>
+<div class="big"><strong>3.42</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>45%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:25.0%"></span></span><span class="dv">10명 <em>(25.0%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:20.0%"></span></span><span class="dv">8명 <em>(20.0%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:40.0%"></span></span><span class="dv">16명 <em>(40.0%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:2.5%"></span></span><span class="dv">1명 <em>(2.5%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:12.5%"></span></span><span class="dv">5명 <em>(12.5%)</em></span></div></div></article></div></div><div class="block"><div class="block-head"><div><h3>KB 상위 50% 고객</h3><p>KB_final 15점 이상 (전체 응답자 중앙값 기준, 다른 조건 없음)</p></div>
+<div class="meta"><span>전체 n = 170 · 평균 3.44</span><span class="pill">컨셉 간 차이 p = 0.50 (ANOVA, 유의하지 않음)</span></div></div>
+<div class="grid3"><article class="cc cA"><header><h4>컨셉 A <span class="kc" lang="ja">集中うるおいブースト</span></h4><span class="n">n = 54</span></header>
+<div class="big"><strong>3.44</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>52%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:31.5%"></span></span><span class="dv">17명 <em>(31.5%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:20.4%"></span></span><span class="dv">11명 <em>(20.4%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:22.2%"></span></span><span class="dv">12명 <em>(22.2%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:13.0%"></span></span><span class="dv">7명 <em>(13.0%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:13.0%"></span></span><span class="dv">7명 <em>(13.0%)</em></span></div></div></article><article class="cc cB"><header><h4>컨셉 B <span class="kc" lang="ja">集中うるおいケア</span></h4><span class="n">n = 59</span></header>
+<div class="big"><strong>3.58</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>53%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:32.2%"></span></span><span class="dv">19명 <em>(32.2%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:20.3%"></span></span><span class="dv">12명 <em>(20.3%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:28.8%"></span></span><span class="dv">17명 <em>(28.8%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:10.2%"></span></span><span class="dv">6명 <em>(10.2%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:8.5%"></span></span><span class="dv">5명 <em>(8.5%)</em></span></div></div></article><article class="cc cC"><header><h4>컨셉 C <span class="kc" lang="ja">うるおいキープケア</span></h4><span class="n">n = 57</span></header>
+<div class="big"><strong>3.28</strong><span>평균 구매의향 (5점 만점)</span></div>
+<div class="hi"><strong>46%</strong><span>의향 높음 (4·5점)</span></div>
+<div class="dist"><div class="dist-row"><span class="dk">5점</span><span class="track"><span class="fill" style="width:24.6%"></span></span><span class="dv">14명 <em>(24.6%)</em></span></div><div class="dist-row"><span class="dk">4점</span><span class="track"><span class="fill" style="width:21.1%"></span></span><span class="dv">12명 <em>(21.1%)</em></span></div><div class="dist-row"><span class="dk">3점</span><span class="track"><span class="fill" style="width:29.8%"></span></span><span class="dv">17명 <em>(29.8%)</em></span></div><div class="dist-row"><span class="dk">2점</span><span class="track"><span class="fill" style="width:7.0%"></span></span><span class="dv">4명 <em>(7.0%)</em></span></div><div class="dist-row"><span class="dk">1점</span><span class="track"><span class="fill" style="width:17.5%"></span></span><span class="dv">10명 <em>(17.5%)</em></span></div></div></article></div></div>
+  </section>
+
+  <section>
+    <h2>2. 구매이유 분석 (전체 대상 고객 · 컨셉별 · 의향 높음/낮음)</h2>
+    <p class="lead">구매의향 점수의 선택 이유(주관식)를 의향 높음(4·5점)과 낮음(1·2점) 그룹으로 나누고, 각 그룹 안에서 컨셉 A·B·C를 가로로 병렬 비교. 한 응답이 여러 카테고리에 해당될 수 있는 복수 태그 집계. 워드클라우드는 일본어 원문 기준. 전체 대상 고객(158명)만 대상으로 함(오프라인 구매·KB 상위 뷰 제외).</p>
+    <div class="block high"><div class="block-head"><div><h3>의향 높음 (4·5점)</h3><p>컨셉 A · B · C 병렬 비교</p></div></div><div class="grid3"><article class="rc cA"><header><h4>컨셉 A <span class="kc" lang="ja">集中うるおいブースト</span></h4><span class="n">n = 25</span></header>
+<h5>카테고리별 언급 횟수</h5><div class="cats"><div class="cat"><span class="cl">보습·촉촉함 기대</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="cv">17</span></div><div class="cat"><span class="cl">효과·효능 기대</span><span class="track"><span class="fill" style="width:53%"></span></span><span class="cv">9</span></div><div class="cat"><span class="cl">가격·가성비</span><span class="track"><span class="fill" style="width:29%"></span></span><span class="cv">5</span></div><div class="cat"><span class="cl">새로움·시도 의향</span><span class="track"><span class="fill" style="width:12%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">품질·고급감</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="cv">1</span></div><div class="cat"><span class="cl">성분(보습성분) 기대</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="cv">1</span></div><div class="cat"><span class="cl">사용 편의성</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="cv">1</span></div><div class="cat"><span class="cl">막연한 호감·기타</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="cv">1</span></div></div><h5>워드클라우드 (일본어 원문)</h5><div class="cloud" lang="ja"><span class="w t0" style="font-size:0.94rem" title="1회">期待</span><span class="w t1" style="font-size:0.94rem" title="1회">文言</span><span class="w t2" style="font-size:0.94rem" title="1회">明記</span><span class="w t0" style="font-size:0.94rem" title="1회">コスパ</span><span class="w t1" style="font-size:0.94rem" title="1회">買いやすい</span><span class="w t2" style="font-size:0.94rem" title="1회">乾燥肌</span><span class="w t0" style="font-size:0.94rem" title="1회">高い</span><span class="w t1" style="font-size:1.09rem" title="2회">試したい</span><span class="w t2" style="font-size:1.23rem" title="3회">良い</span><span class="w t0" style="font-size:1.38rem" title="4회">潤い</span><span class="w t1" style="font-size:2.10rem" title="9회">肌</span><span class="w t2" style="font-size:2.10rem" title="9회">整える</span><span class="w t0" style="font-size:2.10rem" title="9회">水分バランス</span><span class="w t1" style="font-size:1.23rem" title="3회">安い</span><span class="w t2" style="font-size:1.09rem" title="2회">乾燥</span><span class="w t0" style="font-size:1.09rem" title="2회">価格</span><span class="w t1" style="font-size:0.94rem" title="1회">保湿力</span><span class="w t2" style="font-size:0.94rem" title="1회">品質</span><span class="w t0" style="font-size:0.94rem" title="1회">値段</span><span class="w t1" style="font-size:0.94rem" title="1회">使う</span><span class="w t2" style="font-size:0.94rem" title="1회">うるおいケア</span><span class="w t0" style="font-size:0.94rem" title="1회">効果</span></div></article><article class="rc cB"><header><h4>컨셉 B <span class="kc" lang="ja">集中うるおいケア</span></h4><span class="n">n = 29</span></header>
+<h5>카테고리별 언급 횟수</h5><div class="cats"><div class="cat"><span class="cl">보습·촉촉함 기대</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="cv">17</span></div><div class="cat"><span class="cl">효과·효능 기대</span><span class="track"><span class="fill" style="width:65%"></span></span><span class="cv">11</span></div><div class="cat"><span class="cl">가격·가성비</span><span class="track"><span class="fill" style="width:24%"></span></span><span class="cv">4</span></div><div class="cat"><span class="cl">막연한 호감·기타</span><span class="track"><span class="fill" style="width:24%"></span></span><span class="cv">4</span></div><div class="cat"><span class="cl">성분(히알루론산 등) 기대</span><span class="track"><span class="fill" style="width:12%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">품질·고급감</span><span class="track"><span class="fill" style="width:12%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">새로움·시도 의향</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="cv">1</span></div></div><h5>워드클라우드 (일본어 원문)</h5><div class="cloud" lang="ja"><span class="w t0" style="font-size:0.92rem" title="1회">文言</span><span class="w t1" style="font-size:0.92rem" title="1회">明記</span><span class="w t2" style="font-size:0.92rem" title="1회">魅力</span><span class="w t0" style="font-size:0.92rem" title="1회">買いやすい</span><span class="w t1" style="font-size:0.92rem" title="1회">効く</span><span class="w t2" style="font-size:0.92rem" title="1회">みずみずしい</span><span class="w t0" style="font-size:0.92rem" title="1회">なれる</span><span class="w t1" style="font-size:0.92rem" title="1회">乾燥</span><span class="w t2" style="font-size:1.04rem" title="2회">安い</span><span class="w t0" style="font-size:1.27rem" title="4회">潤い</span><span class="w t1" style="font-size:1.86rem" title="9회">整える</span><span class="w t2" style="font-size:2.10rem" title="11회">肌</span><span class="w t0" style="font-size:1.86rem" title="9회">水分バランス</span><span class="w t1" style="font-size:1.27rem" title="4회">良い</span><span class="w t2" style="font-size:1.04rem" title="2회">乾燥肌</span><span class="w t0" style="font-size:0.92rem" title="1회">防ぐ</span><span class="w t1" style="font-size:0.92rem" title="1회">美しい</span><span class="w t2" style="font-size:0.92rem" title="1회">保てる</span><span class="w t0" style="font-size:0.92rem" title="1회">品質</span><span class="w t1" style="font-size:0.92rem" title="1회">価格</span><span class="w t2" style="font-size:0.92rem" title="1회">ヒアルロン酸</span><span class="w t0" style="font-size:0.92rem" title="1회">うるおいケア</span></div></article><article class="rc cC"><header><h4>컨셉 C <span class="kc" lang="ja">うるおいキープケア</span></h4><span class="n">n = 27</span></header>
+<h5>카테고리별 언급 횟수</h5><div class="cats"><div class="cat"><span class="cl">보습·촉촉함 기대</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="cv">14</span></div><div class="cat"><span class="cl">효과·효능 기대</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="cv">9</span></div><div class="cat"><span class="cl">패키지·디자인 호감</span><span class="track"><span class="fill" style="width:21%"></span></span><span class="cv">3</span></div><div class="cat"><span class="cl">성분(히알루론산 등) 기대</span><span class="track"><span class="fill" style="width:21%"></span></span><span class="cv">3</span></div><div class="cat"><span class="cl">막연한 호감·기타</span><span class="track"><span class="fill" style="width:21%"></span></span><span class="cv">3</span></div><div class="cat"><span class="cl">새로움·시도 의향</span><span class="track"><span class="fill" style="width:14%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">가격·가성비</span><span class="track"><span class="fill" style="width:14%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">품질·고급감</span><span class="track"><span class="fill" style="width:7%"></span></span><span class="cv">1</span></div><div class="cat"><span class="cl">사용 편의성</span><span class="track"><span class="fill" style="width:7%"></span></span><span class="cv">1</span></div></div><h5>워드클라우드 (일본어 원문)</h5><div class="cloud" lang="ja"><span class="w t0" style="font-size:0.96rem" title="1회">取り入れる</span><span class="w t1" style="font-size:0.96rem" title="1회">ケア</span><span class="w t2" style="font-size:0.96rem" title="1회">スキン</span><span class="w t0" style="font-size:0.96rem" title="1회">品質</span><span class="w t1" style="font-size:0.96rem" title="1회">乾燥肌</span><span class="w t2" style="font-size:0.96rem" title="1회">なれる</span><span class="w t0" style="font-size:1.12rem" title="2회">保湿</span><span class="w t1" style="font-size:1.12rem" title="2회">保湿力</span><span class="w t2" style="font-size:1.45rem" title="4회">潤い</span><span class="w t0" style="font-size:1.78rem" title="6회">整える</span><span class="w t1" style="font-size:1.94rem" title="7회">水分バランス</span><span class="w t2" style="font-size:2.10rem" title="8회">肌</span><span class="w t0" style="font-size:1.78rem" title="6회">良い</span><span class="w t1" style="font-size:1.45rem" title="4회">高い</span><span class="w t2" style="font-size:1.29rem" title="3회">ヒアルロン酸</span><span class="w t0" style="font-size:1.12rem" title="2회">試したい</span><span class="w t1" style="font-size:1.12rem" title="2회">パッケージ</span><span class="w t2" style="font-size:0.96rem" title="1회">綺麗</span><span class="w t0" style="font-size:0.96rem" title="1회">魅力</span><span class="w t1" style="font-size:0.96rem" title="1회">対策</span><span class="w t2" style="font-size:0.96rem" title="1회">乾燥</span><span class="w t0" style="font-size:0.96rem" title="1회">季節</span></div></article></div></div><div class="block low"><div class="block-head"><div><h3>의향 낮음 (1·2점)</h3><p>컨셉 A · B · C 병렬 비교</p></div></div><div class="grid3"><article class="rc cA"><header><h4>컨셉 A <span class="kc" lang="ja">集中うるおいブースト</span></h4><span class="n">n = 7</span></header>
+<h5>카테고리별 언급 횟수</h5><div class="cats"><div class="cat"><span class="cl">가격이 비쌈</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="cv">3</span></div><div class="cat"><span class="cl">기타·특별히 없음</span><span class="track"><span class="fill" style="width:67%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">효과 의문·정보 부족</span><span class="track"><span class="fill" style="width:33%"></span></span><span class="cv">1</span></div><div class="cat"><span class="cl">니즈·피부타입 불일치</span><span class="track"><span class="fill" style="width:33%"></span></span><span class="cv">1</span></div></div><h5>워드클라우드 (일본어 원문)</h5><div class="cloud" lang="ja"><span class="w t0" style="font-size:1.23rem" title="1회">良さが分からない</span><span class="w t1" style="font-size:2.10rem" title="3회">高い</span><span class="w t2" style="font-size:2.10rem" title="3회">なし</span><span class="w t0" style="font-size:1.23rem" title="1회">興味</span><span class="w t1" style="font-size:1.23rem" title="1회">価格</span></div></article><article class="rc cB"><header><h4>컨셉 B <span class="kc" lang="ja">集中うるおいケア</span></h4><span class="n">n = 13</span></header>
+<h5>카테고리별 언급 횟수</h5><div class="cats"><div class="cat"><span class="cl">가격이 비쌈</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="cv">10</span></div><div class="cat"><span class="cl">니즈·피부타입 불일치</span><span class="track"><span class="fill" style="width:20%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">기타·특별히 없음</span><span class="track"><span class="fill" style="width:10%"></span></span><span class="cv">1</span></div></div><h5>워드클라우드 (일본어 원문)</h5><div class="cloud" lang="ja"><span class="w t0" style="font-size:0.93rem" title="1회">合う</span><span class="w t1" style="font-size:0.93rem" title="1회">興味</span><span class="w t2" style="font-size:1.06rem" title="2회">なし</span><span class="w t0" style="font-size:2.10rem" title="10회">高い</span><span class="w t1" style="font-size:0.93rem" title="1회">ヒアルロン酸</span><span class="w t2" style="font-size:0.93rem" title="1회">保湿</span><span class="w t0" style="font-size:0.93rem" title="1회">系</span></div></article><article class="rc cC"><header><h4>컨셉 C <span class="kc" lang="ja">うるおいキープケア</span></h4><span class="n">n = 7</span></header>
+<h5>카테고리별 언급 횟수</h5><div class="cats"><div class="cat"><span class="cl">가격이 비쌈</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="cv">4</span></div><div class="cat"><span class="cl">기타·특별히 없음</span><span class="track"><span class="fill" style="width:50%"></span></span><span class="cv">2</span></div><div class="cat"><span class="cl">패키지·디자인 불만</span><span class="track"><span class="fill" style="width:25%"></span></span><span class="cv">1</span></div></div><h5>워드클라우드 (일본어 원문)</h5><div class="cloud" lang="ja"><span class="w t0" style="font-size:1.23rem" title="1회">悪い</span><span class="w t1" style="font-size:1.23rem" title="1회">良い</span><span class="w t2" style="font-size:1.23rem" title="1회">なし</span><span class="w t0" style="font-size:1.23rem" title="1회">惹かれない</span><span class="w t1" style="font-size:2.10rem" title="3회">高い</span><span class="w t2" style="font-size:1.23rem" title="1회">パッケージ</span><span class="w t0" style="font-size:1.23rem" title="1회">ヒアルロン酸</span><span class="w t1" style="font-size:1.23rem" title="1회">コスパ</span></div></article></div></div>
+  </section>
+
+  <footer>수분 마스크 키클레임 컨셉보드 조사 / 분석 리포트</footer>
+</main>
+</body>
+</html>
